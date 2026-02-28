@@ -89,7 +89,7 @@ class TelegramPublisher:
                     chat_id=self.channel_id,
                     text=part,
                     parse_mode=ParseMode.HTML,
-                    disable_web_page_preview=False,
+                    disable_web_page_preview=True,
                 )
                 if message_id is None:
                     message_id = message.message_id
