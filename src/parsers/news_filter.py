@@ -8,6 +8,20 @@ from src.parsers.rss_parser import NewsItem
 
 logger = logging.getLogger(__name__)
 
+# Sources that are inherently AML-relevant and don't need keyword filtering
+AML_NATIVE_SOURCES = {
+    "FATF",
+    "ACAMS MoneyLaundering.com",
+    "OCCRP",
+    "FinCEN",
+    "Compliance Week",
+    "OFAC Sanctions",
+    "EU AML Authority",
+    "Chainalysis Blog",
+    "Elliptic Blog",
+    "Basel AML Index",
+}
+
 
 class NewsFilter:
     """Filters news items for AML relevance and deduplicates."""
@@ -19,7 +33,13 @@ class NewsFilter:
         self._pattern = re.compile("|".join(escaped), re.IGNORECASE)
 
     def is_relevant(self, item: NewsItem) -> bool:
-        """Check if a news item is AML-relevant."""
+        """Check if a news item is AML-relevant.
+
+        Items from known AML sources are always relevant.
+        Items from general sources need keyword matches.
+        """
+        if item.source in AML_NATIVE_SOURCES:
+            return True
         text = f"{item.title} {item.content} {' '.join(item.tags)}".lower()
         return bool(self._pattern.search(text))
 
@@ -29,7 +49,11 @@ class NewsFilter:
         matches = self._pattern.findall(text)
         # Title matches count double
         title_matches = self._pattern.findall(item.title.lower())
-        return len(matches) + len(title_matches)
+        score = len(matches) + len(title_matches)
+        # Boost score for AML-native sources
+        if item.source in AML_NATIVE_SOURCES:
+            score += 5
+        return score
 
     def filter_and_rank(
         self,
@@ -39,15 +63,19 @@ class NewsFilter:
         """Filter for relevance, deduplicate, and rank by score."""
         seen = seen_hashes or set()
         filtered = []
+        skipped_dupes = 0
+        skipped_irrelevant = 0
 
         for item in items:
             # Skip duplicates
             if item.content_hash in seen:
+                skipped_dupes += 1
                 continue
             seen.add(item.content_hash)
 
             # Check relevance
             if not self.is_relevant(item):
+                skipped_irrelevant += 1
                 continue
 
             filtered.append(item)
@@ -56,6 +84,7 @@ class NewsFilter:
         filtered.sort(key=lambda x: self.calculate_relevance_score(x), reverse=True)
 
         logger.info(
-            f"Filtered {len(items)} items down to {len(filtered)} relevant items"
+            f"Фильтрация: {len(items)} всего -> {len(filtered)} релевантных "
+            f"(пропущено: {skipped_dupes} дублей, {skipped_irrelevant} нерелевантных)"
         )
         return filtered

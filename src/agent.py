@@ -124,12 +124,17 @@ class CaseWalkerAgent:
             logger.warning("Нет новых новостей из источников")
             return 0
 
-        # Filter for relevance
-        existing_hashes = set()
-        filtered = self.news_filter.filter_and_rank(all_items, existing_hashes)
+        # Filter for relevance (AML-native sources pass automatically)
+        filtered = self.news_filter.filter_and_rank(all_items)
+
+        if not filtered:
+            logger.warning("После фильтрации не осталось релевантных статей")
+            await self.db.set_state("last_parse", datetime.now(timezone.utc).isoformat())
+            return 0
 
         # Save to database
         saved_count = 0
+        duplicate_count = 0
         for item in filtered:
             score = self.news_filter.calculate_relevance_score(item)
             article_id = await self.db.save_article(
@@ -145,8 +150,13 @@ class CaseWalkerAgent:
             )
             if article_id is not None:
                 saved_count += 1
+            else:
+                duplicate_count += 1
 
-        logger.info(f"Сохранено {saved_count} новых статей из {len(all_items)} найденных")
+        logger.info(
+            f"Сохранено {saved_count} новых статей из {len(filtered)} релевантных "
+            f"({duplicate_count} уже в базе, {len(all_items)} найдено всего)"
+        )
         await self.db.set_state("last_parse", datetime.now(timezone.utc).isoformat())
         return saved_count
 
