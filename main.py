@@ -16,6 +16,7 @@ import asyncio
 import logging
 import sys
 
+from config import ADMIN_CHAT_IDS
 from src.agent import CaseWalkerAgent
 
 # Configure logging
@@ -32,13 +33,13 @@ logger = logging.getLogger("casewalker")
 
 async def run_agent():
     """Run the full agent with scheduler."""
-    agent = CaseWalkerAgent()
+    agent = CaseWalkerAgent(admin_chat_ids=ADMIN_CHAT_IDS)
     await agent.run_forever()
 
 
 async def run_single_parse():
     """Run a single news parsing cycle."""
-    agent = CaseWalkerAgent()
+    agent = CaseWalkerAgent(admin_chat_ids=ADMIN_CHAT_IDS)
     await agent.db.connect()
     count = await agent.parse_all_news()
     print(f"Parsed and saved {count} new articles")
@@ -47,7 +48,7 @@ async def run_single_parse():
 
 async def run_single_post():
     """Generate and publish a single post."""
-    agent = CaseWalkerAgent()
+    agent = CaseWalkerAgent(admin_chat_ids=ADMIN_CHAT_IDS)
     await agent.db.connect()
     result = await agent.generate_and_publish_post()
     print(result)
@@ -56,7 +57,7 @@ async def run_single_post():
 
 async def run_digest(is_morning: bool = True):
     """Generate and publish a digest."""
-    agent = CaseWalkerAgent()
+    agent = CaseWalkerAgent(admin_chat_ids=ADMIN_CHAT_IDS)
     await agent.db.connect()
     await agent.generate_and_publish_digest(is_morning=is_morning)
     print("Digest published")
@@ -65,7 +66,7 @@ async def run_digest(is_morning: bool = True):
 
 async def show_status():
     """Show agent status."""
-    agent = CaseWalkerAgent()
+    agent = CaseWalkerAgent(admin_chat_ids=ADMIN_CHAT_IDS)
     await agent.db.connect()
     status = await agent.get_status()
     print(status)
