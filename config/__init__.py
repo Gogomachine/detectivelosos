@@ -12,6 +12,9 @@ TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "")
 # Anthropic
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
+# Twitter/X API
+TWITTER_BEARER_TOKEN = os.getenv("TWITTER_BEARER_TOKEN", "")
+
 # Database
 DATABASE_PATH = os.getenv("DATABASE_PATH", "data/casewalker.db")
 

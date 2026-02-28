@@ -10,11 +10,13 @@ from datetime import datetime, timedelta, timezone
 
 import aiohttp
 
-from config.sources import RSS_FEEDS, SCRAPE_SOURCES
+from config import TWITTER_BEARER_TOKEN
+from config.sources import RSS_FEEDS, SCRAPE_SOURCES, TWITTER_ACCOUNTS
 from src.content.generator import ContentGenerator
 from src.database.db import Database
 from src.parsers.news_filter import NewsFilter
 from src.parsers.rss_parser import RSSParser
+from src.parsers.twitter_parser import TwitterParser
 from src.parsers.web_scraper import WebScraper
 from src.scheduler.scheduler import AgentScheduler
 from src.telegram_bot.bot import TelegramPublisher, UserBot
@@ -68,6 +70,7 @@ class CaseWalkerAgent:
         self.user_bot.set_callbacks(
             on_force_post=self.generate_and_publish_post,
             on_status=self.get_status,
+            on_explain_term=self.explain_aml_term,
         )
 
         # Run initial news fetch
@@ -95,24 +98,27 @@ class CaseWalkerAgent:
         rss_parser = RSSParser(session=self._http_session)
         web_scraper = WebScraper(session=self._http_session)
 
-        # Fetch from RSS and web in parallel
-        rss_items, web_items = await asyncio.gather(
+        # Build fetch tasks (RSS + web + optionally Twitter)
+        tasks = [
             rss_parser.fetch_all_feeds(RSS_FEEDS),
             web_scraper.scrape_all(SCRAPE_SOURCES),
-            return_exceptions=True,
-        )
+        ]
+        task_names = ["RSS", "Web"]
 
-        # Handle exceptions
+        if TWITTER_BEARER_TOKEN:
+            twitter_parser = TwitterParser(bearer_token=TWITTER_BEARER_TOKEN)
+            tasks.append(twitter_parser.fetch_all_accounts(TWITTER_ACCOUNTS))
+            task_names.append("Twitter")
+
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        # Collect results
         all_items = []
-        if not isinstance(rss_items, Exception):
-            all_items.extend(rss_items)
-        else:
-            logger.error(f"RSS parsing failed: {rss_items}")
-
-        if not isinstance(web_items, Exception):
-            all_items.extend(web_items)
-        else:
-            logger.error(f"Web scraping failed: {web_items}")
+        for name, result in zip(task_names, results):
+            if isinstance(result, Exception):
+                logger.error(f"{name} parsing failed: {result}")
+            else:
+                all_items.extend(result)
 
         if not all_items:
             logger.warning("Нет новых новостей из источников")
@@ -253,6 +259,10 @@ class CaseWalkerAgent:
         else:
             logger.info(f"Дневная квота выполнена: {count} постов")
         return needed
+
+    async def explain_aml_term(self, term: str) -> str:
+        """Explain an AML term using the encyclopedia knowledge base."""
+        return await self.generator.explain_term(term)
 
     async def get_status(self) -> str:
         """Get agent status report."""

@@ -1,6 +1,8 @@
 """Telegram bot for managing the AML detective channel."""
 
 import logging
+import random
+import re
 
 from telegram import (
     Bot,
@@ -30,6 +32,32 @@ INVESTIGATION_PRICE_STARS = 1000
 
 # Conversation states
 WAITING_ADDRESS = 1
+
+# AML Dictionary topics for quick lookup
+AML_DICTIONARY_TOPICS = [
+    ("Миксеры и тамблеры", "mixers"),
+    ("Chain Hopping", "chain_hopping"),
+    ("Peel Chains", "peel_chains"),
+    ("Кластеризация адресов", "clustering"),
+    ("Dusting-атаки", "dusting"),
+    ("DeFi-скамы", "defi_scams"),
+    ("Санкции OFAC", "sanctions"),
+    ("Lazarus Group", "lazarus"),
+    ("Red Flags", "red_flags"),
+    ("FATF и Travel Rule", "fatf"),
+    ("Блокчейн-аналитика", "analytics"),
+    ("VASP Framework", "vasp"),
+]
+
+
+def _clean_html(text: str) -> str:
+    """Strip HTML tags and normalize whitespace."""
+    if not text:
+        return ""
+    from bs4 import BeautifulSoup
+    clean = BeautifulSoup(text, "lxml").get_text(separator=" ")
+    clean = re.sub(r"\s+", " ", clean).strip()
+    return clean
 
 
 class TelegramPublisher:
@@ -110,6 +138,7 @@ class UserBot:
     - /start - main menu with buttons
     - "Заказать расследование" - pay 1000 Stars, send address, get report in 24h
     - "Хочу статью" - random article from DB
+    - "Словарь AML" - browse AML encyclopedia topics
     """
 
     def __init__(
@@ -124,11 +153,13 @@ class UserBot:
         self.app: Application | None = None
         self._on_force_post = None
         self._on_status = None
+        self._on_explain_term = None
 
-    def set_callbacks(self, on_force_post=None, on_status=None):
+    def set_callbacks(self, on_force_post=None, on_status=None, on_explain_term=None):
         """Set callback functions for admin commands."""
         self._on_force_post = on_force_post
         self._on_status = on_status
+        self._on_explain_term = on_explain_term
 
     def _is_admin(self, user_id: int) -> bool:
         if not self.admin_chat_ids:
@@ -147,6 +178,10 @@ class UserBot:
             [InlineKeyboardButton(
                 "📰 Хочу статью",
                 callback_data="random_article",
+            )],
+            [InlineKeyboardButton(
+                "📚 Словарь AML",
+                callback_data="aml_dictionary",
             )],
         ]
         return InlineKeyboardMarkup(buttons)
@@ -189,15 +224,14 @@ class UserBot:
             )
             return
 
-        title = article["title"]
+        title = _clean_html(article["title"])
         source = article["source"]
         url = article.get("url", "")
-        content = article.get("content", "")
+        content = _clean_html(article.get("content", ""))
 
         # Build the article message
         text = f"📰 {title}\n\n"
         if content:
-            # Trim content to reasonable length
             preview = content[:800]
             if len(content) > 800:
                 preview += "..."
@@ -224,6 +258,90 @@ class UserBot:
             "🕵️ Главное меню Кейса Уокера:",
             reply_markup=self._main_keyboard(),
         )
+
+    # --- AML Dictionary ---
+
+    async def callback_aml_dictionary(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle 'Словарь AML' button - show topic list."""
+        query = update.callback_query
+        await query.answer()
+
+        buttons = []
+        for i in range(0, len(AML_DICTIONARY_TOPICS), 2):
+            row = []
+            for j in range(i, min(i + 2, len(AML_DICTIONARY_TOPICS))):
+                name, key = AML_DICTIONARY_TOPICS[j]
+                row.append(InlineKeyboardButton(
+                    name, callback_data=f"dict_{key}"
+                ))
+            buttons.append(row)
+        buttons.append([
+            InlineKeyboardButton("◀️ Назад в меню", callback_data="back_to_menu")
+        ])
+
+        await query.edit_message_text(
+            "📚 Словарь AML от Кейса Уокера\n\n"
+            "Выбери тему - я расскажу что знаю:",
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
+
+    async def callback_dict_topic(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle dictionary topic selection."""
+        query = update.callback_query
+        await query.answer("Готовлю материал...")
+
+        topic_key = query.data.replace("dict_", "")
+
+        # Find topic name
+        topic_name = topic_key
+        for name, key in AML_DICTIONARY_TOPICS:
+            if key == topic_key:
+                topic_name = name
+                break
+
+        # Get explanation from the generator via callback
+        if self._on_explain_term:
+            try:
+                explanation = await self._on_explain_term(topic_name)
+            except Exception as e:
+                logger.error(f"Failed to generate explanation: {e}")
+                explanation = self._get_static_explanation(topic_key)
+        else:
+            explanation = self._get_static_explanation(topic_key)
+
+        # Truncate if too long
+        if len(explanation) > 3500:
+            explanation = explanation[:3500] + "..."
+
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("📚 Другие темы", callback_data="aml_dictionary")],
+            [InlineKeyboardButton("◀️ Назад в меню", callback_data="back_to_menu")],
+        ])
+
+        await query.edit_message_text(
+            f"📚 {topic_name}\n\n{explanation}",
+            reply_markup=keyboard,
+        )
+
+    def _get_static_explanation(self, topic_key: str) -> str:
+        """Fallback static explanations from encyclopedia."""
+        from config.encyclopedia import AML_ENCYCLOPEDIA
+        from src.content.generator import _extract_section, ENCYCLOPEDIA_SECTIONS
+
+        marker = ENCYCLOPEDIA_SECTIONS.get(topic_key, "")
+        if marker:
+            section = _extract_section(marker)
+            if section:
+                # Trim to reasonable length for Telegram
+                if len(section) > 3000:
+                    section = section[:3000] + "..."
+                return section
+
+        return "Информация по этой теме скоро появится. Кейс Уокер уже на деле! 🕵️"
 
     # --- Investigation order (Telegram Stars payment) ---
 
@@ -399,6 +517,12 @@ class UserBot:
         )
         self.app.add_handler(
             CallbackQueryHandler(self.callback_random_article, pattern="^random_article$")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_aml_dictionary, pattern="^aml_dictionary$")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_dict_topic, pattern="^dict_")
         )
         self.app.add_handler(
             CallbackQueryHandler(self.callback_back_to_menu, pattern="^back_to_menu$")
