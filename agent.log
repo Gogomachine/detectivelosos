@@ -1784,3 +1784,1156 @@ Your enrolled account [2027648530370711553] does not have any credits to fulfill
 2026-02-28 13:43:17,379 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
 2026-02-28 13:43:27,479 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
 2026-02-28 13:43:37,583 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:48:02,481 [INFO] src.agent: 🕵️ Кейс Уокер выходит на дело...
+2026-02-28 13:48:02,487 [INFO] src.database.db: Database connected: ./src/database/db.db
+2026-02-28 13:48:02,490 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 13:48:02,491 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 13:48:02,491 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 13:48:02,491 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 13:48:02,491 [INFO] src.scheduler.scheduler: Scheduler configured: parse every 30min, post every 30min, digests at 7:00 / 19:00
+2026-02-28 13:48:02,492 [INFO] apscheduler.scheduler: Added job "Parse AML News" to job store "default"
+2026-02-28 13:48:02,492 [INFO] apscheduler.scheduler: Added job "Combined News + Tip Post" to job store "default"
+2026-02-28 13:48:02,492 [INFO] apscheduler.scheduler: Added job "Morning Digest" to job store "default"
+2026-02-28 13:48:02,492 [INFO] apscheduler.scheduler: Added job "Evening Digest" to job store "default"
+2026-02-28 13:48:02,492 [INFO] apscheduler.scheduler: Scheduler started
+2026-02-28 13:48:02,492 [INFO] src.scheduler.scheduler: Scheduler started
+2026-02-28 13:48:02,492 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 13:48:03,065 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 13:48:03,074 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 13:48:03,091 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 13:48:03,510 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 13:48:03,548 [INFO] src.parsers.rss_parser: Parsed 20 items from CoinDesk
+2026-02-28 13:48:03,639 [INFO] src.parsers.rss_parser: Parsed 20 items from Cointelegraph
+2026-02-28 13:48:03,709 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 13:48:03,925 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @TRM_Labs: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:03,954 [INFO] src.parsers.rss_parser: Parsed 20 items from Cointelegraph Investigations
+2026-02-28 13:48:04,031 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @FATFNews: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,033 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @ACAMSorg: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,033 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @ComplianceWeek: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,033 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @OCCRP: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,037 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @elliptic: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,061 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 13:48:04,095 [WARNING] urllib3.connectionpool: Connection pool is full, discarding connection: api.twitter.com. Connection pool size: 10
+2026-02-28 13:48:04,097 [WARNING] urllib3.connectionpool: Connection pool is full, discarding connection: api.twitter.com. Connection pool size: 10
+2026-02-28 13:48:04,097 [WARNING] urllib3.connectionpool: Connection pool is full, discarding connection: api.twitter.com. Connection pool size: 10
+2026-02-28 13:48:04,097 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @FinCENgov: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,099 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @OFACsanctions: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,099 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @EU_Commission: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,099 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @TheJusticeDept: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,099 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @USTreasury: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,101 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @ICIJorg: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,102 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @chainalysis: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 13:48:04,186 [INFO] src.parsers.web_scraper: Scraped 3 articles from TRM Labs Insights
+2026-02-28 13:48:04,187 [INFO] src.parsers.twitter_parser: Total tweets fetched: 0
+2026-02-28 13:48:04,296 [INFO] src.parsers.rss_parser: Parsed 10 items from Incrypted
+2026-02-28 13:48:04,459 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 13:48:04,813 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 13:48:07,854 [INFO] src.parsers.rss_parser: Parsed 20 items from Forklog
+2026-02-28 13:48:13,748 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 13:48:14,507 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 13:48:14,509 [INFO] src.parsers.rss_parser: Total items fetched: 100
+2026-02-28 13:48:14,740 [INFO] src.parsers.news_filter: Фильтрация: 103 всего -> 52 релевантных (пропущено: 0 дублей, 51 нерелевантных)
+2026-02-28 13:48:14,890 [INFO] src.database.db: Saved article: Hacker returns $21M in Bitcoin stolen from South Korean auth
+2026-02-28 13:48:14,905 [INFO] src.database.db: Saved article: How a $123M crypto scam in Australia laundered millions thro
+2026-02-28 13:48:14,924 [INFO] src.database.db: Saved article: Утечка в PayPal, 15 лет за сбыт фейковых документов и другие
+2026-02-28 13:48:14,939 [INFO] src.database.db: Saved article: Руководство Binance отвергло обвинения в переводах $1,7 млрд
+2026-02-28 13:48:14,952 [INFO] src.database.db: Saved article: They trusted a sealed wallet from TikTok, and it cost them $
+2026-02-28 13:48:14,972 [INFO] src.database.db: Saved article: Manipulation or Conspiracy Theory: Why Jane Street Was Accus
+2026-02-28 13:48:14,990 [INFO] src.database.db: Saved article: Polymarket user gains $400K betting on ZachXBT investigation
+2026-02-28 13:48:15,011 [INFO] src.database.db: Saved article: Powell investigation may introduce ‘risk premia’ for Bitcoin
+2026-02-28 13:48:15,044 [INFO] src.database.db: Saved article: US senator questions DeFi oversight amid crypto bill delay
+2026-02-28 13:48:15,055 [INFO] src.database.db: Saved article: US House members call for investigation into Trump's memecoi
+2026-02-28 13:48:15,068 [INFO] src.database.db: Saved article: Anchorage Digital faces scrutiny from US Homeland Security —
+2026-02-28 13:48:15,100 [INFO] src.database.db: Saved article: Compliance360
+2026-02-28 13:48:15,113 [INFO] src.database.db: Saved article: Suspected insider wallets rack up $1.2M betting on ZachXBT’s
+2026-02-28 13:48:15,135 [INFO] src.database.db: Saved article: How a police officer stole 50 BTC from a seized crypto walle
+2026-02-28 13:48:15,147 [INFO] src.database.db: Saved article: NYC cops linked to crypto torture case put on modified dutie
+2026-02-28 13:48:15,182 [INFO] src.database.db: Saved article: Южнокорейская налоговая раскрыла сид-фразу и потеряла токены
+2026-02-28 13:48:15,197 [INFO] src.database.db: Saved article: Insiders Made More Than $1M From ZachXBT’s Investigation Int
+2026-02-28 13:48:15,219 [INFO] src.database.db: Saved article: 22 Bitcoin worth $1.5M vanish from Seoul police custody
+2026-02-28 13:48:15,233 [INFO] src.database.db: Saved article: SEC ends probe into Aave after four years, CEO Kulechov says
+2026-02-28 13:48:15,264 [INFO] src.database.db: Saved article: Binance suspends employee over using inside information for 
+2026-02-28 13:48:15,280 [INFO] src.database.db: Saved article: Trump-backed WLFI ramps up buybacks as token lingers 50% bel
+2026-02-28 13:48:15,315 [INFO] src.database.db: Saved article: Edel Finance-linked wallets reportedly ‘snipe’ 30% of token 
+2026-02-28 13:48:15,328 [INFO] src.database.db: Saved article: Why is India investigating Binance over crypto loopholes?
+2026-02-28 13:48:15,367 [INFO] src.database.db: Saved article: ‘Hawk tuah girl’ Haliey Welch says FBI probed her ‘memecoin 
+2026-02-28 13:48:15,379 [INFO] src.database.db: Saved article: Bankera founders used ICO funds on global property buys: Rep
+2026-02-28 13:48:15,405 [INFO] src.database.db: Saved article: Bitget’s $12B VOXEL frenzy fizzled fast, but questions remai
+2026-02-28 13:48:15,417 [INFO] src.database.db: Saved article: Banking
+2026-02-28 13:48:15,452 [INFO] src.database.db: Saved article: DeFi Due Diligence
+2026-02-28 13:48:15,463 [INFO] src.database.db: Saved article: Crypto Biz: A Bitcoin treasury shareholder revolt
+2026-02-28 13:48:15,504 [INFO] src.database.db: Saved article: How to Get the Most Out of Nano Banana Pro: 10 Best Prompts
+2026-02-28 13:48:15,517 [INFO] src.database.db: Saved article: Mt. Gox's former CEO floats hard fork to recover 80K hacked 
+2026-02-28 13:48:15,553 [INFO] src.database.db: Saved article: U.S. Senate Democrats asked Treasury, DOJ to probe Binance's
+2026-02-28 13:48:15,566 [INFO] src.database.db: Saved article: US DOJ seized and froze $580M in crypto from ‘Chinese transn
+2026-02-28 13:48:15,599 [INFO] src.database.db: Saved article: Minnesota to weigh ban on crypto kiosks after scam reports
+2026-02-28 13:48:15,614 [INFO] src.database.db: Saved article: Bitget and Obside Launched an AI Trading Arena for Real-Time
+2026-02-28 13:48:15,636 [INFO] src.database.db: Saved article: Инсайдеры заработали свыше $1 млн на расследовании ZachXBT
+2026-02-28 13:48:15,648 [INFO] src.database.db: Saved article: Bitcoin ETF holders and treasury firms stack protection agai
+2026-02-28 13:48:15,678 [INFO] src.database.db: Saved article: Tether froze $4.2B in tokens tied to illicit activity in 3 y
+2026-02-28 13:48:15,695 [INFO] src.database.db: Saved article: Экс-CEO Mt.Gox призвал к харфорку биткоина для возврата 79 9
+2026-02-28 13:48:15,709 [INFO] src.database.db: Saved article: US Authorities have Blacklisted Anthropic
+2026-02-28 13:48:15,727 [INFO] src.database.db: Saved article: Google выпустила нейросеть Nano Banana 2
+2026-02-28 13:48:15,739 [INFO] src.database.db: Saved article: ИИ-аудит выявил критический баг в клиенте Ethereum
+2026-02-28 13:48:15,739 [INFO] src.agent: Сохранено 42 новых статей из 52 релевантных (10 уже в базе, 103 найдено всего)
+2026-02-28 13:48:15,764 [INFO] src.agent: ✅ Кейс Уокер на линии, дела ждут!
+2026-02-28 13:48:16,794 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getMe "HTTP/1.1 200 OK"
+2026-02-28 13:48:16,795 [INFO] apscheduler.scheduler: Scheduler started
+2026-02-28 13:48:16,796 [INFO] telegram.ext.Application: Application started
+2026-02-28 13:48:17,002 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/deleteWebhook "HTTP/1.1 200 OK"
+2026-02-28 13:48:17,003 [INFO] src.agent: Telegram бот запущен (polling)
+2026-02-28 13:48:27,487 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:48:37,719 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:48:47,854 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:48:57,960 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:49:08,117 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:49:18,383 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:49:28,686 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:49:38,791 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:49:48,949 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:49:59,107 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:50:09,230 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:50:19,357 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:50:29,697 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:50:39,782 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:50:49,899 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:51:01,209 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:51:11,443 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:51:21,633 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:51:31,877 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:51:42,013 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:51:52,145 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:52:02,288 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:52:12,424 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:52:22,606 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:52:33,043 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:52:43,129 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:52:53,286 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:53:02,502 [INFO] apscheduler.executors.default: Running job "Combined News + Tip Post (trigger: interval[0:30:00], next run at: 2026-02-28 14:23:02 MSK)" (scheduled at 2026-02-28 10:53:02.491652+00:00)
+2026-02-28 13:53:02,502 [INFO] src.scheduler.scheduler: Running combined post generation
+2026-02-28 13:53:03,466 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:53:13,679 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:53:19,005 [INFO] httpx: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-02-28 13:53:19,016 [INFO] src.content.generator: Generated combined post with 3 news + tip: Privacy coins: почему Monero сложно отсл
+2026-02-28 13:53:20,404 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/sendMessage "HTTP/1.1 200 OK"
+2026-02-28 13:53:20,406 [INFO] src.telegram_bot.bot: Published post to @casewalkerinvestigation, msg_id=7
+2026-02-28 13:53:20,474 [INFO] src.agent: Комбинированный пост опубликован (3 новостей + совет)
+2026-02-28 13:53:20,474 [INFO] apscheduler.executors.default: Job "Combined News + Tip Post (trigger: interval[0:30:00], next run at: 2026-02-28 14:23:02 MSK)" executed successfully
+2026-02-28 13:53:23,775 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:53:33,972 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:53:44,077 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:53:54,156 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:54:04,403 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:54:14,533 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:54:24,809 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:54:34,923 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:54:45,120 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:54:55,204 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:55:05,340 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:55:15,419 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:55:25,529 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:55:35,854 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:55:46,012 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:55:56,138 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:56:06,292 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:56:16,432 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:56:26,543 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:56:36,685 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:56:46,868 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:56:56,972 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:57:07,114 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:57:17,204 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:57:27,321 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:57:37,440 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:57:47,535 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:57:57,615 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:58:07,743 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:58:17,869 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:58:28,006 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:58:38,151 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:58:48,263 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:58:58,358 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:59:08,462 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:59:18,542 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:59:28,669 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:59:38,774 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:59:48,921 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 13:59:58,998 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:00:09,248 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:00:19,378 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:00:29,543 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:00:39,659 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:00:49,852 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:01:00,046 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:01:10,226 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:01:20,543 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:01:30,623 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:01:40,752 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:01:50,876 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:02:01,402 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:02:11,565 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:02:21,675 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:02:31,846 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:02:42,176 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:02:52,369 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:03:02,590 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:03:12,739 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:03:22,851 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:03:32,973 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:03:43,127 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:03:53,246 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:04:03,337 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:04:13,486 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:04:23,582 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:04:33,712 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:04:43,839 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:04:53,923 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:05:04,175 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:05:14,291 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:05:24,744 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:05:34,819 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:05:44,953 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:05:55,074 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:06:05,321 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:06:15,403 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:06:25,637 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:06:35,771 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:06:45,868 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:06:56,049 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:07:06,149 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:07:16,354 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:07:26,882 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:07:37,044 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:07:47,369 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:07:57,475 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:08:07,549 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:08:17,657 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:08:27,730 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:08:37,847 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:08:48,047 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:08:58,128 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:09:08,238 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:09:18,348 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:09:28,438 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:09:38,609 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:09:48,706 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:09:58,840 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:10:08,968 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:10:19,132 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:10:29,587 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:10:39,755 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:10:49,870 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:10:59,950 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:11:10,022 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:11:20,207 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:11:30,286 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:11:40,406 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:11:50,489 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:12:00,583 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:12:10,693 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:12:20,803 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:12:31,013 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:12:41,115 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:12:51,267 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:13:01,374 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:13:11,519 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:13:21,616 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:13:31,701 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:13:41,967 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:13:52,109 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:14:02,717 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:14:12,831 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:14:38,988 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:14:50,139 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:14:51,160 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:14:52,682 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:14:54,944 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:14:58,324 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:15:03,396 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:15:10,999 [ERROR] telegram.ext.Updater: Exception happened while polling for updates.
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 101, in handle_async_request
+    raise exc
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_async\connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_backends\anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpcore\_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 279, in do_request
+    res = await self._client.request(
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\contextlib.py", line 158, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\httpx\_transports\default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 161, in network_retry_loop
+    await do_action()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_utils\networkloop.py", line 154, in do_action
+    action_cb_task.result()
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_updater.py", line 340, in polling_action_cb
+    updates = await self.bot.get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 671, in get_updates
+    updates = await super().get_updates(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 4860, in get_updates
+    await self._post(
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 703, in _post
+    return await self._do_post(
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\ext\_extbot.py", line 369, in _do_post
+    return await super()._do_post(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\_bot.py", line 732, in _do_post
+    result = await request.post(
+             ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 198, in post
+    result = await self._request_wrapper(
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_baserequest.py", line 305, in _request_wrapper
+    code, payload = await self.do_request(
+                    ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\curryx\AppData\Local\Programs\Python\Python311\Lib\site-packages\telegram\request\_httpxrequest.py", line 303, in do_request
+    raise NetworkError(f"httpx.{err.__class__.__name__}: {err}") from err
+telegram.error.NetworkError: httpx.ConnectError: [Errno 11001] getaddrinfo failed
+2026-02-28 14:15:33,791 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:15:43,924 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:15:54,034 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:16:04,129 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:16:14,211 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:16:24,296 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:16:34,422 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:16:44,530 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:16:54,610 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:17:04,694 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:17:14,779 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:17:24,857 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:17:34,956 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:17:45,081 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:17:55,172 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:18:02,491 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 14:48:02 MSK)" (scheduled at 2026-02-28 14:18:02.490652+03:00)
+2026-02-28 14:18:02,491 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 14:18:02,492 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 14:18:02,863 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 14:18:02,865 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 14:18:03,000 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 14:18:03,399 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 14:18:03,791 [INFO] src.parsers.rss_parser: Parsed 20 items from CoinDesk
+2026-02-28 14:18:03,796 [INFO] src.parsers.rss_parser: Parsed 20 items from Cointelegraph
+2026-02-28 14:18:03,931 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 14:18:04,009 [WARNING] urllib3.connectionpool: Connection pool is full, discarding connection: api.twitter.com. Connection pool size: 10
+2026-02-28 14:18:04,009 [WARNING] urllib3.connectionpool: Connection pool is full, discarding connection: api.twitter.com. Connection pool size: 10
+2026-02-28 14:18:04,031 [WARNING] urllib3.connectionpool: Connection pool is full, discarding connection: api.twitter.com. Connection pool size: 10
+2026-02-28 14:18:05,233 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @OCCRP: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,234 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @TheJusticeDept: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,234 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @chainalysis: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,234 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @TRM_Labs: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,234 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @EU_Commission: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,235 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @ComplianceWeek: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,235 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @FATFNews: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,235 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @USTreasury: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,235 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @ACAMSorg: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,236 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @elliptic: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,275 [INFO] src.parsers.rss_parser: Parsed 20 items from Cointelegraph Investigations
+2026-02-28 14:18:05,300 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 14:18:05,305 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @FinCENgov: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,307 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @OFACsanctions: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,310 [ERROR] src.parsers.twitter_parser: Twitter fetch failed for @ICIJorg: 402 Payment Required
+Your enrolled account [2027648530370711553] does not have any credits to fulfill this request.
+2026-02-28 14:18:05,366 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:18:05,368 [INFO] src.parsers.twitter_parser: Total tweets fetched: 0
+2026-02-28 14:18:05,403 [INFO] src.parsers.rss_parser: Parsed 10 items from Incrypted
+2026-02-28 14:18:05,896 [INFO] src.parsers.web_scraper: Scraped 3 articles from TRM Labs Insights
+2026-02-28 14:18:05,897 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 14:18:06,347 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 14:18:06,353 [INFO] src.parsers.rss_parser: Parsed 20 items from Forklog
+2026-02-28 14:18:13,350 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 14:18:13,575 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 14:18:13,576 [INFO] src.parsers.rss_parser: Total items fetched: 100
+2026-02-28 14:18:13,817 [INFO] src.parsers.news_filter: Фильтрация: 103 всего -> 52 релевантных (пропущено: 0 дублей, 51 нерелевантных)
+2026-02-28 14:18:13,997 [INFO] src.agent: Сохранено 0 новых статей из 52 релевантных (52 уже в базе, 103 найдено всего)
+2026-02-28 14:18:14,054 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 14:48:02 MSK)" executed successfully
+2026-02-28 14:18:15,493 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:18:25,592 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:18:35,665 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:18:45,792 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:18:55,900 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:19:05,995 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:19:16,102 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:19:26,229 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:19:36,353 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:19:46,442 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:19:56,589 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:20:06,709 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:20:16,801 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:20:26,881 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:20:36,986 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:20:47,071 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:20:57,210 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:21:07,315 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:21:17,424 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:21:27,504 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:21:37,610 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:21:47,682 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:21:57,764 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:22:07,861 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:22:17,963 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:22:28,074 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:22:38,150 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:22:48,259 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:22:58,446 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:23:02,500 [INFO] apscheduler.executors.default: Running job "Combined News + Tip Post (trigger: interval[0:30:00], next run at: 2026-02-28 14:53:02 MSK)" (scheduled at 2026-02-28 14:23:02.491652+03:00)
+2026-02-28 14:23:02,500 [INFO] src.scheduler.scheduler: Running combined post generation
+2026-02-28 14:23:08,544 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:23:17,388 [INFO] httpx: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-02-28 14:23:17,390 [INFO] src.content.generator: Generated combined post with 3 news + tip: Зачем нужна сертификация CAMS
+2026-02-28 14:23:17,913 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/sendMessage "HTTP/1.1 200 OK"
+2026-02-28 14:23:17,914 [INFO] src.telegram_bot.bot: Published post to @casewalkerinvestigation, msg_id=8
+2026-02-28 14:23:18,020 [INFO] src.agent: Комбинированный пост опубликован (3 новостей + совет)
+2026-02-28 14:23:18,021 [INFO] apscheduler.executors.default: Job "Combined News + Tip Post (trigger: interval[0:30:00], next run at: 2026-02-28 14:53:02 MSK)" executed successfully
+2026-02-28 14:23:18,687 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:23:28,803 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:23:38,875 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:23:49,024 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:23:59,120 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:24:09,202 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:24:19,311 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:24:29,428 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:24:39,509 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:24:49,609 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:24:59,702 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:25:09,809 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:25:19,961 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:25:30,100 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:25:40,181 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:25:50,259 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:26:00,371 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:26:10,535 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:26:20,599 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:26:30,787 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:26:40,953 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:26:51,042 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:27:01,124 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:27:11,235 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:27:21,378 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:27:31,445 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:27:41,547 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:27:51,633 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:28:01,809 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 14:28:11,910 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
