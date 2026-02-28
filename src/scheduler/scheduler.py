@@ -1,18 +1,21 @@
 """
 Scheduler for the AML Detective Agent.
-Manages news parsing, content generation, and posting schedule.
-Posts combined news+tip every 30 minutes, plus morning/evening digests.
+Fixed daily schedule:
+  07:00 - Morning digest
+  10:00 - Combined post (3 news + AML tip)
+  13:00 - Combined post (3 news + AML tip)
+  16:00 - Combined post (3 news + AML tip)
+  19:00 - Evening digest + sweet dreams
+News parsing runs before each post.
 """
 
 import logging
 import random
-from datetime import datetime, timedelta, timezone
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from apscheduler.triggers.interval import IntervalTrigger
 
-from config import MORNING_DIGEST_HOUR, EVENING_DIGEST_HOUR, PARSE_INTERVAL_MINUTES
+from config import MORNING_DIGEST_HOUR, EVENING_DIGEST_HOUR
 
 logger = logging.getLogger(__name__)
 
@@ -54,8 +57,8 @@ AML_TIP_TOPICS = [
     "Зачем нужна сертификация CAMS",
 ]
 
-# Post interval in minutes
-POST_INTERVAL_MINUTES = 30
+# Combined post hours (between morning and evening digests)
+COMBINED_POST_HOURS = [10, 13, 16]
 
 
 class AgentScheduler:
@@ -74,10 +77,7 @@ class AgentScheduler:
         on_combined_post=None,
         on_morning_digest=None,
         on_evening_digest=None,
-        # Legacy callbacks (kept for backward compat)
-        on_generate_post=None,
-        on_fun_fact=None,
-        on_check_quota=None,
+        **_kwargs,
     ):
         """Set callback functions for scheduled tasks."""
         self._on_parse_news = on_parse_news
@@ -87,49 +87,65 @@ class AgentScheduler:
 
     def setup(self):
         """Configure the scheduler with all jobs."""
-        # 1. Parse news every N minutes (offset by 2 min so news are ready before post)
+        # Parse news before morning digest (06:45)
         self.scheduler.add_job(
             self._run_parse_news,
-            trigger=IntervalTrigger(minutes=PARSE_INTERVAL_MINUTES),
-            id="parse_news",
-            name="Parse AML News",
+            trigger=CronTrigger(hour=MORNING_DIGEST_HOUR - 1, minute=45),
+            id="parse_before_morning",
+            name="Parse before morning digest",
             replace_existing=True,
         )
 
-        # 2. Combined post (3 news + AML tip) every 30 minutes
-        self.scheduler.add_job(
-            self._run_combined_post,
-            trigger=IntervalTrigger(minutes=POST_INTERVAL_MINUTES),
-            id="combined_post",
-            name="Combined News + Tip Post",
-            replace_existing=True,
-            # Start 5 min after parse to let news accumulate
-            next_run_time=datetime.now(timezone.utc) + timedelta(minutes=5),
-        )
-
-        # 3. Morning digest
+        # 07:00 - Morning digest
         self.scheduler.add_job(
             self._run_morning_digest,
             trigger=CronTrigger(hour=MORNING_DIGEST_HOUR, minute=0),
             id="morning_digest",
-            name="Morning Digest",
+            name="Morning Digest (07:00)",
             replace_existing=True,
         )
 
-        # 4. Evening digest
+        # 10:00, 13:00, 16:00 - Combined posts (parse news 15 min before each)
+        for hour in COMBINED_POST_HOURS:
+            self.scheduler.add_job(
+                self._run_parse_news,
+                trigger=CronTrigger(hour=hour - 1, minute=45),
+                id=f"parse_before_{hour}",
+                name=f"Parse before {hour}:00 post",
+                replace_existing=True,
+            )
+            self.scheduler.add_job(
+                self._run_combined_post,
+                trigger=CronTrigger(hour=hour, minute=0),
+                id=f"combined_post_{hour}",
+                name=f"Combined Post ({hour}:00)",
+                replace_existing=True,
+            )
+
+        # Parse news before evening digest (18:45)
+        self.scheduler.add_job(
+            self._run_parse_news,
+            trigger=CronTrigger(hour=EVENING_DIGEST_HOUR - 1, minute=45),
+            id="parse_before_evening",
+            name="Parse before evening digest",
+            replace_existing=True,
+        )
+
+        # 19:00 - Evening digest
         self.scheduler.add_job(
             self._run_evening_digest,
             trigger=CronTrigger(hour=EVENING_DIGEST_HOUR, minute=0),
             id="evening_digest",
-            name="Evening Digest",
+            name="Evening Digest (19:00)",
             replace_existing=True,
         )
 
-        logger.info(
-            f"Scheduler configured: parse every {PARSE_INTERVAL_MINUTES}min, "
-            f"post every {POST_INTERVAL_MINUTES}min, "
-            f"digests at {MORNING_DIGEST_HOUR}:00 / {EVENING_DIGEST_HOUR}:00"
+        schedule_str = (
+            f"07:00 утренний дайджест, "
+            f"{', '.join(f'{h}:00' for h in COMBINED_POST_HOURS)} сводки, "
+            f"19:00 вечерний дайджест"
         )
+        logger.info(f"Расписание настроено: {schedule_str}")
 
     def start(self):
         """Start the scheduler."""
