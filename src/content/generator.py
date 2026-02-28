@@ -41,7 +41,7 @@ class ContentGenerator:
             raise
 
     async def generate_news_post(
-        self, title: str, content: str, source: str, category: str
+        self, title: str, content: str, source: str, category: str, url: str = ""
     ) -> str:
         """Generate a Telegram post from a news article."""
         prompt = NEWS_POST_TEMPLATE.format(
@@ -49,6 +49,7 @@ class ContentGenerator:
             content=content[:3000],  # Limit content length
             source=source,
             category=category,
+            url=url or "не указан",
         )
         post = await self._generate(prompt)
         logger.info(f"Generated news post for: {title[:50]}")
@@ -63,7 +64,8 @@ class ContentGenerator:
         today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
 
         news_list = "\n".join(
-            f"- {item['title']} ({item['source']})" for item in news_items
+            f"- {item['title']} ({item['source']}) | {item.get('url', '')}"
+            for item in news_items
         )
 
         prompt = DIGEST_TEMPLATE.format(

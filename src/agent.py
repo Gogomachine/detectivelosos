@@ -158,6 +158,7 @@ class CaseWalkerAgent:
             content=content,
             source=article["source"],
             category=article["category"],
+            url=article.get("url", ""),
         )
 
         # Save to DB
