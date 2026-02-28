@@ -1,0 +1,154 @@
+2026-02-28 06:01:46,870 [INFO] src.agent: 🕵️ Кейс Уокер выходит на дело...
+2026-02-28 06:01:46,947 [INFO] src.database.db: Database connected: ./src/database/db.db
+2026-02-28 06:01:46,957 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 06:01:46,958 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 06:01:46,959 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 06:01:46,960 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 06:01:46,960 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 06:01:46,961 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 06:01:46,961 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 06:01:46,961 [INFO] src.scheduler.scheduler: Scheduler configured with all jobs
+2026-02-28 06:01:46,961 [INFO] apscheduler.scheduler: Added job "Parse AML News" to job store "default"
+2026-02-28 06:01:46,962 [INFO] apscheduler.scheduler: Added job "Morning Digest" to job store "default"
+2026-02-28 06:01:46,962 [INFO] apscheduler.scheduler: Added job "Evening Digest" to job store "default"
+2026-02-28 06:01:46,962 [INFO] apscheduler.scheduler: Added job "News Post at 10:00" to job store "default"
+2026-02-28 06:01:46,962 [INFO] apscheduler.scheduler: Added job "News Post at 13:00" to job store "default"
+2026-02-28 06:01:46,962 [INFO] apscheduler.scheduler: Added job "News Post at 16:00" to job store "default"
+2026-02-28 06:01:46,962 [INFO] apscheduler.scheduler: Added job "Check Daily Post Quota" to job store "default"
+2026-02-28 06:01:46,962 [INFO] apscheduler.scheduler: Scheduler started
+2026-02-28 06:01:46,963 [INFO] src.scheduler.scheduler: Scheduler started
+2026-02-28 06:01:46,963 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 06:01:47,430 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 06:01:47,517 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 06:01:47,723 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 06:01:47,797 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 06:01:48,230 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 06:01:48,231 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 06:01:48,642 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 06:01:48,966 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 06:01:57,361 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 06:01:57,361 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 06:01:57,362 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 06:01:57,476 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 06:01:57,526 [INFO] src.database.db: Saved article: Russian Harmful Foreign Activities Sanctions
+2026-02-28 06:01:57,550 [INFO] src.database.db: Saved article: Syria Sanctions - Inactive and Archived
+2026-02-28 06:01:57,569 [INFO] src.database.db: Saved article: Promoting Accountability for Assad and Regional Stabilizatio
+2026-02-28 06:01:57,586 [INFO] src.database.db: Saved article: Burma-Related Sanctions
+2026-02-28 06:01:57,603 [INFO] src.database.db: Saved article: Chinese Military Companies Sanctions
+2026-02-28 06:01:57,619 [INFO] src.database.db: Saved article: International Criminal Court-Related Sanctions
+2026-02-28 06:01:57,637 [INFO] src.database.db: Saved article: Ethiopia-Related Sanctions
+2026-02-28 06:01:57,659 [INFO] src.database.db: Saved article: Hong Kong-Related Sanctions
+2026-02-28 06:01:57,679 [INFO] src.database.db: Saved article: Hostages and Wrongfully Detained U.S. Nationals Sanctions
+2026-02-28 06:01:57,698 [INFO] src.database.db: Saved article: Afghanistan-Related Sanctions
+2026-02-28 06:01:57,698 [INFO] src.agent: Сохранено 10 новых статей из 10 найденных
+2026-02-28 06:01:57,708 [INFO] src.agent: ✅ Кейс Уокер на линии, дела ждут!
+2026-02-28 06:31:46,965 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 07:01:46 MSK)" (scheduled at 2026-02-28 06:31:46.957186+03:00)
+2026-02-28 06:31:46,965 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 06:31:46,965 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 06:31:47,481 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 06:31:47,541 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 06:31:47,542 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 06:31:47,545 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 06:31:47,614 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 06:31:47,672 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 06:31:47,761 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 06:31:47,991 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 06:31:57,967 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 06:31:58,390 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 06:31:58,391 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 06:31:58,494 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 06:31:58,602 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 06:31:58,646 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 07:01:46 MSK)" executed successfully
+2026-02-28 07:00:00,020 [INFO] apscheduler.executors.default: Running job "Morning Digest (trigger: cron[hour='7', minute='0'], next run at: 2026-03-01 07:00:00 MSK)" (scheduled at 2026-02-28 07:00:00+03:00)
+2026-02-28 07:00:00,021 [INFO] src.scheduler.scheduler: Running morning digest
+2026-02-28 07:00:11,150 [INFO] httpx: HTTP Request: POST https://api.anthropic.com/v1/messages "HTTP/1.1 200 OK"
+2026-02-28 07:00:11,171 [INFO] src.content.generator: Generated утренний digest
+2026-02-28 07:00:16,357 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/sendMessage "HTTP/1.1 200 OK"
+2026-02-28 07:00:16,358 [INFO] src.telegram_bot.bot: Published post to @casewalkerinvestigation, msg_id=3
+2026-02-28 07:00:16,420 [INFO] src.agent: Утренний дайджест опубликован
+2026-02-28 07:00:16,421 [INFO] apscheduler.executors.default: Job "Morning Digest (trigger: cron[hour='7', minute='0'], next run at: 2026-03-01 07:00:00 MSK)" executed successfully
+2026-02-28 07:01:46,965 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 07:31:46 MSK)" (scheduled at 2026-02-28 07:01:46.957186+03:00)
+2026-02-28 07:01:46,966 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 07:01:46,966 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 07:01:47,344 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 07:01:47,448 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 07:01:47,449 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 07:01:47,657 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 07:01:47,679 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 07:01:47,910 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 07:01:48,123 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 07:01:48,152 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 07:01:55,700 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 07:01:57,080 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 07:01:57,081 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 07:01:57,184 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 07:01:57,295 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 07:01:57,341 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 07:31:46 MSK)" executed successfully
+2026-02-28 07:31:46,961 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 08:01:46 MSK)" (scheduled at 2026-02-28 07:31:46.957186+03:00)
+2026-02-28 07:31:46,961 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 07:31:46,961 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 07:31:47,210 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 07:31:47,454 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 07:31:47,519 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 07:31:47,715 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 07:31:47,740 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 07:31:47,740 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 07:31:47,773 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 07:31:48,655 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 07:31:57,304 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 07:31:57,914 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 07:31:57,915 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 07:31:58,020 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 07:31:58,159 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 07:31:58,223 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 08:01:46 MSK)" executed successfully
+2026-02-28 08:01:46,963 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 08:31:46 MSK)" (scheduled at 2026-02-28 08:01:46.957186+03:00)
+2026-02-28 08:01:46,963 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 08:01:46,963 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 08:01:47,355 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 08:01:47,490 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 08:01:47,562 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 08:01:47,590 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 08:01:47,625 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 08:01:47,698 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 08:01:47,815 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 08:01:47,928 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 08:01:56,885 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 08:01:57,722 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 08:01:57,723 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 08:01:57,826 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 08:01:57,936 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 08:01:58,014 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 08:31:46 MSK)" executed successfully
+2026-02-28 08:31:46,972 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 09:01:46 MSK)" (scheduled at 2026-02-28 08:31:46.957186+03:00)
+2026-02-28 08:31:46,972 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 08:31:46,972 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 08:31:47,483 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 08:31:47,519 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 08:31:47,609 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 08:31:47,676 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 08:31:47,677 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 08:31:47,890 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 08:31:48,094 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 08:31:48,132 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 08:31:56,125 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 08:31:58,484 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 08:31:58,485 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 08:31:58,590 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 08:31:58,702 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 08:31:58,765 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 09:01:46 MSK)" executed successfully
+2026-02-28 09:01:46,970 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 09:31:46 MSK)" (scheduled at 2026-02-28 09:01:46.957186+03:00)
+2026-02-28 09:01:46,970 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 09:01:46,971 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 09:01:47,252 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 09:01:47,361 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 09:01:47,385 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 09:01:47,454 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 09:01:47,567 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 09:01:47,663 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 09:01:47,734 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 09:01:48,043 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 09:01:57,544 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 09:01:58,010 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 09:01:58,011 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 09:01:58,113 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 09:01:58,224 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 09:01:58,235 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 09:31:46 MSK)" executed successfully
