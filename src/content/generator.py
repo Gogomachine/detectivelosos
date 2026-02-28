@@ -9,11 +9,17 @@ import anthropic
 from config import ANTHROPIC_API_KEY
 from config.encyclopedia import AML_ENCYCLOPEDIA
 from config.prompts import (
+    AFTERNOON_NEWS_TEMPLATE,
+    AUTHOR_POST_TEMPLATE,
     COMBINED_POST_TEMPLATE,
+    DEEP_DIVE_TEMPLATE,
     ENRICHMENT_TEMPLATE,
     EVENING_DIGEST_TEMPLATE,
+    EVENING_NEWS_TEMPLATE,
     FUN_FACT_TEMPLATE,
+    MINI_POST_TEMPLATE,
     MORNING_DIGEST_TEMPLATE,
+    MORNING_NEWS_TEMPLATE,
     INVESTIGATION_TEMPLATE,
     NEWS_POST_TEMPLATE,
     SYSTEM_PROMPT,
@@ -309,6 +315,102 @@ class ContentGenerator:
 Пиши как Кейс Уокер - живо, понятно, с деталями.
 Без Markdown-разметки, без ** и без длинных тире."""
         return await self._generate_with_context(prompt, context, max_tokens=1500)
+
+    async def generate_news_briefing(
+        self,
+        news_items: list[dict],
+        time_of_day: str = "morning",
+        daily_summary: str = "",
+    ) -> str:
+        """Generate a news briefing (morning/afternoon/evening) with max 7 articles."""
+        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+
+        news_list = "\n".join(
+            f"- {item['title']} ({item['source']}) | {item.get('url', '')}"
+            for item in news_items[:7]
+        )
+
+        if time_of_day == "morning":
+            prompt = MORNING_NEWS_TEMPLATE.format(
+                date=today,
+                news_list=news_list or "Ночь прошла тихо - ни одной новости. Подозрительно...",
+            )
+        elif time_of_day == "afternoon":
+            prompt = AFTERNOON_NEWS_TEMPLATE.format(
+                date=today,
+                news_list=news_list or "Тихий день - пока ничего нового. Кейс на чеку...",
+            )
+        else:
+            prompt = EVENING_NEWS_TEMPLATE.format(
+                date=today,
+                news_list=news_list or "Вечер без новостей. Редкое затишье...",
+                daily_summary=daily_summary or "Сегодня был насыщенный день.",
+            )
+
+        # Get context from article contents
+        all_text = " ".join(item.get("title", "") for item in news_items[:7])
+        context = _get_relevant_context(all_text)
+        post = await self._generate_with_context(prompt, context, max_tokens=3000)
+        logger.info(f"Generated {time_of_day} news briefing ({len(news_items)} articles)")
+        return post
+
+    async def generate_mini_post(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate a short educational post about security or AML."""
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = MINI_POST_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+        )
+        post = await self._generate(prompt, max_tokens=1500)
+        logger.info(f"Generated mini post: {topic[:50]}")
+        return post
+
+    async def generate_deep_dive(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate an in-depth analysis post about crypto/AML topic."""
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = DEEP_DIVE_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+        )
+        context = _get_relevant_context(topic)
+        post = await self._generate_with_context(prompt, context, max_tokens=4000)
+        logger.info(f"Generated deep dive: {topic[:50]}")
+        return post
+
+    async def generate_author_post(
+        self, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate a free-form author's post - personal thoughts, jokes, reflections."""
+        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = AUTHOR_POST_TEMPLATE.format(
+            date=today,
+            used_topics=used_str,
+        )
+        post = await self._generate(prompt, max_tokens=1500)
+        logger.info("Generated author post")
+        return post
 
     def get_category_emoji(self, category: str) -> str:
         """Get emoji for post category."""
