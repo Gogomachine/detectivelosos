@@ -136,16 +136,48 @@ class Database:
         return cursor.lastrowid
 
     async def get_unposted_articles(self, limit: int = 10) -> list[dict]:
-        """Get articles that haven't been posted yet."""
+        """Get articles that haven't been posted yet, preferring recent and diverse sources."""
         cursor = await self.db.execute(
             """SELECT * FROM articles
                WHERE is_posted = 0
-               ORDER BY relevance_score DESC, fetched_at DESC
+               ORDER BY fetched_at DESC, relevance_score DESC
                LIMIT ?""",
-            (limit,),
+            (limit * 5,),  # Fetch more to allow source diversity filtering
         )
         rows = await cursor.fetchall()
         return [dict(row) for row in rows]
+
+    async def get_diverse_unposted_articles(self, count: int = 3) -> list[dict]:
+        """Get unposted articles ensuring source diversity (max 1 per source)."""
+        cursor = await self.db.execute(
+            """SELECT * FROM articles
+               WHERE is_posted = 0
+               ORDER BY fetched_at DESC, relevance_score DESC
+               LIMIT 50"""
+        )
+        rows = await cursor.fetchall()
+        all_articles = [dict(row) for row in rows]
+
+        # Pick articles from different sources
+        selected = []
+        seen_sources = set()
+        for article in all_articles:
+            source = article["source"]
+            if source not in seen_sources:
+                selected.append(article)
+                seen_sources.add(source)
+                if len(selected) >= count:
+                    break
+
+        # If not enough diverse sources, fill from remaining
+        if len(selected) < count:
+            for article in all_articles:
+                if article not in selected:
+                    selected.append(article)
+                    if len(selected) >= count:
+                        break
+
+        return selected
 
     async def mark_article_posted(self, article_id: int, post_id: int):
         """Mark an article as posted."""

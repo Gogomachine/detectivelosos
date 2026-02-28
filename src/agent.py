@@ -160,8 +160,8 @@ class CaseWalkerAgent:
 
     async def generate_and_publish_combined_post(self, tip_topic: str) -> str:
         """Generate and publish a combined post: 3 news + AML tip."""
-        # Get up to 3 unposted articles (prefer AML, fallback to general crypto)
-        articles = await self.db.get_unposted_articles(limit=3)
+        # Get up to 3 unposted articles from different sources
+        articles = await self.db.get_diverse_unposted_articles(count=3)
 
         if not articles:
             logger.info("Нет непопубликованных статей для комбинированного поста")
