@@ -183,6 +183,10 @@ class UserBot:
                 "📚 Словарь AML",
                 callback_data="aml_dictionary",
             )],
+            [InlineKeyboardButton(
+                "✉️ Связаться со мной",
+                callback_data="contact",
+            )],
         ]
         return InlineKeyboardMarkup(buttons)
 
@@ -343,6 +347,80 @@ class UserBot:
 
         return "Информация по этой теме скоро появится. Кейс Уокер уже на деле! 🕵️"
 
+    # --- Contact / Message to admin ---
+
+    async def callback_contact(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle 'Связаться со мной' button - ask user for a message."""
+        query = update.callback_query
+        await query.answer()
+
+        await query.edit_message_text(
+            "✉️ Связаться с Кейсом Уокером\n\n"
+            "Напиши своё сообщение - я обязательно прочитаю и отвечу.\n\n"
+            "Можешь задать вопрос, предложить тему для расследования, "
+            "оставить отзыв или просто поздороваться.",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("◀️ Отмена", callback_data="back_to_menu")],
+            ]),
+        )
+
+        context.user_data["awaiting_contact_message"] = True
+
+    async def handle_contact_message(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle user's contact message and forward it to admin(s)."""
+        if not context.user_data.get("awaiting_contact_message"):
+            return False
+
+        context.user_data["awaiting_contact_message"] = False
+        user = update.effective_user
+        message_text = update.message.text.strip()
+
+        if not message_text:
+            await update.message.reply_text(
+                "Пустое сообщение. Попробуй ещё раз.",
+                reply_markup=self._main_keyboard(),
+            )
+            return True
+
+        # Forward to admin(s)
+        forwarded = False
+        for admin_id in self.admin_chat_ids:
+            try:
+                bot = Bot(token=self.bot_token)
+                await bot.send_message(
+                    chat_id=admin_id,
+                    text=(
+                        f"✉️ Новое сообщение от пользователя\n\n"
+                        f"От: @{user.username or 'нет юзернейма'} "
+                        f"(ID: {user.id})\n"
+                        f"Имя: {user.full_name}\n\n"
+                        f"Сообщение:\n{message_text}"
+                    ),
+                )
+                forwarded = True
+            except Exception as e:
+                logger.error(f"Failed to forward message to admin {admin_id}: {e}")
+
+        if forwarded:
+            await update.message.reply_text(
+                "✅ Сообщение отправлено!\n\n"
+                "Кейс Уокер получил твоё письмо и ответит "
+                "как только разберётся с текущими делами. 🕵️",
+                reply_markup=self._main_keyboard(),
+            )
+        else:
+            await update.message.reply_text(
+                "К сожалению, не удалось отправить сообщение. "
+                "Попробуй позже.",
+                reply_markup=self._main_keyboard(),
+            )
+
+        return True
+
     # --- Investigation order (Telegram Stars payment) ---
 
     async def callback_investigate(
@@ -371,6 +449,11 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle address text message from user."""
+        # Check contact message first
+        if context.user_data.get("awaiting_contact_message"):
+            await self.handle_contact_message(update, context)
+            return
+
         if not context.user_data.get("awaiting_address"):
             return
 
@@ -523,6 +606,9 @@ class UserBot:
         )
         self.app.add_handler(
             CallbackQueryHandler(self.callback_dict_topic, pattern="^dict_")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_contact, pattern="^contact$")
         )
         self.app.add_handler(
             CallbackQueryHandler(self.callback_back_to_menu, pattern="^back_to_menu$")
