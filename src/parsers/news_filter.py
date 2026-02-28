@@ -52,9 +52,9 @@ class NewsFilter:
         # Title matches count double
         title_matches = self._pattern.findall(item.title.lower())
         score = len(matches) + len(title_matches)
-        # Boost score for AML-native sources
-        if item.source in AML_NATIVE_SOURCES:
-            score += 5
+        # Boost if article has actual content (not just a title/link)
+        if item.content and len(item.content) > 100:
+            score += 2
         return score
 
     def filter_and_rank(
