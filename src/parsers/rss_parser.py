@@ -6,10 +6,22 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
+import re
+
 import aiohttp
 import feedparser
+from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
+
+
+def strip_html(raw: str) -> str:
+    """Remove HTML tags and clean up whitespace."""
+    if not raw:
+        return ""
+    text = BeautifulSoup(raw, "lxml").get_text(separator=" ")
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 
 @dataclass
@@ -83,19 +95,19 @@ class RSSParser:
         items = []
 
         for entry in feed.entries[:20]:  # Limit to 20 most recent
-            title = entry.get("title", "").strip()
+            title = strip_html(entry.get("title", ""))
             link = entry.get("link", "").strip()
             if not title or not link:
                 continue
 
-            # Extract content
+            # Extract content and strip HTML
             content = ""
             if hasattr(entry, "content") and entry.content:
-                content = entry.content[0].get("value", "")
+                content = strip_html(entry.content[0].get("value", ""))
             elif hasattr(entry, "summary"):
-                content = entry.summary or ""
+                content = strip_html(entry.summary or "")
             elif hasattr(entry, "description"):
-                content = entry.description or ""
+                content = strip_html(entry.description or "")
 
             # Parse published date
             published = datetime.now(timezone.utc)

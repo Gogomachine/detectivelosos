@@ -1,6 +1,7 @@
 """Telegram bot for managing the AML detective channel."""
 
 import logging
+import re
 
 from telegram import (
     Bot,
@@ -30,6 +31,16 @@ INVESTIGATION_PRICE_STARS = 1000
 
 # Conversation states
 WAITING_ADDRESS = 1
+
+
+def _clean_html(text: str) -> str:
+    """Strip HTML tags and normalize whitespace."""
+    if not text:
+        return ""
+    from bs4 import BeautifulSoup
+    clean = BeautifulSoup(text, "lxml").get_text(separator=" ")
+    clean = re.sub(r"\s+", " ", clean).strip()
+    return clean
 
 
 class TelegramPublisher:
@@ -189,15 +200,14 @@ class UserBot:
             )
             return
 
-        title = article["title"]
+        title = _clean_html(article["title"])
         source = article["source"]
         url = article.get("url", "")
-        content = article.get("content", "")
+        content = _clean_html(article.get("content", ""))
 
         # Build the article message
         text = f"📰 {title}\n\n"
         if content:
-            # Trim content to reasonable length
             preview = content[:800]
             if len(content) > 800:
                 preview += "..."
