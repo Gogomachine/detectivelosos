@@ -47,6 +47,12 @@ RSS_FEEDS = [
         "category": "regulation",
         "language": "en",
     },
+    {
+        "name": "CoinDesk",
+        "url": "https://www.coindesk.com/arc/outboundfeeds/rss",
+        "category": "crypto_aml",
+        "language": "en",
+    },
 ]
 
 # Web pages to scrape (when RSS is not available)
