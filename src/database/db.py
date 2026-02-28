@@ -65,6 +65,15 @@ CREATE TABLE IF NOT EXISTS investigations (
 
 CREATE INDEX IF NOT EXISTS idx_investigations_user ON investigations(user_id);
 CREATE INDEX IF NOT EXISTS idx_investigations_status ON investigations(status);
+
+CREATE TABLE IF NOT EXISTS used_topics (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic TEXT NOT NULL,
+    post_type TEXT NOT NULL,
+    used_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_used_topics_type ON used_topics(post_type);
 """
 
 
@@ -330,6 +339,28 @@ class Database:
                 (status, investigation_id),
             )
         await self.db.commit()
+
+    # --- Used Topics ---
+
+    async def save_used_topic(self, topic: str, post_type: str):
+        """Save a topic as used to avoid repetition."""
+        await self.db.execute(
+            "INSERT INTO used_topics (topic, post_type) VALUES (?, ?)",
+            (topic, post_type),
+        )
+        await self.db.commit()
+
+    async def get_used_topics(self, post_type: str, limit: int = 50) -> list[str]:
+        """Get recently used topics for a post type."""
+        cursor = await self.db.execute(
+            """SELECT topic FROM used_topics
+               WHERE post_type = ?
+               ORDER BY used_at DESC
+               LIMIT ?""",
+            (post_type, limit),
+        )
+        rows = await cursor.fetchall()
+        return [row[0] for row in rows]
 
     # --- Agent State ---
 

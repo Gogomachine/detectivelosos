@@ -1,10 +1,17 @@
 """
 Main AML Detective Agent orchestrator.
 Coordinates all components: parsing, content generation, database, and publishing.
+
+Daily schedule (Moscow time):
+  09:00 - Morning News (max 7 articles, AML professional opinion)
+  10:00 - Mini Post (security/AML educational)
+  13:00 - Deep Dive (crypto networks, AML incidents analysis)
+  15:00 - Afternoon News (max 7 articles, AML professional opinion)
+  17:00 - Author's Post (free-form, personal)
+  20:00 - Evening News (max 7 articles, daily summary, good night)
 """
 
 import asyncio
-import json
 import logging
 from datetime import datetime, timedelta, timezone
 
@@ -21,7 +28,7 @@ from src.telegram_bot.bot import TelegramPublisher, UserBot
 
 logger = logging.getLogger(__name__)
 
-MIN_DAILY_POSTS = 5
+MIN_DAILY_POSTS = 6
 
 
 class CaseWalkerAgent:
@@ -42,7 +49,7 @@ class CaseWalkerAgent:
 
     async def start(self):
         """Initialize and start the agent."""
-        logger.info("🕵️ Кейс Уокер выходит на дело...")
+        logger.info("Кейс Уокер выходит на дело...")
 
         # Initialize components
         await self.db.connect()
@@ -54,9 +61,12 @@ class CaseWalkerAgent:
         # Configure scheduler callbacks
         self.scheduler.set_callbacks(
             on_parse_news=self.parse_all_news,
-            on_combined_post=self.generate_and_publish_combined_post,
-            on_morning_digest=lambda: self.generate_and_publish_digest(is_morning=True),
-            on_evening_digest=lambda: self.generate_and_publish_digest(is_morning=False),
+            on_morning_news=lambda: self.generate_and_publish_news_briefing("morning"),
+            on_mini_post=self.generate_and_publish_mini_post,
+            on_deep_dive=self.generate_and_publish_deep_dive,
+            on_afternoon_news=lambda: self.generate_and_publish_news_briefing("afternoon"),
+            on_author_post=self.generate_and_publish_author_post,
+            on_evening_news=lambda: self.generate_and_publish_news_briefing("evening"),
         )
         self.scheduler.setup()
         self.scheduler.start()
@@ -64,7 +74,9 @@ class CaseWalkerAgent:
         # Configure user bot callbacks
         self.user_bot.db = self.db
         self.user_bot.set_callbacks(
-            on_force_post=lambda: self.generate_and_publish_combined_post("Red flags при крипто-транзакциях: топ-5"),
+            on_force_post=lambda: self.generate_and_publish_mini_post(
+                "Red flags при крипто-транзакциях: топ-5"
+            ),
             on_status=self.get_status,
             on_explain_term=self.explain_aml_term,
         )
@@ -73,7 +85,7 @@ class CaseWalkerAgent:
         await self.parse_all_news()
 
         self._running = True
-        logger.info("✅ Кейс Уокер на линии, дела ждут!")
+        logger.info("Кейс Уокер на линии, дела ждут!")
 
     async def stop(self):
         """Gracefully stop the agent."""
@@ -151,25 +163,41 @@ class CaseWalkerAgent:
         await self.db.set_state("last_parse", datetime.now(timezone.utc).isoformat())
         return saved_count
 
-    async def generate_and_publish_combined_post(self, tip_topic: str) -> str:
-        """Generate and publish a combined post: 3 news + AML tip."""
-        # Get up to 3 unposted articles from different sources
-        articles = await self.db.get_diverse_unposted_articles(count=3)
+    # --- News Briefings (09:00, 15:00, 20:00) ---
+
+    async def generate_and_publish_news_briefing(self, time_of_day: str):
+        """Generate and publish a news briefing (morning/afternoon/evening)."""
+        # Get fresh unposted articles (max 7)
+        articles = await self.db.get_diverse_unposted_articles(count=7)
 
         if not articles:
-            logger.info("Нет непопубликованных статей для комбинированного поста")
-            return "Нет новых статей для публикации"
+            logger.info(f"Нет непопубликованных статей для {time_of_day} сводки")
+            articles = []
 
-        # Generate combined post
-        post_text = await self.generator.generate_combined_post(
-            articles=articles,
-            tip_topic=tip_topic,
+        # For evening - build daily summary from today's posts
+        daily_summary = ""
+        if time_of_day == "evening":
+            posts_today = await self.db.get_posts_today()
+            if posts_today:
+                summaries = []
+                for p in posts_today:
+                    ptype = p.get("post_type", "")
+                    content = p.get("content", "")[:150]
+                    summaries.append(f"[{ptype}] {content}...")
+                daily_summary = "\n".join(summaries)
+
+        # Generate briefing
+        post_text = await self.generator.generate_news_briefing(
+            news_items=articles,
+            time_of_day=time_of_day,
+            daily_summary=daily_summary,
         )
 
         # Save to DB
         article_ids = ",".join(str(a["id"]) for a in articles)
+        post_type = f"news_{time_of_day}"
         post_id = await self.db.save_post(
-            post_type="combined",
+            post_type=post_type,
             content=post_text,
             article_ids=article_ids,
             status="draft",
@@ -179,15 +207,123 @@ class CaseWalkerAgent:
         message_id = await self.publisher.publish_post(post_text)
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
-            # Mark all articles as posted
             for article in articles:
                 await self.db.mark_article_posted(article["id"], post_id)
-            titles = ", ".join(a["title"][:30] for a in articles)
-            logger.info(f"Комбинированный пост опубликован ({len(articles)} новостей + совет)")
-            return f"✅ Опубликовано: {len(articles)} новостей + AML-совет"
+            label = {"morning": "Утренняя", "afternoon": "Дневная", "evening": "Вечерняя"}
+            logger.info(f"{label.get(time_of_day, '')} сводка опубликована ({len(articles)} новостей)")
         else:
             await self.db.update_post_status(post_id, "failed")
-            return f"❌ Ошибка публикации комбинированного поста"
+
+    # --- Mini Post (10:00) ---
+
+    async def generate_and_publish_mini_post(self, topic: str):
+        """Generate and publish a mini educational post about security/AML."""
+        # Get used topics to avoid repetition
+        used_topics = await self.db.get_used_topics("mini_post")
+
+        post_text = await self.generator.generate_mini_post(
+            topic=topic,
+            used_topics=used_topics,
+        )
+
+        post_id = await self.db.save_post(
+            post_type="mini_post",
+            content=post_text,
+            status="draft",
+        )
+
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            await self.db.save_used_topic(topic, "mini_post")
+            logger.info(f"Мини-пост опубликован: {topic[:50]}")
+        else:
+            await self.db.update_post_status(post_id, "failed")
+
+    # --- Deep Dive (13:00) ---
+
+    async def generate_and_publish_deep_dive(self, topic: str):
+        """Generate and publish a deep dive analysis post."""
+        used_topics = await self.db.get_used_topics("deep_dive")
+
+        post_text = await self.generator.generate_deep_dive(
+            topic=topic,
+            used_topics=used_topics,
+        )
+
+        post_id = await self.db.save_post(
+            post_type="deep_dive",
+            content=post_text,
+            status="draft",
+        )
+
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            await self.db.save_used_topic(topic, "deep_dive")
+            logger.info(f"Разбор опубликован: {topic[:50]}")
+        else:
+            await self.db.update_post_status(post_id, "failed")
+
+    # --- Author's Post (17:00) ---
+
+    async def generate_and_publish_author_post(self):
+        """Generate and publish a free-form author's post."""
+        used_topics = await self.db.get_used_topics("author_post")
+
+        post_text = await self.generator.generate_author_post(
+            used_topics=used_topics,
+        )
+
+        post_id = await self.db.save_post(
+            post_type="author_post",
+            content=post_text,
+            status="draft",
+        )
+
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            # Save first line as topic marker to avoid repetition
+            first_line = post_text.split("\n")[0][:100]
+            await self.db.save_used_topic(first_line, "author_post")
+            logger.info("Авторский пост опубликован")
+        else:
+            await self.db.update_post_status(post_id, "failed")
+
+    # --- Legacy methods (kept for /post command and manual use) ---
+
+    async def generate_and_publish_combined_post(self, tip_topic: str) -> str:
+        """Generate and publish a combined post: 3 news + AML tip."""
+        articles = await self.db.get_diverse_unposted_articles(count=3)
+
+        if not articles:
+            logger.info("Нет непопубликованных статей для комбинированного поста")
+            return "Нет новых статей для публикации"
+
+        post_text = await self.generator.generate_combined_post(
+            articles=articles,
+            tip_topic=tip_topic,
+        )
+
+        article_ids = ",".join(str(a["id"]) for a in articles)
+        post_id = await self.db.save_post(
+            post_type="combined",
+            content=post_text,
+            article_ids=article_ids,
+            status="draft",
+        )
+
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            for article in articles:
+                await self.db.mark_article_posted(article["id"], post_id)
+            logger.info(f"Комбинированный пост опубликован ({len(articles)} новостей + совет)")
+            return f"Опубликовано: {len(articles)} новостей + AML-совет"
+        else:
+            await self.db.update_post_status(post_id, "failed")
+            return "Ошибка публикации комбинированного поста"
 
     async def generate_and_publish_post(self) -> str:
         """Generate and publish a post from the best unposted article."""
@@ -198,14 +334,12 @@ class CaseWalkerAgent:
 
         article = articles[0]
 
-        # If content is too short, enrich it
         content = article["content"] or ""
         if len(content) < 200:
             content = await self.generator.enrich_article(
                 article["title"], content
             )
 
-        # Generate post
         post_text = await self.generator.generate_news_post(
             title=article["title"],
             content=content,
@@ -214,7 +348,6 @@ class CaseWalkerAgent:
             url=article.get("url", ""),
         )
 
-        # Save to DB
         post_id = await self.db.save_post(
             post_type="news",
             content=post_text,
@@ -222,40 +355,30 @@ class CaseWalkerAgent:
             status="draft",
         )
 
-        # Publish to Telegram
         message_id = await self.publisher.publish_post(post_text)
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
             await self.db.mark_article_posted(article["id"], post_id)
             logger.info(f"Опубликован пост: {article['title'][:50]}")
-            return f"✅ Опубликовано: {article['title'][:50]}"
+            return f"Опубликовано: {article['title'][:50]}"
         else:
             await self.db.update_post_status(post_id, "failed")
-            return f"❌ Ошибка публикации: {article['title'][:50]}"
+            return f"Ошибка публикации: {article['title'][:50]}"
 
     async def generate_and_publish_digest(self, is_morning: bool = True):
-        """Generate and publish a digest (morning or evening)."""
-        # Get articles from the relevant period
-        if is_morning:
-            # Evening articles (previous day 19:00 to today 07:00)
-            since = datetime.now(timezone.utc) - timedelta(hours=12)
-        else:
-            # Daytime articles (today 07:00 to 19:00)
-            since = datetime.now(timezone.utc) - timedelta(hours=12)
-
+        """Generate and publish a digest (morning or evening). Legacy method."""
+        since = datetime.now(timezone.utc) - timedelta(hours=12)
         articles = await self.db.get_articles_since(since)
 
         if not articles:
             logger.info("Нет статей для дайджеста")
             articles = [{"title": "Тишина на фронтах AML", "source": "Case Walker"}]
 
-        # Generate digest
         digest_text = await self.generator.generate_digest(
-            news_items=articles[:10],  # Top 10 for digest
+            news_items=articles[:10],
             is_morning=is_morning,
         )
 
-        # Save and publish
         article_ids = ",".join(str(a.get("id", "")) for a in articles[:10])
         post_id = await self.db.save_post(
             post_type="digest_morning" if is_morning else "digest_evening",
@@ -289,8 +412,10 @@ class CaseWalkerAgent:
         else:
             await self.db.update_post_status(post_id, "failed")
 
+    # --- Utility ---
+
     async def check_daily_quota(self) -> int:
-        """Check if minimum daily post count is met. Returns posts still needed."""
+        """Check if minimum daily post count is met."""
         count = await self.db.get_post_count_today()
         needed = max(0, MIN_DAILY_POSTS - count)
         if needed > 0:
@@ -311,16 +436,23 @@ class CaseWalkerAgent:
         next_runs = self.scheduler.get_next_runs()
 
         next_runs_text = "\n".join(
-            f"  • {j['name']}: {j['next_run']}" for j in next_runs[:5]
+            f"  - {j['name']}: {j['next_run']}" for j in next_runs[:8]
         )
 
         return (
-            f"🕵️ Статус Кейса Уокера\n\n"
-            f"📊 Сегодня:\n"
-            f"  • Постов: {posts_today}/{MIN_DAILY_POSTS}\n"
-            f"  • Статей в базе: {articles_today}\n"
-            f"  • Последний парсинг: {last_parse}\n\n"
-            f"⏰ Ближайшие задачи:\n{next_runs_text}"
+            f"Статус Кейса Уокера\n\n"
+            f"Сегодня:\n"
+            f"  - Постов: {posts_today}/{MIN_DAILY_POSTS}\n"
+            f"  - Статей в базе: {articles_today}\n"
+            f"  - Последний парсинг: {last_parse}\n\n"
+            f"Расписание (МСК):\n"
+            f"  09:00 - Утренние новости\n"
+            f"  10:00 - Мини-пост\n"
+            f"  13:00 - Разбор\n"
+            f"  15:00 - Дневные новости\n"
+            f"  17:00 - Авторский пост\n"
+            f"  20:00 - Вечерние новости\n\n"
+            f"Ближайшие задачи:\n{next_runs_text}"
         )
 
     async def run_forever(self):
