@@ -20,6 +20,8 @@ AML_NATIVE_SOURCES = {
     "Chainalysis Blog",
     "Elliptic Blog",
     "Basel AML Index",
+    "TRM Labs Insights",
+    "Cointelegraph Investigations",
 }
 
 
