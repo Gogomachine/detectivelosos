@@ -5,6 +5,7 @@ RSS feeds, websites, and API endpoints for monitoring.
 
 # RSS feeds for AML/compliance news
 RSS_FEEDS = [
+    # AML-dedicated sources
     {
         "name": "FATF",
         "url": "https://www.fatf-gafi.org/en/rss.xml",
@@ -47,9 +48,34 @@ RSS_FEEDS = [
         "category": "regulation",
         "language": "en",
     },
+    # Crypto / general sources (filtered by AML keywords)
     {
         "name": "CoinDesk",
         "url": "https://www.coindesk.com/arc/outboundfeeds/rss",
+        "category": "crypto_aml",
+        "language": "en",
+    },
+    {
+        "name": "Cointelegraph Investigations",
+        "url": "https://cointelegraph.com/rss/tag/investigation",
+        "category": "investigations",
+        "language": "en",
+    },
+    {
+        "name": "Cointelegraph",
+        "url": "https://cointelegraph.com/rss",
+        "category": "crypto_aml",
+        "language": "en",
+    },
+    {
+        "name": "Forklog",
+        "url": "https://forklog.com/feed/",
+        "category": "crypto_aml",
+        "language": "ru",
+    },
+    {
+        "name": "Incrypted",
+        "url": "https://incrypted.com/en/feed/",
         "category": "crypto_aml",
         "language": "en",
     },
@@ -75,6 +101,12 @@ SCRAPE_SOURCES = [
         "selector": ".news-item",
         "category": "rankings",
     },
+    {
+        "name": "TRM Labs Insights",
+        "url": "https://www.trmlabs.com/category/insights",
+        "selector": "article, .blog-post, .post-card, [class*='post'], [class*='card']",
+        "category": "crypto_aml",
+    },
 ]
 
 # Twitter/X accounts to monitor for AML news
@@ -99,7 +131,7 @@ TWITTER_ACCOUNTS = [
     {"username": "EU_Commission", "category": "sanctions"},
 ]
 
-# Keywords for filtering relevant content
+# Keywords for filtering relevant content (for general crypto sources)
 AML_KEYWORDS = [
     # English
     "money laundering", "aml", "anti-money laundering", "kyc", "know your customer",
@@ -111,11 +143,21 @@ AML_KEYWORDS = [
     "mutual evaluation", "fiu", "financial intelligence", "seized assets",
     "forfeiture", "confiscation", "cryptocurrency laundering", "mixer", "tumbler",
     "travel rule", "virtual asset", "vasp",
+    # Crypto-specific AML keywords
+    "hack", "hacked", "exploit", "breach", "stolen", "theft", "fraud",
+    "investigation", "arrest", "indictment", "extradition", "seizure",
+    "tornado cash", "lazarus", "north korea", "dprk",
+    "chainalysis", "elliptic", "trm labs", "blockchain analytics",
+    "rug pull", "scam", "ponzi", "phishing",
+    "ofac", "treasury", "fincen", "sec enforcement",
+    "darknet", "ransomware", "cybercrime",
     # Russian
     "отмывание денег", "подозрительная транзакция", "финмониторинг",
     "комплаенс", "санкции", "финансовое преступление", "бенефициарный владелец",
     "подставная компания", "легализация доходов", "противодействие отмыванию",
     "росфинмониторинг", "финансовая разведка",
+    "взлом", "хакер", "украдено", "мошенничество", "расследование",
+    "арест", "конфискация", "скам",
 ]
 
 # Post categories and their emoji markers
@@ -125,8 +167,10 @@ POST_CATEGORIES = {
     "regulation": "📋",
     "sanctions": "⚖️",
     "crypto_aml": "🪙",
+    "crypto_news": "💰",
     "digest": "📰",
     "fun_fact": "💡",
     "analytics": "📊",
     "opinion": "🎯",
+    "combined": "🕵️",
 }

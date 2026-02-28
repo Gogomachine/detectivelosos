@@ -9,6 +9,7 @@ import anthropic
 from config import ANTHROPIC_API_KEY
 from config.encyclopedia import AML_ENCYCLOPEDIA
 from config.prompts import (
+    COMBINED_POST_TEMPLATE,
     DIGEST_TEMPLATE,
     ENRICHMENT_TEMPLATE,
     FUN_FACT_TEMPLATE,
@@ -197,6 +198,29 @@ class ContentGenerator:
         context = _get_relevant_context(f"{title} {content[:500]}")
         post = await self._generate_with_context(prompt, context)
         logger.info(f"Generated news post for: {title[:50]}")
+        return post
+
+    async def generate_combined_post(
+        self, articles: list[dict], tip_topic: str
+    ) -> str:
+        """Generate combined post: 3 news summaries + AML tip."""
+        news_list = ""
+        for i, article in enumerate(articles[:3], 1):
+            title = article.get("title", "")
+            source = article.get("source", "")
+            url = article.get("url", "")
+            content = article.get("content", "")[:300]
+            news_list += f"{i}. [{source}] {title}\n   {content}\n   URL: {url}\n\n"
+
+        prompt = COMBINED_POST_TEMPLATE.format(
+            news_list=news_list or "Нет свежих новостей - тишина подозрительна...",
+            tip_topic=tip_topic,
+        )
+        # Gather context from all articles + tip topic
+        all_text = " ".join(a.get("title", "") for a in articles[:3]) + " " + tip_topic
+        context = _get_relevant_context(all_text)
+        post = await self._generate_with_context(prompt, context, max_tokens=3000)
+        logger.info(f"Generated combined post with {len(articles)} news + tip: {tip_topic[:40]}")
         return post
 
     async def generate_digest(

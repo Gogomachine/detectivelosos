@@ -56,11 +56,9 @@ class CaseWalkerAgent:
         # Configure scheduler callbacks
         self.scheduler.set_callbacks(
             on_parse_news=self.parse_all_news,
-            on_generate_post=self.generate_and_publish_post,
+            on_combined_post=self.generate_and_publish_combined_post,
             on_morning_digest=lambda: self.generate_and_publish_digest(is_morning=True),
             on_evening_digest=lambda: self.generate_and_publish_digest(is_morning=False),
-            on_fun_fact=self.generate_and_publish_fun_fact,
-            on_check_quota=self.check_daily_quota,
         )
         self.scheduler.setup()
         self.scheduler.start()
@@ -68,7 +66,7 @@ class CaseWalkerAgent:
         # Configure user bot callbacks
         self.user_bot.db = self.db
         self.user_bot.set_callbacks(
-            on_force_post=self.generate_and_publish_post,
+            on_force_post=lambda: self.generate_and_publish_combined_post("Red flags при крипто-транзакциях: топ-5"),
             on_status=self.get_status,
             on_explain_term=self.explain_aml_term,
         )
@@ -124,12 +122,17 @@ class CaseWalkerAgent:
             logger.warning("Нет новых новостей из источников")
             return 0
 
-        # Filter for relevance
-        existing_hashes = set()
-        filtered = self.news_filter.filter_and_rank(all_items, existing_hashes)
+        # Filter for relevance (AML-native sources pass automatically)
+        filtered = self.news_filter.filter_and_rank(all_items)
+
+        if not filtered:
+            logger.warning("После фильтрации не осталось релевантных статей")
+            await self.db.set_state("last_parse", datetime.now(timezone.utc).isoformat())
+            return 0
 
         # Save to database
         saved_count = 0
+        duplicate_count = 0
         for item in filtered:
             score = self.news_filter.calculate_relevance_score(item)
             article_id = await self.db.save_article(
@@ -145,10 +148,53 @@ class CaseWalkerAgent:
             )
             if article_id is not None:
                 saved_count += 1
+            else:
+                duplicate_count += 1
 
-        logger.info(f"Сохранено {saved_count} новых статей из {len(all_items)} найденных")
+        logger.info(
+            f"Сохранено {saved_count} новых статей из {len(filtered)} релевантных "
+            f"({duplicate_count} уже в базе, {len(all_items)} найдено всего)"
+        )
         await self.db.set_state("last_parse", datetime.now(timezone.utc).isoformat())
         return saved_count
+
+    async def generate_and_publish_combined_post(self, tip_topic: str) -> str:
+        """Generate and publish a combined post: 3 news + AML tip."""
+        # Get up to 3 unposted articles (prefer AML, fallback to general crypto)
+        articles = await self.db.get_unposted_articles(limit=3)
+
+        if not articles:
+            logger.info("Нет непопубликованных статей для комбинированного поста")
+            return "Нет новых статей для публикации"
+
+        # Generate combined post
+        post_text = await self.generator.generate_combined_post(
+            articles=articles,
+            tip_topic=tip_topic,
+        )
+
+        # Save to DB
+        article_ids = ",".join(str(a["id"]) for a in articles)
+        post_id = await self.db.save_post(
+            post_type="combined",
+            content=post_text,
+            article_ids=article_ids,
+            status="draft",
+        )
+
+        # Publish to Telegram
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            # Mark all articles as posted
+            for article in articles:
+                await self.db.mark_article_posted(article["id"], post_id)
+            titles = ", ".join(a["title"][:30] for a in articles)
+            logger.info(f"Комбинированный пост опубликован ({len(articles)} новостей + совет)")
+            return f"✅ Опубликовано: {len(articles)} новостей + AML-совет"
+        else:
+            await self.db.update_post_status(post_id, "failed")
+            return f"❌ Ошибка публикации комбинированного поста"
 
     async def generate_and_publish_post(self) -> str:
         """Generate and publish a post from the best unposted article."""
