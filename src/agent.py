@@ -10,13 +10,11 @@ from datetime import datetime, timedelta, timezone
 
 import aiohttp
 
-from config import TWITTER_BEARER_TOKEN
-from config.sources import RSS_FEEDS, SCRAPE_SOURCES, TWITTER_ACCOUNTS
+from config.sources import RSS_FEEDS, SCRAPE_SOURCES
 from src.content.generator import ContentGenerator
 from src.database.db import Database
 from src.parsers.news_filter import NewsFilter
 from src.parsers.rss_parser import RSSParser
-from src.parsers.twitter_parser import TwitterParser
 from src.parsers.web_scraper import WebScraper
 from src.scheduler.scheduler import AgentScheduler
 from src.telegram_bot.bot import TelegramPublisher, UserBot
@@ -96,17 +94,12 @@ class CaseWalkerAgent:
         rss_parser = RSSParser(session=self._http_session)
         web_scraper = WebScraper(session=self._http_session)
 
-        # Build fetch tasks (RSS + web + optionally Twitter)
+        # Build fetch tasks (RSS + web)
         tasks = [
             rss_parser.fetch_all_feeds(RSS_FEEDS),
             web_scraper.scrape_all(SCRAPE_SOURCES),
         ]
         task_names = ["RSS", "Web"]
-
-        if TWITTER_BEARER_TOKEN:
-            twitter_parser = TwitterParser(bearer_token=TWITTER_BEARER_TOKEN)
-            tasks.append(twitter_parser.fetch_all_accounts(TWITTER_ACCOUNTS))
-            task_names.append("Twitter")
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
 

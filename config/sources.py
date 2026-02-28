@@ -109,28 +109,6 @@ SCRAPE_SOURCES = [
     },
 ]
 
-# Twitter/X accounts to monitor for AML news
-TWITTER_ACCOUNTS = [
-    # Regulators
-    {"username": "FinCENgov", "category": "regulation"},
-    {"username": "FATFNews", "category": "regulation"},
-    {"username": "OFACsanctions", "category": "sanctions"},
-    {"username": "TheJusticeDept", "category": "regulation"},
-    # AML industry
-    {"username": "ACAMSorg", "category": "compliance"},
-    {"username": "ComplianceWeek", "category": "compliance"},
-    # Crypto AML / blockchain analytics
-    {"username": "chainalysis", "category": "crypto_aml"},
-    {"username": "elliptic", "category": "crypto_aml"},
-    {"username": "TRM_Labs", "category": "crypto_aml"},
-    # Investigative journalists & orgs
-    {"username": "ICIJorg", "category": "investigations"},
-    {"username": "OCCRP", "category": "investigations"},
-    # Sanctions & treasury
-    {"username": "USTreasury", "category": "sanctions"},
-    {"username": "EU_Commission", "category": "sanctions"},
-]
-
 # Keywords for filtering relevant content (for general crypto sources)
 AML_KEYWORDS = [
     # English
