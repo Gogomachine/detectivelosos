@@ -391,6 +391,12 @@ class UserBot:
         for admin_id in self.admin_chat_ids:
             try:
                 bot = Bot(token=self.bot_token)
+                reply_keyboard = InlineKeyboardMarkup([
+                    [InlineKeyboardButton(
+                        "💬 Ответить",
+                        callback_data=f"reply_{user.id}",
+                    )],
+                ])
                 await bot.send_message(
                     chat_id=admin_id,
                     text=(
@@ -400,6 +406,7 @@ class UserBot:
                         f"Имя: {user.full_name}\n\n"
                         f"Сообщение:\n{message_text}"
                     ),
+                    reply_markup=reply_keyboard,
                 )
                 forwarded = True
             except Exception as e:
@@ -445,15 +452,21 @@ class UserBot:
 
         context.user_data["awaiting_address"] = True
 
-    async def handle_address_message(
+    async def handle_text_message(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
-        """Handle address text message from user."""
-        # Check contact message first
+        """Route incoming text messages to the correct handler."""
+        # 1. Admin reply to user
+        if context.user_data.get("reply_to_user_id"):
+            await self.handle_admin_reply(update, context)
+            return
+
+        # 2. Contact message from user
         if context.user_data.get("awaiting_contact_message"):
             await self.handle_contact_message(update, context)
             return
 
+        # 3. Investigation address
         if not context.user_data.get("awaiting_address"):
             return
 
@@ -539,6 +552,67 @@ class UserBot:
 
         context.user_data.pop("investigation_address", None)
 
+    # --- Admin reply to user ---
+
+    async def callback_reply_to_user(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle admin 'Reply' button - ask admin to type a reply."""
+        query = update.callback_query
+        if not self._is_admin(query.from_user.id):
+            await query.answer("Только для админов")
+            return
+
+        await query.answer()
+
+        # Extract user_id from callback_data "reply_123456"
+        target_user_id = int(query.data.replace("reply_", ""))
+        context.user_data["reply_to_user_id"] = target_user_id
+
+        await query.message.reply_text(
+            f"💬 Напиши ответ для пользователя (ID: {target_user_id}).\n"
+            f"Следующее твоё сообщение будет отправлено ему от имени бота.",
+        )
+
+    async def handle_admin_reply(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle admin's reply text and send it to the user."""
+        target_user_id = context.user_data.get("reply_to_user_id")
+        if not target_user_id:
+            return False
+        if not self._is_admin(update.effective_user.id):
+            return False
+
+        context.user_data.pop("reply_to_user_id", None)
+        reply_text = update.message.text.strip()
+
+        try:
+            bot = Bot(token=self.bot_token)
+            await bot.send_message(
+                chat_id=target_user_id,
+                text=(
+                    f"🕵️ Ответ от Кейса Уокера:\n\n"
+                    f"{reply_text}"
+                ),
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton(
+                        "✉️ Написать ещё",
+                        callback_data="contact",
+                    )],
+                ]),
+            )
+            await update.message.reply_text(
+                f"✅ Ответ отправлен пользователю {target_user_id}"
+            )
+        except Exception as e:
+            logger.error(f"Failed to send reply to user {target_user_id}: {e}")
+            await update.message.reply_text(
+                f"Не удалось отправить ответ: {e}"
+            )
+
+        return True
+
     # --- Admin commands ---
 
     async def cmd_status(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -613,6 +687,9 @@ class UserBot:
         self.app.add_handler(
             CallbackQueryHandler(self.callback_back_to_menu, pattern="^back_to_menu$")
         )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_reply_to_user, pattern="^reply_")
+        )
 
         # Payment handlers
         self.app.add_handler(PreCheckoutQueryHandler(self.pre_checkout_handler))
@@ -622,10 +699,10 @@ class UserBot:
             )
         )
 
-        # Text message handler (for address input)
+        # Text message handler (for address input, contact messages, admin replies)
         self.app.add_handler(
             MessageHandler(
-                filters.TEXT & ~filters.COMMAND, self.handle_address_message
+                filters.TEXT & ~filters.COMMAND, self.handle_text_message
             )
         )
 
