@@ -10,9 +10,10 @@ from config import ANTHROPIC_API_KEY
 from config.encyclopedia import AML_ENCYCLOPEDIA
 from config.prompts import (
     COMBINED_POST_TEMPLATE,
-    DIGEST_TEMPLATE,
     ENRICHMENT_TEMPLATE,
+    EVENING_DIGEST_TEMPLATE,
     FUN_FACT_TEMPLATE,
+    MORNING_DIGEST_TEMPLATE,
     INVESTIGATION_TEMPLATE,
     NEWS_POST_TEMPLATE,
     SYSTEM_PROMPT,
@@ -227,8 +228,6 @@ class ContentGenerator:
         self, news_items: list[dict], is_morning: bool = True
     ) -> str:
         """Generate morning or evening digest."""
-        time_of_day = "Утренний" if is_morning else "Вечерний"
-        emoji = "☀️" if is_morning else "🌙"
         today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
 
         news_list = "\n".join(
@@ -236,14 +235,14 @@ class ContentGenerator:
             for item in news_items
         )
 
-        prompt = DIGEST_TEMPLATE.format(
-            time_of_day=time_of_day,
-            emoji=emoji,
+        template = MORNING_DIGEST_TEMPLATE if is_morning else EVENING_DIGEST_TEMPLATE
+        prompt = template.format(
             period=today,
             news_list=news_list or "Нет новых новостей - тишина подозрительна... 🤔",
         )
         post = await self._generate(prompt, max_tokens=3000)
-        logger.info(f"Generated {time_of_day.lower()} digest")
+        time_label = "утренний" if is_morning else "вечерний"
+        logger.info(f"Generated {time_label} digest")
         return post
 
     async def generate_investigation(
