@@ -70,6 +70,7 @@ class CaseWalkerAgent:
         self.user_bot.set_callbacks(
             on_force_post=self.generate_and_publish_post,
             on_status=self.get_status,
+            on_explain_term=self.explain_aml_term,
         )
 
         # Run initial news fetch
@@ -258,6 +259,10 @@ class CaseWalkerAgent:
         else:
             logger.info(f"Дневная квота выполнена: {count} постов")
         return needed
+
+    async def explain_aml_term(self, term: str) -> str:
+        """Explain an AML term using the encyclopedia knowledge base."""
+        return await self.generator.explain_term(term)
 
     async def get_status(self) -> str:
         """Get agent status report."""
