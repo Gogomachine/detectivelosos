@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 MIN_DAILY_POSTS = 5
 
 
-class DetectiveLososAgent:
+class CaseWalkerAgent:
     """
     The main AML Detective Agent.
     Orchestrates news monitoring, content creation, and channel management.
@@ -41,13 +41,13 @@ class DetectiveLososAgent:
 
     async def start(self):
         """Initialize and start the agent."""
-        logger.info("🐟🔎 Детектив Лосось запускается...")
+        logger.info("🕵️ Кейс Уокер выходит на дело...")
 
         # Initialize components
         await self.db.connect()
         self._http_session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=30),
-            headers={"User-Agent": "DetectiveLosos AML Bot/1.0"},
+            headers={"User-Agent": "CaseWalker AML Bot/1.0"},
         )
 
         # Configure scheduler callbacks
@@ -66,17 +66,17 @@ class DetectiveLososAgent:
         await self.parse_all_news()
 
         self._running = True
-        logger.info("✅ Детектив Лосось запущен и готов к работе!")
+        logger.info("✅ Кейс Уокер на линии, дела ждут!")
 
     async def stop(self):
         """Gracefully stop the agent."""
-        logger.info("Останавливаю Детектива Лосося...")
+        logger.info("Кейс Уокер уходит на перерыв...")
         self._running = False
         self.scheduler.stop()
         if self._http_session:
             await self._http_session.close()
         await self.db.close()
-        logger.info("Детектив Лосось остановлен.")
+        logger.info("Кейс Уокер остановлен.")
 
     # --- Core Operations ---
 
@@ -193,7 +193,7 @@ class DetectiveLososAgent:
 
         if not articles:
             logger.info("Нет статей для дайджеста")
-            articles = [{"title": "Тишина на фронтах AML", "source": "Детектив Лосось"}]
+            articles = [{"title": "Тишина на фронтах AML", "source": "Case Walker"}]
 
         # Generate digest
         digest_text = await self.generator.generate_digest(
@@ -257,7 +257,7 @@ class DetectiveLososAgent:
         )
 
         return (
-            f"🐟🔎 Статус Детектива Лосося\n\n"
+            f"🕵️ Статус Кейса Уокера\n\n"
             f"📊 Сегодня:\n"
             f"  • Постов: {posts_today}/{MIN_DAILY_POSTS}\n"
             f"  • Статей в базе: {articles_today}\n"

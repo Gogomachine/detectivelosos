@@ -159,7 +159,7 @@ class AdminBot:
         if not update.effective_user or not self._is_admin(update.effective_user.id):
             return
         await update.message.reply_text(
-            "🐟🔎 Детектив Лосось на связи!\n\n"
+            "🕵️ Кейс Уокер на связи!\n\n"
             "Команды:\n"
             "/status — статус агента\n"
             "/post — принудительно опубликовать пост\n"

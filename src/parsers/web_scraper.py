@@ -23,7 +23,7 @@ class WebScraper:
         if self._session is None:
             self._session = aiohttp.ClientSession(
                 timeout=aiohttp.ClientTimeout(total=30),
-                headers={"User-Agent": "DetectiveLosos AML Bot/1.0"},
+                headers={"User-Agent": "CaseWalker AML Bot/1.0"},
             )
         return self._session
 

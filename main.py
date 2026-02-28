@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DetectiveLosos — AML Journalist Agent
+Case Walker — AML Journalist Agent
 Main entry point for running the agent.
 
 Usage:
@@ -16,7 +16,7 @@ import asyncio
 import logging
 import sys
 
-from src.agent import DetectiveLososAgent
+from src.agent import CaseWalkerAgent
 
 # Configure logging
 logging.basicConfig(
@@ -27,18 +27,18 @@ logging.basicConfig(
         logging.FileHandler("agent.log", encoding="utf-8"),
     ],
 )
-logger = logging.getLogger("detectivelosos")
+logger = logging.getLogger("casewalker")
 
 
 async def run_agent():
     """Run the full agent with scheduler."""
-    agent = DetectiveLososAgent()
+    agent = CaseWalkerAgent()
     await agent.run_forever()
 
 
 async def run_single_parse():
     """Run a single news parsing cycle."""
-    agent = DetectiveLososAgent()
+    agent = CaseWalkerAgent()
     await agent.db.connect()
     count = await agent.parse_all_news()
     print(f"Parsed and saved {count} new articles")
@@ -47,7 +47,7 @@ async def run_single_parse():
 
 async def run_single_post():
     """Generate and publish a single post."""
-    agent = DetectiveLososAgent()
+    agent = CaseWalkerAgent()
     await agent.db.connect()
     result = await agent.generate_and_publish_post()
     print(result)
@@ -56,7 +56,7 @@ async def run_single_post():
 
 async def run_digest(is_morning: bool = True):
     """Generate and publish a digest."""
-    agent = DetectiveLososAgent()
+    agent = CaseWalkerAgent()
     await agent.db.connect()
     await agent.generate_and_publish_digest(is_morning=is_morning)
     print("Digest published")
@@ -65,7 +65,7 @@ async def run_digest(is_morning: bool = True):
 
 async def show_status():
     """Show agent status."""
-    agent = DetectiveLososAgent()
+    agent = CaseWalkerAgent()
     await agent.db.connect()
     status = await agent.get_status()
     print(status)
@@ -74,7 +74,7 @@ async def show_status():
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DetectiveLosos — AML Journalist Agent 🐟🔎"
+        description="Case Walker — AML Journalist Agent 🕵️"
     )
     parser.add_argument("--parse", action="store_true", help="Run single parse cycle")
     parser.add_argument("--post", action="store_true", help="Generate and publish one post")
@@ -98,8 +98,8 @@ def main():
         asyncio.run(show_status())
     else:
         # Run full agent
-        print("🐟🔎 Запускаю Детектива Лосося...")
-        print("    АМЛ-агент-журналист на страже чистоты!")
+        print("🕵️ Запускаю Кейса Уокера...")
+        print("    АМЛ-агент-журналист — ходит по делам!")
         print("    Ctrl+C для остановки\n")
         asyncio.run(run_agent())
 

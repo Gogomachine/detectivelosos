@@ -1,1 +1,1 @@
-"""DetectiveLosos - AML Journalist Agent."""
+"""Case Walker - AML Journalist Agent."""

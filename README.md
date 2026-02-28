@@ -1,6 +1,8 @@
-# 🐟🔎 Детектив Лосось — AML Journalist Agent
+# 🕵️ Case Walker — AML Journalist Agent
 
 Автономный AI-агент, который ведёт Telegram-канал про борьбу с отмыванием денег (AML).
+
+**Кейс Уокер (Case Walker)** — "ходит по делам", буквально. Case — и дело, и кейс-стади.
 
 ## Возможности
 
@@ -15,7 +17,7 @@
 
 ```
 src/
-├── agent.py              # Главный оркестратор
+├── agent.py              # Главный оркестратор (CaseWalkerAgent)
 ├── parsers/
 │   ├── rss_parser.py     # Парсер RSS-лент
 │   ├── web_scraper.py    # Скрапер веб-страниц
@@ -31,7 +33,7 @@ src/
 config/
 ├── __init__.py           # Переменные окружения
 ├── sources.py            # Источники новостей и ключевые слова
-└── prompts.py            # Промпты для Claude API
+└── prompts.py            # Промпты для Claude API (персонаж Case Walker)
 ```
 
 ## Установка
@@ -57,7 +59,7 @@ cp .env.example .env
 
 В файле `.env` указать:
 - `TELEGRAM_BOT_TOKEN` — токен бота из @BotFather
-- `TELEGRAM_CHANNEL_ID` — ID канала (например `@detectivelosos`)
+- `TELEGRAM_CHANNEL_ID` — ID канала (например `@casewalker_aml`)
 - `ANTHROPIC_API_KEY` — API ключ Anthropic
 
 ## Запуск

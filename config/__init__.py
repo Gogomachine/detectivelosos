@@ -13,7 +13,7 @@ TELEGRAM_CHANNEL_ID = os.getenv("TELEGRAM_CHANNEL_ID", "")
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
 # Database
-DATABASE_PATH = os.getenv("DATABASE_PATH", "data/detectivelosos.db")
+DATABASE_PATH = os.getenv("DATABASE_PATH", "data/casewalker.db")
 
 # Schedule (UTC)
 MORNING_DIGEST_HOUR = int(os.getenv("MORNING_DIGEST_HOUR", "7"))
