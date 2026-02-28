@@ -152,3 +152,54 @@
 2026-02-28 09:01:58,113 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
 2026-02-28 09:01:58,224 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
 2026-02-28 09:01:58,235 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 09:31:46 MSK)" executed successfully
+2026-02-28 09:32:14,029 [INFO] src.agent: 🕵️ Кейс Уокер выходит на дело...
+2026-02-28 09:32:14,033 [INFO] src.database.db: Database connected: ./src/database/db.db
+2026-02-28 09:32:14,036 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 09:32:14,037 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 09:32:14,037 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 09:32:14,037 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 09:32:14,038 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 09:32:14,038 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 09:32:14,038 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 09:32:14,039 [INFO] src.scheduler.scheduler: Scheduler configured with all jobs
+2026-02-28 09:32:14,039 [INFO] apscheduler.scheduler: Added job "Parse AML News" to job store "default"
+2026-02-28 09:32:14,039 [INFO] apscheduler.scheduler: Added job "Morning Digest" to job store "default"
+2026-02-28 09:32:14,039 [INFO] apscheduler.scheduler: Added job "Evening Digest" to job store "default"
+2026-02-28 09:32:14,040 [INFO] apscheduler.scheduler: Added job "News Post at 10:00" to job store "default"
+2026-02-28 09:32:14,040 [INFO] apscheduler.scheduler: Added job "News Post at 13:00" to job store "default"
+2026-02-28 09:32:14,040 [INFO] apscheduler.scheduler: Added job "News Post at 16:00" to job store "default"
+2026-02-28 09:32:14,040 [INFO] apscheduler.scheduler: Added job "Check Daily Post Quota" to job store "default"
+2026-02-28 09:32:14,040 [INFO] apscheduler.scheduler: Scheduler started
+2026-02-28 09:32:14,040 [INFO] src.scheduler.scheduler: Scheduler started
+2026-02-28 09:32:14,041 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 09:32:14,759 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 09:32:14,967 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 09:32:14,968 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 09:32:15,302 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 09:32:15,304 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 09:32:15,330 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 09:32:15,425 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 09:32:15,796 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 09:32:23,539 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 09:32:23,927 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 09:32:23,928 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 09:32:24,031 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 09:32:24,143 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 09:32:24,153 [INFO] src.agent: ✅ Кейс Уокер на линии, дела ждут!
+2026-02-28 10:02:14,036 [INFO] apscheduler.executors.default: Running job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 10:32:14 MSK)" (scheduled at 2026-02-28 10:02:14.036245+03:00)
+2026-02-28 10:02:14,036 [INFO] src.scheduler.scheduler: Running scheduled news parse
+2026-02-28 10:02:14,036 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 10:02:14,795 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 10:02:14,800 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 10:02:14,854 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 10:02:14,896 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 10:02:14,969 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 10:02:14,971 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 10:02:15,142 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 10:02:15,746 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 10:02:23,414 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 10:02:24,505 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 10:02:24,505 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 10:02:24,608 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 10:02:24,719 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 10:02:24,730 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 10:32:14 MSK)" executed successfully
