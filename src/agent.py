@@ -17,7 +17,7 @@ from src.parsers.news_filter import NewsFilter
 from src.parsers.rss_parser import RSSParser
 from src.parsers.web_scraper import WebScraper
 from src.scheduler.scheduler import AgentScheduler
-from src.telegram_bot.bot import TelegramPublisher
+from src.telegram_bot.bot import TelegramPublisher, UserBot
 
 logger = logging.getLogger(__name__)
 
@@ -30,10 +30,11 @@ class CaseWalkerAgent:
     Orchestrates news monitoring, content creation, and channel management.
     """
 
-    def __init__(self):
+    def __init__(self, admin_chat_ids: list[int] | None = None):
         self.db = Database()
         self.generator = ContentGenerator()
         self.publisher = TelegramPublisher()
+        self.user_bot = UserBot(db=self.db, admin_chat_ids=admin_chat_ids or [])
         self.scheduler = AgentScheduler()
         self.news_filter = NewsFilter()
         self._http_session: aiohttp.ClientSession | None = None
@@ -61,6 +62,13 @@ class CaseWalkerAgent:
         )
         self.scheduler.setup()
         self.scheduler.start()
+
+        # Configure user bot callbacks
+        self.user_bot.db = self.db
+        self.user_bot.set_callbacks(
+            on_force_post=self.generate_and_publish_post,
+            on_status=self.get_status,
+        )
 
         # Run initial news fetch
         await self.parse_all_news()
@@ -269,10 +277,21 @@ class CaseWalkerAgent:
     async def run_forever(self):
         """Run the agent indefinitely."""
         await self.start()
+
+        # Build and start user bot (polling)
+        bot_app = self.user_bot.build()
+        await bot_app.initialize()
+        await bot_app.start()
+        await bot_app.updater.start_polling()
+        logger.info("Telegram бот запущен (polling)")
+
         try:
             while self._running:
                 await asyncio.sleep(1)
         except (KeyboardInterrupt, SystemExit):
             logger.info("Получен сигнал остановки")
         finally:
+            await bot_app.updater.stop()
+            await bot_app.stop()
+            await bot_app.shutdown()
             await self.stop()

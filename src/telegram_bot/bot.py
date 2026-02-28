@@ -2,20 +2,34 @@
 
 import logging
 
-from telegram import Bot, Update
+from telegram import (
+    Bot,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    LabeledPrice,
+    Update,
+)
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
+    CallbackQueryHandler,
     CommandHandler,
     ContextTypes,
+    ConversationHandler,
+    MessageHandler,
+    PreCheckoutQueryHandler,
+    filters,
 )
 
 from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID
 
 logger = logging.getLogger(__name__)
 
-# Maximum Telegram message length
 MAX_MESSAGE_LENGTH = 4096
+INVESTIGATION_PRICE_STARS = 1000
+
+# Conversation states
+WAITING_ADDRESS = 1
 
 
 class TelegramPublisher:
@@ -37,12 +51,8 @@ class TelegramPublisher:
         return self._bot
 
     async def publish_post(self, text: str) -> int | None:
-        """
-        Publish a post to the Telegram channel.
-        Returns the message ID or None on failure.
-        """
+        """Publish a post to the Telegram channel."""
         try:
-            # Split long messages
             parts = self._split_message(text)
             message_id = None
 
@@ -61,7 +71,6 @@ class TelegramPublisher:
 
         except Exception as e:
             logger.error(f"Failed to publish post: {e}")
-            # Retry without HTML parsing if it was a formatting error
             try:
                 message = await self.bot.send_message(
                     chat_id=self.channel_id,
@@ -83,7 +92,6 @@ class TelegramPublisher:
                 parts.append(text)
                 break
 
-            # Try to split at paragraph boundary
             split_pos = text.rfind("\n\n", 0, MAX_MESSAGE_LENGTH)
             if split_pos == -1:
                 split_pos = text.rfind("\n", 0, MAX_MESSAGE_LENGTH)
@@ -95,49 +103,23 @@ class TelegramPublisher:
 
         return parts
 
-    async def publish_with_markdown(self, text: str) -> int | None:
-        """Publish using Markdown parse mode (Telegram's MarkdownV2)."""
-        try:
-            escaped = self._escape_markdown_v2(text)
-            message = await self.bot.send_message(
-                chat_id=self.channel_id,
-                text=escaped[:MAX_MESSAGE_LENGTH],
-                parse_mode=ParseMode.MARKDOWN_V2,
-            )
-            return message.message_id
-        except Exception as e:
-            logger.warning(f"MarkdownV2 failed, falling back to plain: {e}")
-            return await self.publish_post(text)
 
-    @staticmethod
-    def _escape_markdown_v2(text: str) -> str:
-        """Escape special characters for Telegram MarkdownV2."""
-        special_chars = r"_[]()~`>#+-=|{}.!"
-        result = []
-        i = 0
-        while i < len(text):
-            # Preserve bold markers
-            if text[i:i+2] == "**":
-                result.append("**")
-                i += 2
-                continue
-            if text[i] in special_chars:
-                result.append(f"\\{text[i]}")
-            else:
-                result.append(text[i])
-            i += 1
-        return "".join(result)
-
-
-class AdminBot:
-    """Admin bot for controlling the agent via Telegram commands."""
+class UserBot:
+    """
+    Public-facing bot with user commands:
+    - /start - main menu with buttons
+    - "Заказать расследование" - pay 1000 Stars, send address, get report in 24h
+    - "Хочу статью" - random article from DB
+    """
 
     def __init__(
         self,
         bot_token: str | None = None,
+        db=None,
         admin_chat_ids: list[int] | None = None,
     ):
         self.bot_token = bot_token or TELEGRAM_BOT_TOKEN
+        self.db = db
         self.admin_chat_ids = admin_chat_ids or []
         self.app: Application | None = None
         self._on_force_post = None
@@ -149,49 +131,297 @@ class AdminBot:
         self._on_status = on_status
 
     def _is_admin(self, user_id: int) -> bool:
-        """Check if user is an authorized admin."""
         if not self.admin_chat_ids:
-            return True  # No restrictions if no admins configured
+            return True
         return user_id in self.admin_chat_ids
 
+    # --- Main menu ---
+
+    def _main_keyboard(self) -> InlineKeyboardMarkup:
+        """Build the main menu keyboard."""
+        buttons = [
+            [InlineKeyboardButton(
+                "🔍 Заказать расследование (1000 ⭐)",
+                callback_data="investigate",
+            )],
+            [InlineKeyboardButton(
+                "📰 Хочу статью",
+                callback_data="random_article",
+            )],
+        ]
+        return InlineKeyboardMarkup(buttons)
+
     async def cmd_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle /start command."""
-        if not update.effective_user or not self._is_admin(update.effective_user.id):
-            return
+        """Handle /start - show main menu."""
         await update.message.reply_text(
             "🕵️ Кейс Уокер на связи!\n\n"
-            "Команды:\n"
-            "/status — статус агента\n"
-            "/post — принудительно опубликовать пост\n"
-            "/digest — сгенерировать дайджест\n"
-            "/stats — статистика канала"
+            "Я - АМЛ-детектив. Хожу по делам, раскапываю схемы "
+            "и пишу про отмывание денег.\n\n"
+            "Что тебя интересует?",
+            reply_markup=self._main_keyboard(),
         )
 
+    async def cmd_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /menu - show main menu again."""
+        await update.message.reply_text(
+            "🕵️ Главное меню Кейса Уокера:",
+            reply_markup=self._main_keyboard(),
+        )
+
+    # --- Random article ---
+
+    async def callback_random_article(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle 'Хочу статью' button press."""
+        query = update.callback_query
+        await query.answer()
+
+        if not self.db:
+            await query.edit_message_text("База данных не подключена")
+            return
+
+        article = await self.db.get_random_article()
+        if not article:
+            await query.edit_message_text(
+                "🕵️ В базе пока нет статей. Зайди позже - Кейс Уокер уже на деле!",
+                reply_markup=self._main_keyboard(),
+            )
+            return
+
+        title = article["title"]
+        source = article["source"]
+        url = article.get("url", "")
+        content = article.get("content", "")
+
+        # Build the article message
+        text = f"📰 {title}\n\n"
+        if content:
+            # Trim content to reasonable length
+            preview = content[:800]
+            if len(content) > 800:
+                preview += "..."
+            text += f"{preview}\n\n"
+        text += f"Источник: {source}\n"
+        if url:
+            text += f"Читать полностью: {url}\n"
+
+        # Add "another article" and "back" buttons
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🎲 Ещё статью", callback_data="random_article")],
+            [InlineKeyboardButton("◀️ Назад в меню", callback_data="back_to_menu")],
+        ])
+
+        await query.edit_message_text(text, reply_markup=keyboard)
+
+    async def callback_back_to_menu(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle back to menu button."""
+        query = update.callback_query
+        await query.answer()
+        await query.edit_message_text(
+            "🕵️ Главное меню Кейса Уокера:",
+            reply_markup=self._main_keyboard(),
+        )
+
+    # --- Investigation order (Telegram Stars payment) ---
+
+    async def callback_investigate(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle 'Заказать расследование' button - explain and ask for address."""
+        query = update.callback_query
+        await query.answer()
+
+        await query.edit_message_text(
+            "🔍 Заказать расследование\n\n"
+            "Кейс Уокер лично проведёт проверку по указанному адресу "
+            "(кошелёк, компания, контрагент).\n\n"
+            "Стоимость: 1000 ⭐ (Telegram Stars)\n"
+            "Срок: до 24 часов\n"
+            "Результат: подробный отчёт в личном сообщении\n\n"
+            "Отправь мне адрес для проверки (текстовым сообщением):",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("◀️ Отмена", callback_data="back_to_menu")],
+            ]),
+        )
+
+        context.user_data["awaiting_address"] = True
+
+    async def handle_address_message(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle address text message from user."""
+        if not context.user_data.get("awaiting_address"):
+            return
+
+        address = update.message.text.strip()
+        if not address or len(address) < 3:
+            await update.message.reply_text(
+                "Адрес слишком короткий. Отправь корректный адрес для проверки."
+            )
+            return
+
+        context.user_data["awaiting_address"] = False
+        context.user_data["investigation_address"] = address
+
+        # Send Stars invoice
+        await update.message.reply_invoice(
+            title="Расследование от Кейса Уокера",
+            description=f"Проверка адреса: {address[:100]}",
+            payload=f"investigate_{update.effective_user.id}_{address[:100]}",
+            currency="XTR",  # Telegram Stars currency code
+            prices=[LabeledPrice("Расследование", INVESTIGATION_PRICE_STARS)],
+        )
+
+    async def pre_checkout_handler(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle pre-checkout query - approve the payment."""
+        query = update.pre_checkout_query
+        await query.answer(ok=True)
+
+    async def successful_payment_handler(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle successful Stars payment - create investigation order."""
+        payment = update.message.successful_payment
+        user = update.effective_user
+        address = context.user_data.get("investigation_address", "")
+
+        if not address:
+            # Try to extract from payload
+            payload = payment.invoice_payload or ""
+            parts = payload.split("_", 2)
+            if len(parts) >= 3:
+                address = parts[2]
+
+        # Save to database
+        if self.db:
+            order_id = await self.db.create_investigation(
+                user_id=user.id,
+                username=user.username or str(user.id),
+                address=address,
+                stars_paid=payment.total_amount,
+                telegram_payment_id=payment.telegram_payment_charge_id or "",
+            )
+        else:
+            order_id = 0
+
+        await update.message.reply_text(
+            f"🕵️ Расследование #{order_id} принято!\n\n"
+            f"Адрес: {address}\n"
+            f"Оплачено: {payment.total_amount} ⭐\n\n"
+            f"Кейс Уокер берётся за дело. "
+            f"Отчёт будет готов в течение 24 часов.\n\n"
+            f"Следи за обновлениями!",
+            reply_markup=self._main_keyboard(),
+        )
+
+        # Notify admins about new order
+        for admin_id in self.admin_chat_ids:
+            try:
+                bot = Bot(token=self.bot_token)
+                await bot.send_message(
+                    chat_id=admin_id,
+                    text=(
+                        f"🚨 Новый заказ расследования #{order_id}\n\n"
+                        f"Пользователь: @{user.username or user.id}\n"
+                        f"Адрес: {address}\n"
+                        f"Оплата: {payment.total_amount} ⭐\n"
+                        f"Срок: 24 часа"
+                    ),
+                )
+            except Exception as e:
+                logger.error(f"Failed to notify admin {admin_id}: {e}")
+
+        context.user_data.pop("investigation_address", None)
+
+    # --- Admin commands ---
+
     async def cmd_status(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle /status command."""
+        """Handle /status command (admin only)."""
         if not update.effective_user or not self._is_admin(update.effective_user.id):
             return
         if self._on_status:
             status = await self._on_status()
             await update.message.reply_text(status)
         else:
-            await update.message.reply_text("Агент работает ✅")
+            await update.message.reply_text("Агент работает")
 
     async def cmd_force_post(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle /post command to force publish next post."""
+        """Handle /post command (admin only)."""
         if not update.effective_user or not self._is_admin(update.effective_user.id):
             return
         if self._on_force_post:
-            await update.message.reply_text("⏳ Генерирую пост...")
+            await update.message.reply_text("Генерирую пост...")
             result = await self._on_force_post()
             await update.message.reply_text(result)
         else:
             await update.message.reply_text("Функция не подключена")
 
+    async def cmd_orders(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /orders command - list pending investigations (admin only)."""
+        if not update.effective_user or not self._is_admin(update.effective_user.id):
+            return
+        if not self.db:
+            await update.message.reply_text("БД не подключена")
+            return
+
+        orders = await self.db.get_pending_investigations()
+        if not orders:
+            await update.message.reply_text("Нет активных заказов")
+            return
+
+        text = "🔍 Активные расследования:\n\n"
+        for o in orders:
+            text += (
+                f"#{o['id']} | @{o['username']} | {o['address'][:40]}\n"
+                f"   Оплата: {o['stars_paid']} ⭐ | {o['created_at']}\n\n"
+            )
+
+        await update.message.reply_text(text)
+
+    # --- Build application ---
+
     def build(self) -> Application:
-        """Build the bot application."""
+        """Build the bot application with all handlers."""
         self.app = Application.builder().token(self.bot_token).build()
+
+        # Public commands
         self.app.add_handler(CommandHandler("start", self.cmd_start))
+        self.app.add_handler(CommandHandler("menu", self.cmd_menu))
+
+        # Inline button callbacks
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_investigate, pattern="^investigate$")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_random_article, pattern="^random_article$")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_back_to_menu, pattern="^back_to_menu$")
+        )
+
+        # Payment handlers
+        self.app.add_handler(PreCheckoutQueryHandler(self.pre_checkout_handler))
+        self.app.add_handler(
+            MessageHandler(
+                filters.SUCCESSFUL_PAYMENT, self.successful_payment_handler
+            )
+        )
+
+        # Text message handler (for address input)
+        self.app.add_handler(
+            MessageHandler(
+                filters.TEXT & ~filters.COMMAND, self.handle_address_message
+            )
+        )
+
+        # Admin commands
         self.app.add_handler(CommandHandler("status", self.cmd_status))
         self.app.add_handler(CommandHandler("post", self.cmd_force_post))
+        self.app.add_handler(CommandHandler("orders", self.cmd_orders))
+
         return self.app
