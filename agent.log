@@ -203,3 +203,67 @@
 2026-02-28 10:02:24,608 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
 2026-02-28 10:02:24,719 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
 2026-02-28 10:02:24,730 [INFO] apscheduler.executors.default: Job "Parse AML News (trigger: interval[0:30:00], next run at: 2026-02-28 10:32:14 MSK)" executed successfully
+2026-02-28 10:18:03,958 [INFO] src.agent: 🕵️ Кейс Уокер выходит на дело...
+2026-02-28 10:18:04,043 [INFO] src.database.db: Database connected: ./src/database/db.db
+2026-02-28 10:18:04,046 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 10:18:04,047 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 10:18:04,048 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 10:18:04,048 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 10:18:04,048 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 10:18:04,049 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 10:18:04,049 [INFO] apscheduler.scheduler: Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2026-02-28 10:18:04,049 [INFO] src.scheduler.scheduler: Scheduler configured with all jobs
+2026-02-28 10:18:04,050 [INFO] apscheduler.scheduler: Added job "Parse AML News" to job store "default"
+2026-02-28 10:18:04,050 [INFO] apscheduler.scheduler: Added job "Morning Digest" to job store "default"
+2026-02-28 10:18:04,050 [INFO] apscheduler.scheduler: Added job "Evening Digest" to job store "default"
+2026-02-28 10:18:04,050 [INFO] apscheduler.scheduler: Added job "News Post at 10:00" to job store "default"
+2026-02-28 10:18:04,050 [INFO] apscheduler.scheduler: Added job "News Post at 13:00" to job store "default"
+2026-02-28 10:18:04,050 [INFO] apscheduler.scheduler: Added job "News Post at 16:00" to job store "default"
+2026-02-28 10:18:04,050 [INFO] apscheduler.scheduler: Added job "Check Daily Post Quota" to job store "default"
+2026-02-28 10:18:04,051 [INFO] apscheduler.scheduler: Scheduler started
+2026-02-28 10:18:04,051 [INFO] src.scheduler.scheduler: Scheduler started
+2026-02-28 10:18:04,051 [INFO] src.agent: Начинаю парсинг новостей...
+2026-02-28 10:18:05,156 [WARNING] src.parsers.rss_parser: Feed FATF returned status 403
+2026-02-28 10:18:05,194 [WARNING] src.parsers.rss_parser: Feed OCCRP returned status 404
+2026-02-28 10:18:05,249 [INFO] src.parsers.web_scraper: Scraped 0 articles from Chainalysis Blog
+2026-02-28 10:18:05,318 [INFO] src.parsers.web_scraper: Scraped 0 articles from Elliptic Blog
+2026-02-28 10:18:05,319 [WARNING] src.parsers.rss_parser: Feed ACAMS MoneyLaundering.com returned status 403
+2026-02-28 10:18:05,441 [WARNING] src.parsers.rss_parser: Feed EU AML Authority returned status 404
+2026-02-28 10:18:06,508 [WARNING] src.parsers.rss_parser: Feed Compliance Week returned status 404
+2026-02-28 10:18:06,534 [INFO] src.parsers.web_scraper: Scraped 0 articles from Basel AML Index
+2026-02-28 10:18:13,460 [WARNING] src.parsers.rss_parser: Feed FinCEN returned status 404
+2026-02-28 10:18:19,215 [INFO] src.parsers.rss_parser: Parsed 10 items from OFAC Sanctions
+2026-02-28 10:18:19,216 [INFO] src.parsers.rss_parser: Total items fetched: 10
+2026-02-28 10:18:19,324 [INFO] src.parsers.news_filter: Filtered 10 items down to 10 relevant items
+2026-02-28 10:18:19,432 [INFO] src.agent: Сохранено 0 новых статей из 10 найденных
+2026-02-28 10:18:19,501 [INFO] src.agent: ✅ Кейс Уокер на линии, дела ждут!
+2026-02-28 10:18:20,725 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getMe "HTTP/1.1 200 OK"
+2026-02-28 10:18:20,727 [INFO] apscheduler.scheduler: Scheduler started
+2026-02-28 10:18:20,727 [INFO] telegram.ext.Application: Application started
+2026-02-28 10:18:20,811 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/deleteWebhook "HTTP/1.1 200 OK"
+2026-02-28 10:18:20,812 [INFO] src.agent: Telegram бот запущен (polling)
+2026-02-28 10:18:21,367 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:18:22,023 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/sendMessage "HTTP/1.1 200 OK"
+2026-02-28 10:18:22,179 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/sendMessage "HTTP/1.1 200 OK"
+2026-02-28 10:18:25,034 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:18:25,238 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/answerCallbackQuery "HTTP/1.1 200 OK"
+2026-02-28 10:18:25,423 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/editMessageText "HTTP/1.1 200 OK"
+2026-02-28 10:18:35,155 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:18:35,989 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:18:36,290 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/answerCallbackQuery "HTTP/1.1 200 OK"
+2026-02-28 10:18:36,466 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/editMessageText "HTTP/1.1 200 OK"
+2026-02-28 10:18:46,148 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:18:56,268 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:06,421 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:08,466 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:08,919 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/answerCallbackQuery "HTTP/1.1 200 OK"
+2026-02-28 10:19:09,114 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/editMessageText "HTTP/1.1 200 OK"
+2026-02-28 10:19:10,701 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:10,791 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/answerCallbackQuery "HTTP/1.1 200 OK"
+2026-02-28 10:19:10,896 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/editMessageText "HTTP/1.1 200 OK"
+2026-02-28 10:19:20,894 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:30,978 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:34,055 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:34,470 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/sendInvoice "HTTP/1.1 200 OK"
+2026-02-28 10:19:44,150 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
+2026-02-28 10:19:54,259 [INFO] httpx: HTTP Request: POST https://api.telegram.org/bot8644573334:AAFh4uFo_pa1v4JPUOUyFkOUdZrR5Ay2GEQ/getUpdates "HTTP/1.1 200 OK"
