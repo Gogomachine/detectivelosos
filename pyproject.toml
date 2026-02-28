@@ -17,6 +17,7 @@ dependencies = [
     "apscheduler>=3.10.0",
     "python-dotenv>=1.0.0",
     "lxml>=5.0.0",
+    "tweepy>=4.14.0",
 ]
 
 [project.optional-dependencies]
