@@ -49,6 +49,22 @@ CREATE INDEX IF NOT EXISTS idx_articles_posted ON articles(is_posted);
 CREATE INDEX IF NOT EXISTS idx_articles_fetched ON articles(fetched_at);
 CREATE INDEX IF NOT EXISTS idx_posts_status ON posts(status);
 CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at);
+
+CREATE TABLE IF NOT EXISTS investigations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    username TEXT,
+    address TEXT NOT NULL,
+    stars_paid INTEGER DEFAULT 0,
+    telegram_payment_id TEXT,
+    status TEXT DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    completed_at TIMESTAMP,
+    report TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_investigations_user ON investigations(user_id);
+CREATE INDEX IF NOT EXISTS idx_investigations_status ON investigations(status);
 """
 
 
@@ -225,6 +241,65 @@ class Database:
         )
         row = await cursor.fetchone()
         return row[0] if row else default
+
+    async def get_random_article(self) -> dict | None:
+        """Get a random article from the database."""
+        cursor = await self.db.execute(
+            "SELECT * FROM articles ORDER BY RANDOM() LIMIT 1"
+        )
+        row = await cursor.fetchone()
+        return dict(row) if row else None
+
+    # --- Investigations ---
+
+    async def create_investigation(
+        self,
+        user_id: int,
+        username: str,
+        address: str,
+        stars_paid: int = 0,
+        telegram_payment_id: str = "",
+    ) -> int:
+        """Create a new investigation order."""
+        cursor = await self.db.execute(
+            """INSERT INTO investigations
+               (user_id, username, address, stars_paid, telegram_payment_id)
+               VALUES (?, ?, ?, ?, ?)""",
+            (user_id, username, address, stars_paid, telegram_payment_id),
+        )
+        await self.db.commit()
+        logger.info(f"Investigation #{cursor.lastrowid} created for user {user_id}")
+        return cursor.lastrowid
+
+    async def get_pending_investigations(self) -> list[dict]:
+        """Get all pending investigation orders."""
+        cursor = await self.db.execute(
+            """SELECT * FROM investigations
+               WHERE status = 'pending'
+               ORDER BY created_at"""
+        )
+        rows = await cursor.fetchall()
+        return [dict(row) for row in rows]
+
+    async def update_investigation_status(
+        self, investigation_id: int, status: str, report: str = ""
+    ):
+        """Update investigation status."""
+        if report:
+            await self.db.execute(
+                """UPDATE investigations
+                   SET status = ?, report = ?, completed_at = ?
+                   WHERE id = ?""",
+                (status, report, datetime.now(timezone.utc).isoformat(), investigation_id),
+            )
+        else:
+            await self.db.execute(
+                "UPDATE investigations SET status = ? WHERE id = ?",
+                (status, investigation_id),
+            )
+        await self.db.commit()
+
+    # --- Agent State ---
 
     async def set_state(self, key: str, value: str):
         """Set agent state value."""
