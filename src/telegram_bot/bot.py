@@ -181,6 +181,26 @@ class UserBot:
             return True
         return user_id in self.admin_chat_ids
 
+    async def _check_banned(self, update: Update) -> bool:
+        """Check if user is banned. Returns True if banned (and sends message)."""
+        user = update.effective_user
+        if not user or not self.db:
+            return False
+        if self._is_admin(user.id):
+            return False
+        if await self.db.is_user_banned(user.id):
+            text = (
+                "🚫 Ваш аккаунт заблокирован.\n\n"
+                "Вы не можете использовать бота. "
+                "Ожидайте разбана или сообщения от администратора."
+            )
+            if update.callback_query:
+                await update.callback_query.answer(text, show_alert=True)
+            elif update.message:
+                await update.message.reply_text(text)
+            return True
+        return False
+
     # --- Main menu ---
 
     def _main_keyboard(self) -> InlineKeyboardMarkup:
@@ -212,11 +232,17 @@ class UserBot:
                 "🛡 Кейс доверяет: Binance",
                 url=BINANCE_REFERRAL_URL,
             )],
+            [InlineKeyboardButton(
+                "🏢 Бюро",
+                url=f"https://t.me/{TELEGRAM_CHANNEL_ID.lstrip('@')}",
+            )],
         ]
         return InlineKeyboardMarkup(buttons)
 
     async def cmd_start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start - show main menu."""
+        if await self._check_banned(update):
+            return
         await update.message.reply_text(
             "🕵️ Кейс Уокер на связи!\n\n"
             "Я - АМЛ-детектив. Хожу по делам, раскапываю схемы "
@@ -227,6 +253,8 @@ class UserBot:
 
     async def cmd_menu(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /menu - show main menu again."""
+        if await self._check_banned(update):
+            return
         await update.message.reply_text(
             "🕵️ Главное меню Кейса Уокера:",
             reply_markup=self._main_keyboard(),
@@ -238,6 +266,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle 'Хочу статью' button press."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
 
@@ -281,6 +311,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle back to menu button."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
         await query.edit_message_text(
@@ -294,6 +326,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle 'Словарь AML' button - show topic list."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
 
@@ -320,6 +354,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle dictionary topic selection."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer("Готовлю материал...")
 
@@ -378,6 +414,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle 'Связаться со мной' button - ask user for a message."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
 
@@ -421,6 +459,16 @@ class UserBot:
                         "💬 Ответить",
                         callback_data=f"reply_{user.id}",
                     )],
+                    [
+                        InlineKeyboardButton(
+                            "🚫 Забанить",
+                            callback_data=f"ban_{user.id}",
+                        ),
+                        InlineKeyboardButton(
+                            "✅ Разбанить",
+                            callback_data=f"unban_{user.id}",
+                        ),
+                    ],
                 ])
                 await bot.send_message(
                     chat_id=admin_id,
@@ -459,6 +507,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle 'Заказать расследование' - show tier selection."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
 
@@ -494,6 +544,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle tier selection - ask for address."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
 
@@ -521,6 +573,11 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Route incoming text messages to the correct handler."""
+        # 0. Check ban (skip for admin actions)
+        if not self._is_admin(update.effective_user.id):
+            if await self._check_banned(update):
+                return
+
         # 1. Admin reply to user
         if context.user_data.get("reply_to_user_id"):
             await self.handle_admin_reply(update, context)
@@ -653,6 +710,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle 'Поддержать Кейса' button - show donation options."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
 
@@ -677,6 +736,8 @@ class UserBot:
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
         """Handle donation amount selection - send Stars invoice."""
+        if await self._check_banned(update):
+            return
         query = update.callback_query
         await query.answer()
 
@@ -688,6 +749,48 @@ class UserBot:
             payload=f"donate_{query.from_user.id}",
             currency="XTR",
             prices=[LabeledPrice("Поддержка", amount)],
+        )
+
+    # --- Admin ban/unban ---
+
+    async def callback_ban_user(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle admin 'Ban' button."""
+        query = update.callback_query
+        if not self._is_admin(query.from_user.id):
+            await query.answer("Только для админов")
+            return
+
+        target_user_id = int(query.data.replace("ban_", ""))
+
+        if self.db:
+            await self.db.ban_user(target_user_id, banned_by=query.from_user.id)
+
+        await query.answer(f"Пользователь {target_user_id} забанен")
+        await query.message.reply_text(
+            f"🚫 Пользователь {target_user_id} забанен.\n"
+            f"Он больше не может использовать бота."
+        )
+
+    async def callback_unban_user(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle admin 'Unban' button."""
+        query = update.callback_query
+        if not self._is_admin(query.from_user.id):
+            await query.answer("Только для админов")
+            return
+
+        target_user_id = int(query.data.replace("unban_", ""))
+
+        if self.db:
+            await self.db.unban_user(target_user_id)
+
+        await query.answer(f"Пользователь {target_user_id} разбанен")
+        await query.message.reply_text(
+            f"✅ Пользователь {target_user_id} разбанен.\n"
+            f"Теперь он снова может использовать бота."
         )
 
     # --- Admin reply to user ---
@@ -916,6 +1019,12 @@ class UserBot:
         )
         self.app.add_handler(
             CallbackQueryHandler(self.callback_reply_to_user, pattern="^reply_")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_ban_user, pattern="^ban_")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_unban_user, pattern="^unban_")
         )
 
         # Payment handlers

@@ -67,6 +67,7 @@ class CaseWalkerAgent:
             on_afternoon_news=lambda: self.generate_and_publish_news_briefing("afternoon"),
             on_author_post=self.generate_and_publish_author_post,
             on_evening_news=lambda: self.generate_and_publish_news_briefing("evening"),
+            on_bot_reminder=self.publish_bot_reminder,
         )
         self.scheduler.setup()
         self.scheduler.start()
@@ -297,6 +298,28 @@ class CaseWalkerAgent:
             logger.info("Авторский пост опубликован")
         else:
             await self.db.update_post_status(post_id, "failed")
+
+    # --- Bot Reminder (12:00) ---
+
+    async def publish_bot_reminder(self, message: str):
+        """Publish a daily bot reminder to the channel with a link to the bot."""
+        # Add inline button to open the bot
+        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+
+        bot = self.publisher.bot
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton("🤖 Открыть бота", url=f"https://t.me/{(await bot.get_me()).username}")],
+        ])
+
+        try:
+            msg = await bot.send_message(
+                chat_id=self.publisher.channel_id,
+                text=message,
+                reply_markup=keyboard,
+            )
+            logger.info(f"Напоминание о боте опубликовано, msg_id={msg.message_id}")
+        except Exception as e:
+            logger.error(f"Ошибка публикации напоминания о боте: {e}")
 
     # --- Legacy methods (kept for /post command and manual use) ---
 
