@@ -24,7 +24,7 @@ from src.parsers.news_filter import NewsFilter
 from src.parsers.rss_parser import RSSParser
 from src.parsers.web_scraper import WebScraper
 from src.scheduler.scheduler import AgentScheduler
-from src.telegram_bot.bot import TelegramPublisher, UserBot
+from src.telegram_bot.bot import BINANCE_REFERRAL_URL, TelegramPublisher, UserBot
 
 logger = logging.getLogger(__name__)
 
@@ -192,6 +192,13 @@ class CaseWalkerAgent:
             time_of_day=time_of_day,
             daily_summary=daily_summary,
         )
+
+        # Add Binance referral to evening post (unobtrusive)
+        if time_of_day == "evening":
+            post_text += (
+                f"\n\n🛡 Безопасная торговля начинается с надёжной биржи. "
+                f"Кейс доверяет: {BINANCE_REFERRAL_URL}"
+            )
 
         # Save to DB
         article_ids = ",".join(str(a["id"]) for a in articles)

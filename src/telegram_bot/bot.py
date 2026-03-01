@@ -28,7 +28,22 @@ from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHANNEL_ID
 logger = logging.getLogger(__name__)
 
 MAX_MESSAGE_LENGTH = 4096
-INVESTIGATION_PRICE_STARS = 1000
+
+# Investigation tiers (price in Telegram Stars)
+INVESTIGATION_TIERS = {
+    "basic": {"name": "Базовое", "price": 1000, "emoji": "🔍", "deadline": "24 часа",
+              "desc": "Проверка адреса, основные связи, AML-скоринг"},
+    "deep": {"name": "Глубокое", "price": 3000, "emoji": "🔬", "deadline": "24 часа",
+             "desc": "Полный граф транзакций, цепочки переводов, связи с миксерами"},
+    "urgent": {"name": "Срочное", "price": 5000, "emoji": "⚡", "deadline": "2 часа",
+               "desc": "Приоритетная проверка + полный граф + рекомендации"},
+}
+
+# Binance referral link
+BINANCE_REFERRAL_URL = (
+    "https://www.binance.com/referral/earn-together/refer2earn-usdc/"
+    "claim?hl=ru&ref=GRO_28502_YIK87&utm_source=default"
+)
 
 # Conversation states
 WAITING_ADDRESS = 1
@@ -172,7 +187,7 @@ class UserBot:
         """Build the main menu keyboard."""
         buttons = [
             [InlineKeyboardButton(
-                "🔍 Заказать расследование (1000 ⭐)",
+                "🔍 Заказать расследование",
                 callback_data="investigate",
             )],
             [InlineKeyboardButton(
@@ -183,9 +198,19 @@ class UserBot:
                 "📚 Словарь AML",
                 callback_data="aml_dictionary",
             )],
+            [
+                InlineKeyboardButton(
+                    "✉️ Связаться",
+                    callback_data="contact",
+                ),
+                InlineKeyboardButton(
+                    "☕ Поддержать Кейса",
+                    callback_data="donate",
+                ),
+            ],
             [InlineKeyboardButton(
-                "✉️ Связаться со мной",
-                callback_data="contact",
+                "🛡 Кейс доверяет: Binance",
+                url=BINANCE_REFERRAL_URL,
             )],
         ]
         return InlineKeyboardMarkup(buttons)
@@ -433,24 +458,64 @@ class UserBot:
     async def callback_investigate(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
-        """Handle 'Заказать расследование' button - explain and ask for address."""
+        """Handle 'Заказать расследование' - show tier selection."""
         query = update.callback_query
         await query.answer()
 
-        await query.edit_message_text(
+        text = (
             "🔍 Заказать расследование\n\n"
             "Кейс Уокер лично проведёт проверку по указанному адресу "
             "(кошелёк, компания, контрагент).\n\n"
-            "Стоимость: 1000 ⭐ (Telegram Stars)\n"
-            "Срок: до 24 часов\n"
-            "Результат: подробный отчёт в личном сообщении\n\n"
-            "Отправь мне адрес для проверки (текстовым сообщением):",
-            reply_markup=InlineKeyboardMarkup([
-                [InlineKeyboardButton("◀️ Отмена", callback_data="back_to_menu")],
-            ]),
+            "Выбери тариф:\n\n"
+        )
+        for tier_id, tier in INVESTIGATION_TIERS.items():
+            text += (
+                f"{tier['emoji']} {tier['name']} - {tier['price']} ⭐\n"
+                f"   {tier['desc']}\n"
+                f"   Срок: {tier['deadline']}\n\n"
+            )
+
+        buttons = [
+            [InlineKeyboardButton(
+                f"{t['emoji']} {t['name']} ({t['price']} ⭐)",
+                callback_data=f"tier_{tid}",
+            )]
+            for tid, t in INVESTIGATION_TIERS.items()
+        ]
+        buttons.append([
+            InlineKeyboardButton("◀️ Назад", callback_data="back_to_menu")
+        ])
+
+        await query.edit_message_text(
+            text, reply_markup=InlineKeyboardMarkup(buttons),
         )
 
+    async def callback_select_tier(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle tier selection - ask for address."""
+        query = update.callback_query
+        await query.answer()
+
+        tier_id = query.data.replace("tier_", "")
+        tier = INVESTIGATION_TIERS.get(tier_id)
+        if not tier:
+            await query.edit_message_text("Неизвестный тариф",
+                                          reply_markup=self._main_keyboard())
+            return
+
+        context.user_data["investigation_tier"] = tier_id
         context.user_data["awaiting_address"] = True
+
+        await query.edit_message_text(
+            f"{tier['emoji']} {tier['name']} расследование ({tier['price']} ⭐)\n\n"
+            f"{tier['desc']}\n"
+            f"Срок: {tier['deadline']}\n\n"
+            f"Отправь мне адрес для проверки (текстовым сообщением):",
+            reply_markup=InlineKeyboardMarkup([
+                [InlineKeyboardButton("◀️ Назад к тарифам", callback_data="investigate")],
+            ]),
+        )
 
     async def handle_text_message(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
@@ -480,13 +545,17 @@ class UserBot:
         context.user_data["awaiting_address"] = False
         context.user_data["investigation_address"] = address
 
+        # Get tier price
+        tier_id = context.user_data.get("investigation_tier", "basic")
+        tier = INVESTIGATION_TIERS.get(tier_id, INVESTIGATION_TIERS["basic"])
+
         # Send Stars invoice
         await update.message.reply_invoice(
-            title="Расследование от Кейса Уокера",
-            description=f"Проверка адреса: {address[:100]}",
-            payload=f"investigate_{update.effective_user.id}_{address[:100]}",
-            currency="XTR",  # Telegram Stars currency code
-            prices=[LabeledPrice("Расследование", INVESTIGATION_PRICE_STARS)],
+            title=f"{tier['emoji']} {tier['name']} расследование",
+            description=f"Проверка адреса: {address[:80]}\n{tier['desc']}",
+            payload=f"investigate_{tier_id}_{update.effective_user.id}_{address[:80]}",
+            currency="XTR",
+            prices=[LabeledPrice(tier["name"], tier["price"])],
         )
 
     async def pre_checkout_handler(
@@ -499,17 +568,38 @@ class UserBot:
     async def successful_payment_handler(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
-        """Handle successful Stars payment - create investigation order."""
+        """Handle successful Stars payment - investigation or donation."""
         payment = update.message.successful_payment
         user = update.effective_user
+        payload = payment.invoice_payload or ""
+
+        # --- Donation ---
+        if payload.startswith("donate_"):
+            await update.message.reply_text(
+                f"🕵️ Спасибо за поддержку! {payment.total_amount} ⭐ получены.\n\n"
+                "Кейс Уокер ценит каждого, кто помогает бороться "
+                "с грязными деньгами. Твоя поддержка - мотивация "
+                "копать ещё глубже!",
+                reply_markup=self._main_keyboard(),
+            )
+            logger.info(
+                f"Donation received: {payment.total_amount} Stars "
+                f"from @{user.username or user.id}"
+            )
+            return
+
+        # --- Investigation ---
         address = context.user_data.get("investigation_address", "")
+        tier_id = context.user_data.get("investigation_tier", "basic")
+        tier = INVESTIGATION_TIERS.get(tier_id, INVESTIGATION_TIERS["basic"])
 
         if not address:
-            # Try to extract from payload
-            payload = payment.invoice_payload or ""
-            parts = payload.split("_", 2)
-            if len(parts) >= 3:
-                address = parts[2]
+            # Try to extract from payload: investigate_tier_userid_address
+            parts = payload.split("_", 3)
+            if len(parts) >= 4:
+                address = parts[3]
+                tier_id = parts[1]
+                tier = INVESTIGATION_TIERS.get(tier_id, INVESTIGATION_TIERS["basic"])
 
         # Save to database
         if self.db:
@@ -525,11 +615,12 @@ class UserBot:
 
         await update.message.reply_text(
             f"🕵️ Расследование #{order_id} принято!\n\n"
+            f"Тариф: {tier['emoji']} {tier['name']}\n"
             f"Адрес: {address}\n"
-            f"Оплачено: {payment.total_amount} ⭐\n\n"
+            f"Оплачено: {payment.total_amount} ⭐\n"
+            f"Срок: {tier['deadline']}\n\n"
             f"Кейс Уокер берётся за дело. "
-            f"Отчёт будет готов в течение 24 часов.\n\n"
-            f"Следи за обновлениями!",
+            f"Отчёт придёт прямо сюда!",
             reply_markup=self._main_keyboard(),
         )
 
@@ -541,16 +632,63 @@ class UserBot:
                     chat_id=admin_id,
                     text=(
                         f"🚨 Новый заказ расследования #{order_id}\n\n"
+                        f"Тариф: {tier['emoji']} {tier['name']}\n"
                         f"Пользователь: @{user.username or user.id}\n"
                         f"Адрес: {address}\n"
                         f"Оплата: {payment.total_amount} ⭐\n"
-                        f"Срок: 24 часа"
+                        f"Срок: {tier['deadline']}\n\n"
+                        f"Для отправки отчёта:\n"
+                        f"/report {order_id} текст отчёта"
                     ),
                 )
             except Exception as e:
                 logger.error(f"Failed to notify admin {admin_id}: {e}")
 
         context.user_data.pop("investigation_address", None)
+        context.user_data.pop("investigation_tier", None)
+
+    # --- Donate ---
+
+    async def callback_donate(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle 'Поддержать Кейса' button - show donation options."""
+        query = update.callback_query
+        await query.answer()
+
+        buttons = [
+            [InlineKeyboardButton(
+                f"☕ {amount} ⭐",
+                callback_data=f"donate_{amount}",
+            ) for amount in [50, 100, 500]],
+            [InlineKeyboardButton("◀️ Назад", callback_data="back_to_menu")],
+        ]
+
+        await query.edit_message_text(
+            "☕ Поддержать Кейса Уокера\n\n"
+            "Кейс работает на результат: парсит новости, "
+            "разбирает кейсы, следит за санкциями.\n\n"
+            "Если тебе полезен канал - можешь угостить "
+            "детектива кофе. Любая сумма - мотивация!",
+            reply_markup=InlineKeyboardMarkup(buttons),
+        )
+
+    async def callback_donate_amount(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle donation amount selection - send Stars invoice."""
+        query = update.callback_query
+        await query.answer()
+
+        amount = int(query.data.replace("donate_", ""))
+
+        await query.message.reply_invoice(
+            title="Поддержка Кейса Уокера",
+            description=f"Донат {amount} ⭐ на развитие канала и бота",
+            payload=f"donate_{query.from_user.id}",
+            currency="XTR",
+            prices=[LabeledPrice("Поддержка", amount)],
+        )
 
     # --- Admin reply to user ---
 
@@ -615,6 +753,86 @@ class UserBot:
 
     # --- Admin commands ---
 
+    async def cmd_report(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /report <id> <text> - send investigation report to user."""
+        if not update.effective_user or not self._is_admin(update.effective_user.id):
+            return
+        if not self.db:
+            await update.message.reply_text("БД не подключена")
+            return
+
+        # Parse: /report 123 текст отчёта
+        text = update.message.text or ""
+        parts = text.split(None, 2)  # ["/report", "id", "report text..."]
+        if len(parts) < 3:
+            await update.message.reply_text(
+                "Формат: /report <id> <текст отчёта>\n"
+                "Пример: /report 1 Адрес чистый, связей с миксерами не обнаружено..."
+            )
+            return
+
+        try:
+            order_id = int(parts[1])
+        except ValueError:
+            await update.message.reply_text("ID должен быть числом")
+            return
+
+        report_text = parts[2]
+
+        # Get investigation from DB
+        orders = await self.db.get_pending_investigations()
+        order = None
+        for o in orders:
+            if o["id"] == order_id:
+                order = o
+                break
+
+        if not order:
+            await update.message.reply_text(
+                f"Заказ #{order_id} не найден или уже завершён"
+            )
+            return
+
+        # Send report to user
+        try:
+            bot = Bot(token=self.bot_token)
+
+            report_msg = (
+                f"🕵️ Отчёт по расследованию #{order_id}\n\n"
+                f"Адрес: {order['address']}\n\n"
+                f"{report_text}\n\n"
+                f"---\n"
+                f"Кейс Уокер, AML-детектив\n"
+                f"Есть вопросы? Нажми кнопку ниже."
+            )
+
+            await bot.send_message(
+                chat_id=order["user_id"],
+                text=report_msg,
+                reply_markup=InlineKeyboardMarkup([
+                    [InlineKeyboardButton("✉️ Задать вопрос", callback_data="contact")],
+                    [InlineKeyboardButton("🔍 Новое расследование", callback_data="investigate")],
+                    [InlineKeyboardButton(
+                        "🛡 Кейс доверяет: Binance",
+                        url=BINANCE_REFERRAL_URL,
+                    )],
+                ]),
+            )
+
+            # Mark as completed in DB
+            await self.db.update_investigation_status(
+                order_id, "completed", report_text
+            )
+
+            await update.message.reply_text(
+                f"✅ Отчёт по заказу #{order_id} отправлен "
+                f"пользователю @{order['username']}"
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to send report: {e}")
+            await update.message.reply_text(f"Ошибка отправки отчёта: {e}")
+
     async def cmd_status(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /status command (admin only)."""
         if not update.effective_user or not self._is_admin(update.effective_user.id):
@@ -673,6 +891,9 @@ class UserBot:
             CallbackQueryHandler(self.callback_investigate, pattern="^investigate$")
         )
         self.app.add_handler(
+            CallbackQueryHandler(self.callback_select_tier, pattern="^tier_")
+        )
+        self.app.add_handler(
             CallbackQueryHandler(self.callback_random_article, pattern="^random_article$")
         )
         self.app.add_handler(
@@ -683,6 +904,12 @@ class UserBot:
         )
         self.app.add_handler(
             CallbackQueryHandler(self.callback_contact, pattern="^contact$")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_donate, pattern="^donate$")
+        )
+        self.app.add_handler(
+            CallbackQueryHandler(self.callback_donate_amount, pattern="^donate_")
         )
         self.app.add_handler(
             CallbackQueryHandler(self.callback_back_to_menu, pattern="^back_to_menu$")
@@ -710,5 +937,6 @@ class UserBot:
         self.app.add_handler(CommandHandler("status", self.cmd_status))
         self.app.add_handler(CommandHandler("post", self.cmd_force_post))
         self.app.add_handler(CommandHandler("orders", self.cmd_orders))
+        self.app.add_handler(CommandHandler("report", self.cmd_report))
 
         return self.app
