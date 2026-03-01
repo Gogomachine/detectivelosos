@@ -569,6 +569,16 @@ class UserBot:
             ]),
         )
 
+    async def handle_photo_message(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle photo messages (admin reply with photo)."""
+        if not context.user_data.get("reply_to_user_id"):
+            return
+        if not self._is_admin(update.effective_user.id):
+            return
+        await self.handle_admin_reply(update, context)
+
     async def handle_text_message(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
@@ -685,6 +695,22 @@ class UserBot:
         for admin_id in self.admin_chat_ids:
             try:
                 bot = Bot(token=self.bot_token)
+                admin_keyboard = InlineKeyboardMarkup([
+                    [InlineKeyboardButton(
+                        "💬 Ответить",
+                        callback_data=f"reply_{user.id}",
+                    )],
+                    [
+                        InlineKeyboardButton(
+                            "🚫 Забанить",
+                            callback_data=f"ban_{user.id}",
+                        ),
+                        InlineKeyboardButton(
+                            "✅ Разбанить",
+                            callback_data=f"unban_{user.id}",
+                        ),
+                    ],
+                ])
                 await bot.send_message(
                     chat_id=admin_id,
                     text=(
@@ -693,10 +719,9 @@ class UserBot:
                         f"Пользователь: @{user.username or user.id}\n"
                         f"Адрес: {address}\n"
                         f"Оплата: {payment.total_amount} ⭐\n"
-                        f"Срок: {tier['deadline']}\n\n"
-                        f"Для отправки отчёта:\n"
-                        f"/report {order_id} текст отчёта"
+                        f"Срок: {tier['deadline']}"
                     ),
+                    reply_markup=admin_keyboard,
                 )
             except Exception as e:
                 logger.error(f"Failed to notify admin {admin_id}: {e}")
@@ -812,13 +837,13 @@ class UserBot:
 
         await query.message.reply_text(
             f"💬 Напиши ответ для пользователя (ID: {target_user_id}).\n"
-            f"Следующее твоё сообщение будет отправлено ему от имени бота.",
+            f"Следующее твоё сообщение (текст или фото) будет отправлено ему от имени бота.",
         )
 
     async def handle_admin_reply(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
-        """Handle admin's reply text and send it to the user."""
+        """Handle admin's reply (text or photo) and send it to the user."""
         target_user_id = context.user_data.get("reply_to_user_id")
         if not target_user_id:
             return False
@@ -826,23 +851,42 @@ class UserBot:
             return False
 
         context.user_data.pop("reply_to_user_id", None)
-        reply_text = update.message.text.strip()
+
+        reply_keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton(
+                "✉️ Написать ещё",
+                callback_data="contact",
+            )],
+        ])
 
         try:
             bot = Bot(token=self.bot_token)
-            await bot.send_message(
-                chat_id=target_user_id,
-                text=(
-                    f"🕵️ Ответ от Кейса Уокера:\n\n"
-                    f"{reply_text}"
-                ),
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton(
-                        "✉️ Написать ещё",
-                        callback_data="contact",
-                    )],
-                ]),
-            )
+
+            # Check if the message contains a photo
+            if update.message.photo:
+                photo = update.message.photo[-1]  # highest resolution
+                caption = update.message.caption or ""
+                caption_text = (
+                    f"🕵️ Ответ от Кейса Уокера:\n\n{caption}" if caption
+                    else "🕵️ Ответ от Кейса Уокера:"
+                )
+                await bot.send_photo(
+                    chat_id=target_user_id,
+                    photo=photo.file_id,
+                    caption=caption_text,
+                    reply_markup=reply_keyboard,
+                )
+            else:
+                reply_text = (update.message.text or "").strip()
+                await bot.send_message(
+                    chat_id=target_user_id,
+                    text=(
+                        f"🕵️ Ответ от Кейса Уокера:\n\n"
+                        f"{reply_text}"
+                    ),
+                    reply_markup=reply_keyboard,
+                )
+
             await update.message.reply_text(
                 f"✅ Ответ отправлен пользователю {target_user_id}"
             )
@@ -855,86 +899,6 @@ class UserBot:
         return True
 
     # --- Admin commands ---
-
-    async def cmd_report(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle /report <id> <text> - send investigation report to user."""
-        if not update.effective_user or not self._is_admin(update.effective_user.id):
-            return
-        if not self.db:
-            await update.message.reply_text("БД не подключена")
-            return
-
-        # Parse: /report 123 текст отчёта
-        text = update.message.text or ""
-        parts = text.split(None, 2)  # ["/report", "id", "report text..."]
-        if len(parts) < 3:
-            await update.message.reply_text(
-                "Формат: /report <id> <текст отчёта>\n"
-                "Пример: /report 1 Адрес чистый, связей с миксерами не обнаружено..."
-            )
-            return
-
-        try:
-            order_id = int(parts[1])
-        except ValueError:
-            await update.message.reply_text("ID должен быть числом")
-            return
-
-        report_text = parts[2]
-
-        # Get investigation from DB
-        orders = await self.db.get_pending_investigations()
-        order = None
-        for o in orders:
-            if o["id"] == order_id:
-                order = o
-                break
-
-        if not order:
-            await update.message.reply_text(
-                f"Заказ #{order_id} не найден или уже завершён"
-            )
-            return
-
-        # Send report to user
-        try:
-            bot = Bot(token=self.bot_token)
-
-            report_msg = (
-                f"🕵️ Отчёт по расследованию #{order_id}\n\n"
-                f"Адрес: {order['address']}\n\n"
-                f"{report_text}\n\n"
-                f"---\n"
-                f"Кейс Уокер, AML-детектив\n"
-                f"Есть вопросы? Нажми кнопку ниже."
-            )
-
-            await bot.send_message(
-                chat_id=order["user_id"],
-                text=report_msg,
-                reply_markup=InlineKeyboardMarkup([
-                    [InlineKeyboardButton("✉️ Задать вопрос", callback_data="contact")],
-                    [InlineKeyboardButton("🔍 Новое расследование", callback_data="investigate")],
-                    [InlineKeyboardButton(
-                        "🛡 Кейс доверяет: Binance",
-                        url=BINANCE_REFERRAL_URL,
-                    )],
-                ]),
-            )
-
-            # Mark as completed in DB
-            await self.db.update_investigation_status(
-                order_id, "completed", report_text
-            )
-
-            await update.message.reply_text(
-                f"✅ Отчёт по заказу #{order_id} отправлен "
-                f"пользователю @{order['username']}"
-            )
-
-        except Exception as e:
-            logger.error(f"Failed to send report: {e}")
-            await update.message.reply_text(f"Ошибка отправки отчёта: {e}")
 
     async def cmd_status(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /status command (admin only)."""
@@ -1035,6 +999,11 @@ class UserBot:
             )
         )
 
+        # Photo handler (admin reply with photo)
+        self.app.add_handler(
+            MessageHandler(filters.PHOTO, self.handle_photo_message)
+        )
+
         # Text message handler (for address input, contact messages, admin replies)
         self.app.add_handler(
             MessageHandler(
@@ -1046,6 +1015,5 @@ class UserBot:
         self.app.add_handler(CommandHandler("status", self.cmd_status))
         self.app.add_handler(CommandHandler("post", self.cmd_force_post))
         self.app.add_handler(CommandHandler("orders", self.cmd_orders))
-        self.app.add_handler(CommandHandler("report", self.cmd_report))
 
         return self.app
