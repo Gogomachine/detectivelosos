@@ -212,6 +212,10 @@ class UserBot:
                 "🛡 Кейс доверяет: Binance",
                 url=BINANCE_REFERRAL_URL,
             )],
+            [InlineKeyboardButton(
+                "🏢 Бюро",
+                url=f"https://t.me/{TELEGRAM_CHANNEL_ID.lstrip('@')}",
+            )],
         ]
         return InlineKeyboardMarkup(buttons)
 

@@ -5,6 +5,7 @@ New content schedule (Moscow time):
   08:45 - Parse news
   09:00 - Morning News (max 7 articles, AML professional opinion)
   10:00 - Mini Post (security/AML educational, unique)
+  12:00 - Bot Reminder (daily reminder about the bot with rotating messages)
   13:00 - Deep Dive (crypto networks, AML incidents, security analysis)
   14:45 - Parse news
   15:00 - Afternoon News (max 7 articles, AML professional opinion)
@@ -12,7 +13,7 @@ New content schedule (Moscow time):
   19:45 - Parse news
   20:00 - Evening News (max 7 articles, AML opinion, good night, daily summary)
 
-Total: 6 posts/day, 3 news parses.
+Total: 7 posts/day, 3 news parses.
 """
 
 import logging
@@ -69,6 +70,66 @@ MINI_POST_TOPICS = [
     "Flash loan attacks: как работают",
 ]
 
+# Daily bot reminder variations (posted once a day to channel)
+BOT_REMINDERS = [
+    "🕵️ Кейс Уокер всегда на связи!\n\n"
+    "Хочешь заказать расследование, почитать словарь AML или просто пообщаться?\n"
+    "Заходи в бота - там всё есть.",
+
+    "🔍 Напоминаю: у Кейса Уокера есть личный бот!\n\n"
+    "Расследования, AML-словарь, свежие статьи - всё в одном месте.\n"
+    "Нажми кнопку и проверь сам.",
+
+    "📱 А ты уже заглядывал в бот Кейса?\n\n"
+    "Там можно заказать проверку адреса, изучить AML-термины "
+    "и получить случайную статью из базы.\n"
+    "Попробуй - не пожалеешь!",
+
+    "🛡 Кейс Уокер работает 24/7!\n\n"
+    "Бот всегда готов помочь: расследования, словарь, связь с детективом.\n"
+    "Одна кнопка - и ты в деле.",
+
+    "💡 Знал, что у канала есть бот?\n\n"
+    "Кейс Уокер лично отвечает на вопросы, проводит расследования "
+    "и делится знаниями из AML-энциклопедии.\n"
+    "Загляни!",
+
+    "🕵️ Детектив не спит!\n\n"
+    "В боте Кейса Уокера можно:\n"
+    "• Заказать расследование адреса\n"
+    "• Изучить AML-словарь\n"
+    "• Получить случайную статью\n"
+    "• Написать детективу лично",
+
+    "📚 Хочешь разобраться в AML?\n\n"
+    "В боте Кейса Уокера есть словарь с объяснениями: миксеры, peel chains, "
+    "санкции OFAC, Lazarus Group и многое другое.\n"
+    "Жми кнопку и учись!",
+
+    "🔬 Подозрительный адрес?\n\n"
+    "Кейс Уокер проведёт расследование: AML-скоринг, связи с миксерами, "
+    "полный граф транзакций.\n"
+    "Всё через бота - быстро и конфиденциально.",
+
+    "☕ Привет от Кейса!\n\n"
+    "Напоминаю, что бот работает круглосуточно. "
+    "Расследования, словарь, статьи, обратная связь - "
+    "всё доступно в пару кликов.",
+
+    "🎯 Кейс Уокер - не только канал!\n\n"
+    "У детектива есть персональный бот с расследованиями, "
+    "AML-энциклопедией и прямой связью.\n"
+    "Не упусти - заходи!",
+
+    "🚨 Быстрая проверка нужна?\n\n"
+    "Срочное расследование в боте Кейса - результат за 2 часа.\n"
+    "Базовое - за 24 часа. Всё через Telegram Stars.",
+
+    "🕵️ Один бот - все инструменты AML-детектива!\n\n"
+    "Расследования, словарь, новости, связь с Кейсом.\n"
+    "Нажимай и пользуйся.",
+]
+
 # Topics for deep dives (13:00) - investigations and analysis
 DEEP_DIVE_TOPICS = [
     # Case studies
@@ -121,6 +182,7 @@ class AgentScheduler:
         self._on_afternoon_news = None
         self._on_author_post = None
         self._on_evening_news = None
+        self._on_bot_reminder = None
 
     def set_callbacks(
         self,
@@ -131,6 +193,7 @@ class AgentScheduler:
         on_afternoon_news=None,
         on_author_post=None,
         on_evening_news=None,
+        on_bot_reminder=None,
         **_kwargs,
     ):
         """Set callback functions for scheduled tasks."""
@@ -141,6 +204,7 @@ class AgentScheduler:
         self._on_afternoon_news = on_afternoon_news
         self._on_author_post = on_author_post
         self._on_evening_news = on_evening_news
+        self._on_bot_reminder = on_bot_reminder
 
     def setup(self):
         """Configure the scheduler with all jobs (times in Moscow timezone)."""
@@ -169,6 +233,15 @@ class AgentScheduler:
             trigger=CronTrigger(hour=10, minute=0),
             id="mini_post",
             name="Мини-пост безопасность/AML (10:00)",
+            replace_existing=True,
+        )
+
+        # --- 12:00 Bot Reminder ---
+        self.scheduler.add_job(
+            self._run_bot_reminder,
+            trigger=CronTrigger(hour=12, minute=0),
+            id="bot_reminder",
+            name="Напоминание о боте (12:00)",
             replace_existing=True,
         )
 
@@ -228,8 +301,8 @@ class AgentScheduler:
 
         logger.info(
             "Расписание настроено (МСК): "
-            "09:00 утренние новости, 10:00 мини-пост, 13:00 разбор, "
-            "15:00 дневные новости, 17:00 авторский, 20:00 вечерние новости"
+            "09:00 утренние новости, 10:00 мини-пост, 12:00 напоминание о боте, "
+            "13:00 разбор, 15:00 дневные новости, 17:00 авторский, 20:00 вечерние новости"
         )
 
     def start(self):
@@ -271,6 +344,16 @@ class AgentScheduler:
                 await self._on_mini_post(topic)
             except Exception as e:
                 logger.error(f"Mini post failed: {e}")
+
+    async def _run_bot_reminder(self):
+        """Run daily bot reminder post."""
+        logger.info("Running bot reminder (12:00 MSK)")
+        if self._on_bot_reminder:
+            try:
+                message = random.choice(BOT_REMINDERS)
+                await self._on_bot_reminder(message)
+            except Exception as e:
+                logger.error(f"Bot reminder failed: {e}")
 
     async def _run_deep_dive(self):
         """Run deep dive analysis generation."""
