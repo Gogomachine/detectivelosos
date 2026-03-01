@@ -79,6 +79,12 @@ RSS_FEEDS = [
         "category": "crypto_aml",
         "language": "en",
     },
+    {
+        "name": "ACAMS Today",
+        "url": "https://www.acamstoday.org/feed/",
+        "category": "compliance",
+        "language": "en",
+    },
 ]
 
 # Web pages to scrape (when RSS is not available)
@@ -106,6 +112,18 @@ SCRAPE_SOURCES = [
         "url": "https://www.trmlabs.com/category/insights",
         "selector": "article, .blog-post, .post-card, [class*='post'], [class*='card']",
         "category": "crypto_aml",
+    },
+    {
+        "name": "Bitget News",
+        "url": "https://www.bitget.com/ru/news",
+        "selector": "article, a[class*='news'], a[class*='article'], [class*='newsItem'], [class*='card']",
+        "category": "crypto_aml",
+    },
+    {
+        "name": "ACAMS AML",
+        "url": "https://www.acams.org/en/taxonomy/term/680",
+        "selector": "article, .views-row, .node, [class*='article'], [class*='card']",
+        "category": "news",
     },
 ]
 
