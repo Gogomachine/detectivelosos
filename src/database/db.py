@@ -74,6 +74,12 @@ CREATE TABLE IF NOT EXISTS used_topics (
 );
 
 CREATE INDEX IF NOT EXISTS idx_used_topics_type ON used_topics(post_type);
+
+CREATE TABLE IF NOT EXISTS banned_users (
+    user_id INTEGER PRIMARY KEY,
+    banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    banned_by INTEGER
+);
 """
 
 
@@ -361,6 +367,33 @@ class Database:
         )
         rows = await cursor.fetchall()
         return [row[0] for row in rows]
+
+    # --- Banned Users ---
+
+    async def ban_user(self, user_id: int, banned_by: int = 0):
+        """Ban a user from using the bot."""
+        await self.db.execute(
+            """INSERT OR IGNORE INTO banned_users (user_id, banned_at, banned_by)
+               VALUES (?, ?, ?)""",
+            (user_id, datetime.now(timezone.utc).isoformat(), banned_by),
+        )
+        await self.db.commit()
+        logger.info(f"User {user_id} banned by {banned_by}")
+
+    async def unban_user(self, user_id: int):
+        """Unban a user."""
+        await self.db.execute(
+            "DELETE FROM banned_users WHERE user_id = ?", (user_id,)
+        )
+        await self.db.commit()
+        logger.info(f"User {user_id} unbanned")
+
+    async def is_user_banned(self, user_id: int) -> bool:
+        """Check if a user is banned."""
+        cursor = await self.db.execute(
+            "SELECT 1 FROM banned_users WHERE user_id = ?", (user_id,)
+        )
+        return await cursor.fetchone() is not None
 
     # --- Agent State ---
 
