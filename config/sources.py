@@ -125,6 +125,24 @@ SCRAPE_SOURCES = [
         "selector": "article, .views-row, .node, [class*='article'], [class*='card']",
         "category": "news",
     },
+    {
+        "name": "Binance Square News",
+        "url": "https://www.binance.com/en/square/news/all",
+        "selector": "article, a[class*='news'], a[class*='article'], [class*='card'], [class*='feed']",
+        "category": "crypto_aml",
+    },
+    {
+        "name": "Rekt News",
+        "url": "https://rekt.news/ru",
+        "selector": "article, [class*='post'], [class*='card'], [class*='article']",
+        "category": "investigations",
+    },
+    {
+        "name": "PeckShield",
+        "url": "https://peckshield.com/",
+        "selector": "article, [class*='post'], [class*='card'], [class*='blog'], [class*='news']",
+        "category": "crypto_aml",
+    },
 ]
 
 # Keywords for filtering relevant content (for general crypto sources)
