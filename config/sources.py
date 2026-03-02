@@ -143,6 +143,12 @@ SCRAPE_SOURCES = [
         "selector": "article, [class*='post'], [class*='card'], [class*='blog'], [class*='news']",
         "category": "crypto_aml",
     },
+    {
+        "name": "The Block",
+        "url": "https://www.theblock.co/latest-crypto-news",
+        "selector": "article, a[class*='article'], [class*='card'], [class*='story'], [class*='post']",
+        "category": "crypto_aml",
+    },
 ]
 
 # Keywords for filtering relevant content (for general crypto sources)
