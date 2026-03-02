@@ -3,12 +3,13 @@ Main AML Detective Agent orchestrator.
 Coordinates all components: parsing, content generation, database, and publishing.
 
 Daily schedule (Moscow time):
-  09:00 - Morning News (max 7 articles, AML professional opinion)
+  09:00 - Morning News (greeting + news without comments)
   10:00 - Mini Post (security/AML educational)
   13:00 - Deep Dive (crypto networks, AML incidents analysis)
-  15:00 - Afternoon News (max 7 articles, AML professional opinion)
+  15:00 - Afternoon News (news + expert opinion on main news)
   17:00 - Author's Post (free-form, personal)
-  20:00 - Evening News (max 7 articles, daily summary, good night)
+  20:00 - Evening News (news with links + expert summary)
+  23:00 - Goodnight Post (sweet dreams wish + mini security tip)
 """
 
 import asyncio
@@ -68,6 +69,7 @@ class CaseWalkerAgent:
             on_author_post=self.generate_and_publish_author_post,
             on_evening_news=lambda: self.generate_and_publish_news_briefing("evening"),
             on_bot_reminder=self.publish_bot_reminder,
+            on_goodnight_post=self.generate_and_publish_goodnight_post,
         )
         self.scheduler.setup()
         self.scheduler.start()
@@ -321,6 +323,31 @@ class CaseWalkerAgent:
         except Exception as e:
             logger.error(f"Ошибка публикации напоминания о боте: {e}")
 
+    # --- Goodnight Post (23:00) ---
+
+    async def generate_and_publish_goodnight_post(self, tip_topic: str):
+        """Generate and publish a goodnight post with sweet dreams wish and security tip."""
+        used_topics = await self.db.get_used_topics("goodnight_post")
+
+        post_text = await self.generator.generate_goodnight_post(
+            tip_topic=tip_topic,
+            used_topics=used_topics,
+        )
+
+        post_id = await self.db.save_post(
+            post_type="goodnight_post",
+            content=post_text,
+            status="draft",
+        )
+
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            await self.db.save_used_topic(tip_topic, "goodnight_post")
+            logger.info(f"Ночной пост опубликован: {tip_topic[:50]}")
+        else:
+            await self.db.update_post_status(post_id, "failed")
+
     # --- Legacy methods (kept for /post command and manual use) ---
 
     async def generate_and_publish_combined_post(self, tip_topic: str) -> str:
@@ -481,7 +508,8 @@ class CaseWalkerAgent:
             f"  13:00 - Разбор\n"
             f"  15:00 - Дневные новости\n"
             f"  17:00 - Авторский пост\n"
-            f"  20:00 - Вечерние новости\n\n"
+            f"  20:00 - Вечерние новости\n"
+            f"  23:00 - Ночной пост\n\n"
             f"Ближайшие задачи:\n{next_runs_text}"
         )
 

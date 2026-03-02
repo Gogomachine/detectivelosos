@@ -3,17 +3,18 @@ Scheduler for the AML Detective Agent.
 New content schedule (Moscow time):
 
   08:45 - Parse news
-  09:00 - Morning News (max 7 articles, AML professional opinion)
+  09:00 - Morning News (greeting + news without comments)
   10:00 - Mini Post (security/AML educational, unique)
   12:00 - Bot Reminder (daily reminder about the bot with rotating messages)
   13:00 - Deep Dive (crypto networks, AML incidents, security analysis)
   14:45 - Parse news
-  15:00 - Afternoon News (max 7 articles, AML professional opinion)
+  15:00 - Afternoon News (news + expert opinion on main news)
   17:00 - Author's Post (free-form, personal, can be non-crypto)
   19:45 - Parse news
-  20:00 - Evening News (max 7 articles, AML opinion, good night, daily summary)
+  20:00 - Evening News (news with links + expert summary)
+  23:00 - Goodnight Post (sweet dreams wish + mini security tip)
 
-Total: 7 posts/day, 3 news parses.
+Total: 8 posts/day, 3 news parses.
 """
 
 import logging
@@ -68,6 +69,30 @@ MINI_POST_TOPICS = [
     "Как Chainalysis кластеризует адреса",
     "OWASP Smart Contract Top 10: главные уязвимости",
     "Flash loan attacks: как работают",
+]
+
+# Goodnight security tip topics (23:00)
+GOODNIGHT_TIP_TOPICS = [
+    "Проверь разрешения (approvals) в своих DeFi-кошельках",
+    "Не храни seed-фразу в заметках телефона",
+    "Используй отдельный кошелёк для взаимодействия с новыми dApps",
+    "Проверяй URL сайта перед подключением кошелька",
+    "Включи 2FA на всех крипто-биржах",
+    "Не переходи по ссылкам из крипто-чатов без проверки",
+    "Регулярно проверяй активные сессии на биржах",
+    "Используй аппаратный кошелёк для крупных сумм",
+    "Не делись скриншотами баланса в соцсетях",
+    "Проверяй адрес получателя перед каждой транзакцией",
+    "Обновляй прошивку аппаратного кошелька",
+    "Не подключай кошелёк к сайтам из рекламы в поисковиках",
+    "Используй разные пароли для каждой биржи",
+    "Проверяй смарт-контракт перед минтом NFT",
+    "Не отвечай на DM с предложениями 'помочь' в крипте",
+    "Сделай бэкап seed-фразы в нескольких местах оффлайн",
+    "Проверь, не было ли утечки твоего email на haveibeenpwned",
+    "Отзови ненужные approvals через revoke.cash",
+    "Не используй публичный Wi-Fi для крипто-транзакций",
+    "Проверяй gas fees перед подтверждением - аномально высокий gas может быть red flag",
 ]
 
 # Daily bot reminder variations (posted once a day to channel)
@@ -181,6 +206,7 @@ class AgentScheduler:
         self._on_author_post = None
         self._on_evening_news = None
         self._on_bot_reminder = None
+        self._on_goodnight_post = None
 
     def set_callbacks(
         self,
@@ -192,6 +218,7 @@ class AgentScheduler:
         on_author_post=None,
         on_evening_news=None,
         on_bot_reminder=None,
+        on_goodnight_post=None,
         **_kwargs,
     ):
         """Set callback functions for scheduled tasks."""
@@ -203,6 +230,7 @@ class AgentScheduler:
         self._on_author_post = on_author_post
         self._on_evening_news = on_evening_news
         self._on_bot_reminder = on_bot_reminder
+        self._on_goodnight_post = on_goodnight_post
 
     def setup(self):
         """Configure the scheduler with all jobs (times in Moscow timezone)."""
@@ -297,10 +325,20 @@ class AgentScheduler:
             replace_existing=True,
         )
 
+        # --- 23:00 Goodnight Post ---
+        self.scheduler.add_job(
+            self._run_goodnight_post,
+            trigger=CronTrigger(hour=23, minute=0),
+            id="goodnight_post",
+            name="Ночной пост (23:00)",
+            replace_existing=True,
+        )
+
         logger.info(
             "Расписание настроено (МСК): "
             "09:00 утренние новости, 10:00 мини-пост, 12:00 напоминание о боте, "
-            "13:00 разбор, 15:00 дневные новости, 17:00 авторский, 20:00 вечерние новости"
+            "13:00 разбор, 15:00 дневные новости, 17:00 авторский, "
+            "20:00 вечерние новости, 23:00 ночной пост"
         )
 
     def start(self):
@@ -389,6 +427,16 @@ class AgentScheduler:
                 await self._on_evening_news()
             except Exception as e:
                 logger.error(f"Evening news failed: {e}")
+
+    async def _run_goodnight_post(self):
+        """Run goodnight post with sweet dreams wish and security tip."""
+        logger.info("Running goodnight post (23:00 MSK)")
+        if self._on_goodnight_post:
+            try:
+                tip_topic = random.choice(GOODNIGHT_TIP_TOPICS)
+                await self._on_goodnight_post(tip_topic)
+            except Exception as e:
+                logger.error(f"Goodnight post failed: {e}")
 
     def get_next_runs(self) -> list[dict]:
         """Get info about upcoming scheduled jobs."""
