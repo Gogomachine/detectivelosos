@@ -17,6 +17,7 @@ from config.prompts import (
     EVENING_DIGEST_TEMPLATE,
     EVENING_NEWS_TEMPLATE,
     FUN_FACT_TEMPLATE,
+    GOODNIGHT_TEMPLATE,
     MINI_POST_TEMPLATE,
     MORNING_DIGEST_TEMPLATE,
     MORNING_NEWS_TEMPLATE,
@@ -410,6 +411,22 @@ class ContentGenerator:
         )
         post = await self._generate(prompt, max_tokens=1500)
         logger.info("Generated author post")
+        return post
+
+    async def generate_goodnight_post(
+        self, tip_topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate a goodnight post with a security tip."""
+        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = GOODNIGHT_TEMPLATE.format(
+            date=today,
+            tip_topic=tip_topic,
+            used_topics=used_str,
+        )
+        post = await self._generate(prompt, max_tokens=1000)
+        logger.info(f"Generated goodnight post with tip: {tip_topic[:50]}")
         return post
 
     def get_category_emoji(self, category: str) -> str:
