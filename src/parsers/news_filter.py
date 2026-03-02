@@ -22,6 +22,10 @@ AML_NATIVE_SOURCES = {
     "Basel AML Index",
     "TRM Labs Insights",
     "Cointelegraph Investigations",
+    "Rekt News",
+    "Rekt News RU",
+    "PeckShield Blog",
+    "PeckShield",
 }
 
 

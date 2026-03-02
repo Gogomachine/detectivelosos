@@ -85,6 +85,25 @@ RSS_FEEDS = [
         "category": "compliance",
         "language": "en",
     },
+    # Crypto security / DeFi hack news
+    {
+        "name": "Rekt News",
+        "url": "https://rekt.news/rss/feed.xml",
+        "category": "investigations",
+        "language": "en",
+    },
+    {
+        "name": "Rekt News RU",
+        "url": "https://rekt.news/ru/rss/feed.xml",
+        "category": "investigations",
+        "language": "ru",
+    },
+    {
+        "name": "PeckShield Blog",
+        "url": "https://medium.com/feed/peckshield",
+        "category": "crypto_aml",
+        "language": "en",
+    },
 ]
 
 # Web pages to scrape (when RSS is not available)
@@ -124,6 +143,19 @@ SCRAPE_SOURCES = [
         "url": "https://www.acams.org/en/taxonomy/term/680",
         "selector": "article, .views-row, .node, [class*='article'], [class*='card']",
         "category": "news",
+    },
+    {
+        "name": "Rekt News RU",
+        "url": "https://rekt.news/ru",
+        "selector": "article, [class*='leaderboard-row'], [class*='article'], a[class*='post'], div[class*='post']",
+        "category": "investigations",
+        "language": "ru",
+    },
+    {
+        "name": "PeckShield",
+        "url": "https://peckshield.com/",
+        "selector": "article, [class*='news'], [class*='post'], [class*='blog'], [class*='card'], section[class*='news']",
+        "category": "crypto_aml",
     },
 ]
 
