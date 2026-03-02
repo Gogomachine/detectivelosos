@@ -86,6 +86,7 @@ class TelegramPublisher:
         self.bot_token = bot_token or TELEGRAM_BOT_TOKEN
         self.channel_id = channel_id or TELEGRAM_CHANNEL_ID
         self._bot: Bot | None = None
+        self._bot_username: str | None = None
 
     @property
     def bot(self) -> Bot:
@@ -93,18 +94,31 @@ class TelegramPublisher:
             self._bot = Bot(token=self.bot_token)
         return self._bot
 
+    async def _get_bot_keyboard(self) -> InlineKeyboardMarkup:
+        """Get inline keyboard with bot link button."""
+        if self._bot_username is None:
+            me = await self.bot.get_me()
+            self._bot_username = me.username
+        return InlineKeyboardMarkup([
+            [InlineKeyboardButton("🤖 Бот Кейса", url=f"https://t.me/{self._bot_username}")],
+        ])
+
     async def publish_post(self, text: str) -> int | None:
-        """Publish a post to the Telegram channel."""
+        """Publish a post to the Telegram channel with bot link button."""
         try:
+            keyboard = await self._get_bot_keyboard()
             parts = self._split_message(text)
             message_id = None
 
-            for part in parts:
+            for i, part in enumerate(parts):
+                # Add bot button only to the last part
+                reply_markup = keyboard if i == len(parts) - 1 else None
                 message = await self.bot.send_message(
                     chat_id=self.channel_id,
                     text=part,
                     parse_mode=ParseMode.HTML,
                     disable_web_page_preview=True,
+                    reply_markup=reply_markup,
                 )
                 if message_id is None:
                     message_id = message.message_id
