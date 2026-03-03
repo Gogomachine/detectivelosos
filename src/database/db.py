@@ -80,6 +80,16 @@ CREATE TABLE IF NOT EXISTS banned_users (
     banned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     banned_by INTEGER
 );
+
+CREATE TABLE IF NOT EXISTS knowledge_base (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    topic TEXT NOT NULL,
+    content TEXT NOT NULL,
+    added_by INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_knowledge_topic ON knowledge_base(topic);
 """
 
 
@@ -407,3 +417,45 @@ class Database:
              value, datetime.now(timezone.utc).isoformat()),
         )
         await self.db.commit()
+
+    # --- Knowledge Base ---
+
+    async def add_knowledge(
+        self, topic: str, content: str, added_by: int = 0
+    ) -> int:
+        """Add an entry to the knowledge base."""
+        cursor = await self.db.execute(
+            """INSERT INTO knowledge_base (topic, content, added_by)
+               VALUES (?, ?, ?)""",
+            (topic, content, added_by),
+        )
+        await self.db.commit()
+        logger.info(f"Knowledge added: {topic[:60]}")
+        return cursor.lastrowid
+
+    async def get_all_knowledge(self) -> list[dict]:
+        """Get all knowledge base entries."""
+        cursor = await self.db.execute(
+            "SELECT * FROM knowledge_base ORDER BY created_at DESC"
+        )
+        rows = await cursor.fetchall()
+        return [dict(row) for row in rows]
+
+    async def search_knowledge(self, query: str) -> list[dict]:
+        """Search knowledge base by topic or content."""
+        cursor = await self.db.execute(
+            """SELECT * FROM knowledge_base
+               WHERE topic LIKE ? OR content LIKE ?
+               ORDER BY created_at DESC""",
+            (f"%{query}%", f"%{query}%"),
+        )
+        rows = await cursor.fetchall()
+        return [dict(row) for row in rows]
+
+    async def delete_knowledge(self, knowledge_id: int):
+        """Delete an entry from the knowledge base."""
+        await self.db.execute(
+            "DELETE FROM knowledge_base WHERE id = ?", (knowledge_id,)
+        )
+        await self.db.commit()
+        logger.info(f"Knowledge #{knowledge_id} deleted")

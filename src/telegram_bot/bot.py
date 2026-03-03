@@ -62,6 +62,25 @@ AML_REPORT_DESCRIPTION = (
 # Conversation states
 WAITING_ADDRESS = 1
 
+def _split_text(text: str, limit: int = MAX_MESSAGE_LENGTH) -> list[str]:
+    """Split text into parts respecting a character limit."""
+    if len(text) <= limit:
+        return [text]
+    parts = []
+    while text:
+        if len(text) <= limit:
+            parts.append(text)
+            break
+        split_pos = text.rfind("\n\n", 0, limit)
+        if split_pos == -1:
+            split_pos = text.rfind("\n", 0, limit)
+        if split_pos == -1:
+            split_pos = limit
+        parts.append(text[:split_pos])
+        text = text[split_pos:].lstrip()
+    return parts
+
+
 # AML Dictionary topics for quick lookup
 AML_DICTIONARY_TOPICS = [
     ("Миксеры и тамблеры", "mixers"),
@@ -197,11 +216,16 @@ class UserBot:
         self._on_force_post = None
         self._on_status = None
         self._on_explain_term = None
+        self._on_admin_chat = None
 
-    def set_callbacks(self, on_force_post=None, on_status=None, on_explain_term=None):
+    def set_callbacks(
+        self, on_force_post=None, on_status=None, on_explain_term=None,
+        on_admin_chat=None,
+    ):
         """Set callback functions for admin commands."""
         self._on_force_post = on_force_post
         self._on_status = on_status
+        self._on_admin_chat = on_admin_chat
         self._on_explain_term = on_explain_term
 
     def _is_admin(self, user_id: int) -> bool:
@@ -636,12 +660,16 @@ class UserBot:
             await self.handle_admin_reply(update, context)
             return
 
-        # 2. Contact message from user
+        # 2. Admin AI chat mode
+        if await self.handle_admin_ai_message(update, context):
+            return
+
+        # 3. Contact message from user
         if context.user_data.get("awaiting_contact_message"):
             await self.handle_contact_message(update, context)
             return
 
-        # 3. Investigation address
+        # 4. Investigation address
         if not context.user_data.get("awaiting_address"):
             return
 
@@ -964,6 +992,151 @@ class UserBot:
         else:
             await update.message.reply_text("Функция не подключена")
 
+    async def cmd_ai(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /ai command - enter AI chat mode (admin only)."""
+        if not update.effective_user or not self._is_admin(update.effective_user.id):
+            return
+        context.user_data["admin_ai_chat"] = True
+        await update.message.reply_text(
+            "🤖 Режим AI-чата активирован.\n\n"
+            "Теперь ты можешь писать мне любые сообщения - "
+            "я отвечу как Кейс Уокер с учётом базы знаний и энциклопедии.\n\n"
+            "Примеры:\n"
+            "- Проанализируй и сделай краткую новость по этой ссылке: ...\n"
+            "- Напиши пост про Lazarus Group\n"
+            "- Что ты знаешь про chain hopping?\n\n"
+            "Команды:\n"
+            "/remember Тема | Текст - добавить в базу знаний\n"
+            "/kb - посмотреть базу знаний\n"
+            "/kbdel 123 - удалить запись из базы\n"
+            "/stop - выйти из режима AI-чата",
+        )
+
+    async def cmd_stop_ai(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /stop command - exit AI chat mode (admin only)."""
+        if not update.effective_user or not self._is_admin(update.effective_user.id):
+            return
+        context.user_data.pop("admin_ai_chat", None)
+        await update.message.reply_text(
+            "🔒 Режим AI-чата отключён. Я снова в обычном режиме.",
+        )
+
+    async def cmd_remember(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /remember command - add entry to knowledge base (admin only).
+
+        Format: /remember Тема | Содержание
+        """
+        if not update.effective_user or not self._is_admin(update.effective_user.id):
+            return
+        if not self.db:
+            await update.message.reply_text("БД не подключена")
+            return
+
+        text = (update.message.text or "").replace("/remember", "", 1).strip()
+        if "|" not in text:
+            await update.message.reply_text(
+                "Формат: /remember Тема | Содержание\n\n"
+                "Пример:\n/remember Lazarus 2025 | В марте 2025 Lazarus Group "
+                "отмыла $1.4B через Thorchain после взлома Bybit.",
+            )
+            return
+
+        topic, content = text.split("|", 1)
+        topic = topic.strip()
+        content = content.strip()
+
+        if not topic or not content:
+            await update.message.reply_text("Тема и содержание не могут быть пустыми.")
+            return
+
+        kb_id = await self.db.add_knowledge(
+            topic=topic,
+            content=content,
+            added_by=update.effective_user.id,
+        )
+        await update.message.reply_text(
+            f"✅ Добавлено в базу знаний (#{kb_id}):\n\n"
+            f"Тема: {topic}\n"
+            f"Содержание: {content[:200]}{'...' if len(content) > 200 else ''}",
+        )
+
+    async def cmd_kb(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /kb command - list knowledge base entries (admin only)."""
+        if not update.effective_user or not self._is_admin(update.effective_user.id):
+            return
+        if not self.db:
+            await update.message.reply_text("БД не подключена")
+            return
+
+        entries = await self.db.get_all_knowledge()
+        if not entries:
+            await update.message.reply_text(
+                "📚 База знаний пуста.\n\n"
+                "Добавь запись:\n/remember Тема | Содержание",
+            )
+            return
+
+        text = "📚 База знаний:\n\n"
+        for e in entries[:30]:
+            content_preview = e["content"][:80]
+            text += (
+                f"#{e['id']} | {e['topic']}\n"
+                f"   {content_preview}{'...' if len(e['content']) > 80 else ''}\n\n"
+            )
+        if len(entries) > 30:
+            text += f"... и ещё {len(entries) - 30} записей"
+
+        await update.message.reply_text(text)
+
+    async def cmd_kbdel(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle /kbdel command - delete knowledge base entry (admin only)."""
+        if not update.effective_user or not self._is_admin(update.effective_user.id):
+            return
+        if not self.db:
+            await update.message.reply_text("БД не подключена")
+            return
+
+        text = (update.message.text or "").replace("/kbdel", "", 1).strip()
+        if not text.isdigit():
+            await update.message.reply_text("Формат: /kbdel 123")
+            return
+
+        kb_id = int(text)
+        await self.db.delete_knowledge(kb_id)
+        await update.message.reply_text(f"🗑 Запись #{kb_id} удалена из базы знаний.")
+
+    async def handle_admin_ai_message(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ) -> bool:
+        """Handle admin message in AI chat mode. Returns True if handled."""
+        if not context.user_data.get("admin_ai_chat"):
+            return False
+        if not self._is_admin(update.effective_user.id):
+            return False
+        if not self._on_admin_chat:
+            await update.message.reply_text(
+                "AI-чат не подключён. Перезапусти бота."
+            )
+            return True
+
+        message = (update.message.text or "").strip()
+        if not message:
+            return True
+
+        await update.message.reply_text("🔄 Думаю...")
+
+        try:
+            response = await self._on_admin_chat(message)
+            # Split long responses
+            parts = _split_text(response, MAX_MESSAGE_LENGTH)
+            for part in parts:
+                await update.message.reply_text(part)
+        except Exception as e:
+            logger.error(f"Admin AI chat error: {e}")
+            await update.message.reply_text(f"Ошибка: {e}")
+
+        return True
+
     async def cmd_orders(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /orders command - list pending investigations (admin only)."""
         if not update.effective_user or not self._is_admin(update.effective_user.id):
@@ -1058,5 +1231,10 @@ class UserBot:
         self.app.add_handler(CommandHandler("status", self.cmd_status))
         self.app.add_handler(CommandHandler("post", self.cmd_force_post))
         self.app.add_handler(CommandHandler("orders", self.cmd_orders))
+        self.app.add_handler(CommandHandler("ai", self.cmd_ai))
+        self.app.add_handler(CommandHandler("stop", self.cmd_stop_ai))
+        self.app.add_handler(CommandHandler("remember", self.cmd_remember))
+        self.app.add_handler(CommandHandler("kb", self.cmd_kb))
+        self.app.add_handler(CommandHandler("kbdel", self.cmd_kbdel))
 
         return self.app

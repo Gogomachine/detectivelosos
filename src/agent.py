@@ -82,6 +82,7 @@ class CaseWalkerAgent:
             ),
             on_status=self.get_status,
             on_explain_term=self.explain_aml_term,
+            on_admin_chat=self.handle_admin_chat,
         )
 
         # Run initial news fetch
@@ -484,6 +485,28 @@ class CaseWalkerAgent:
     async def explain_aml_term(self, term: str) -> str:
         """Explain an AML term using the encyclopedia knowledge base."""
         return await self.generator.explain_term(term)
+
+    async def handle_admin_chat(self, message: str) -> str:
+        """Handle admin AI chat message with custom knowledge context."""
+        # Build custom knowledge context from DB
+        custom_knowledge = ""
+        if self.db:
+            # Search for relevant entries first
+            entries = await self.db.search_knowledge(message)
+            if not entries:
+                # Fall back to all recent entries (limited)
+                entries = await self.db.get_all_knowledge()
+                entries = entries[:10]
+            if entries:
+                parts = []
+                for e in entries[:5]:
+                    parts.append(f"[{e['topic']}]: {e['content']}")
+                custom_knowledge = "\n\n".join(parts)
+
+        return await self.generator.admin_chat(
+            message=message,
+            custom_knowledge=custom_knowledge,
+        )
 
     async def get_status(self) -> str:
         """Get agent status report."""
