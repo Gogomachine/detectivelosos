@@ -42,6 +42,23 @@ INVESTIGATION_TIERS = {
 # Binance referral link
 BINANCE_REFERRAL_URL = "https://tinyurl.com/CaseWalker1"
 
+# AML report description (what the user gets for Stars)
+AML_REPORT_DESCRIPTION = (
+    "📄 Что входит в AML-отчёт:\n\n"
+    "• Адрес кошелька и сеть (Ethereum, Solana, Bitcoin и др.)\n"
+    "• Риск скор (0–100) с визуальным индикатором\n"
+    "• Финансовая сводка: баланс, принято, отправлено, кол-во транзакций\n"
+    "• Первая и последняя активность по адресу\n"
+    "• Анализ рисков Incoming: категории (Sanction list, Hack, Exchange, "
+    "Gambling и др.) с процентами и суммами в USD\n"
+    "• Анализ рисков Outgoing: категории (Sanction list, Hack, Mixing "
+    "service, Suspicious и др.) с процентами и суммами в USD\n"
+    "• Список токенов на кошельке с балансами\n"
+    "• Экспертный обзор от Case Walker Bot с выводами и рекомендациями\n"
+    "• Статус OFAC санкций (при наличии)\n\n"
+    "Отчёт оформлен в фирменном стиле Case Walker Investigation."
+)
+
 # Conversation states
 WAITING_ADDRESS = 1
 
@@ -541,6 +558,7 @@ class UserBot:
             "🔍 Заказать расследование\n\n"
             "Кейс Уокер лично проведёт проверку по указанному адресу "
             "(кошелёк, компания, контрагент).\n\n"
+            f"{AML_REPORT_DESCRIPTION}\n\n"
             "Выбери тариф:\n\n"
         )
         for tier_id, tier in INVESTIGATION_TIERS.items():
