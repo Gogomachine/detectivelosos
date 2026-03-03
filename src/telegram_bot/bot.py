@@ -824,7 +824,18 @@ class UserBot:
             "Кейс работает на результат: парсит новости, "
             "разбирает кейсы, следит за санкциями.\n\n"
             "Если тебе полезен канал - можешь угостить "
-            "детектива кофе. Любая сумма - мотивация!",
+            "детектива кофе. Любая сумма - мотивация!\n\n"
+            "Или отправь крипту напрямую:\n\n"
+            "EVM (ETH/BSC/Polygon/Arbitrum/Base):\n"
+            "0xebF26127f80993FAbc437aaD7719c5B20FBCEcf5\n\n"
+            "SOL:\n"
+            "BpP8RXDs7Kk4wcvLejT8P3usS6PozoJK2Qnw7iGGYYim\n\n"
+            "BTC:\n"
+            "bc1pm52t55hwzsfadmvaxtr3kf3rtzug3uf02cnjqfuau5903sgh5lvstx5z23\n\n"
+            "TRX:\n"
+            "TTURGxcPoBJX6B5aJm9yoQpFwGAXkwp1tD\n\n"
+            "TON:\n"
+            "UQCJ54aXn41b_Zm4RFWGN6wslTCYSHbhO5j7gCVKplG80kXu",
             reply_markup=InlineKeyboardMarkup(buttons),
         )
 
