@@ -40,7 +40,7 @@ INVESTIGATION_TIERS = {
 }
 
 # Binance referral link
-BINANCE_REFERRAL_URL = "https://www.binance.com/referral/earn-together/refer2earn-usdc/claim?ref=GRO_28502_YIK87"
+BINANCE_REFERRAL_URL = "https://tinyurl.com/CaseWalker1"
 
 # Conversation states
 WAITING_ADDRESS = 1
