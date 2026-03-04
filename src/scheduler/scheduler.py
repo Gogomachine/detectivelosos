@@ -18,7 +18,6 @@ Total: 8 posts/day, 3 news parses.
 """
 
 import logging
-import random
 
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -376,8 +375,7 @@ class AgentScheduler:
         logger.info("Running mini post generation (10:00 MSK)")
         if self._on_mini_post:
             try:
-                topic = random.choice(MINI_POST_TOPICS)
-                await self._on_mini_post(topic)
+                await self._on_mini_post()
             except Exception as e:
                 logger.error(f"Mini post failed: {e}")
 
@@ -396,8 +394,7 @@ class AgentScheduler:
         logger.info("Running deep dive generation (13:00 MSK)")
         if self._on_deep_dive:
             try:
-                topic = random.choice(DEEP_DIVE_TOPICS)
-                await self._on_deep_dive(topic)
+                await self._on_deep_dive()
             except Exception as e:
                 logger.error(f"Deep dive failed: {e}")
 
@@ -433,8 +430,7 @@ class AgentScheduler:
         logger.info("Running goodnight post (23:00 MSK)")
         if self._on_goodnight_post:
             try:
-                tip_topic = random.choice(GOODNIGHT_TIP_TOPICS)
-                await self._on_goodnight_post(tip_topic)
+                await self._on_goodnight_post()
             except Exception as e:
                 logger.error(f"Goodnight post failed: {e}")
 

@@ -23,6 +23,7 @@ from config.prompts import (
     MORNING_NEWS_TEMPLATE,
     INVESTIGATION_TEMPLATE,
     NEWS_POST_TEMPLATE,
+    STYLE_EXAMPLES,
     SYSTEM_PROMPT,
     WEEKLY_ANALYTICS_TEMPLATE,
 )
@@ -161,10 +162,11 @@ class ContentGenerator:
     async def _generate(self, user_prompt: str, max_tokens: int = 2000) -> str:
         """Send a prompt to Claude and get the response."""
         try:
+            full_system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
             message = await self.client.messages.create(
                 model=self.model,
                 max_tokens=max_tokens,
-                system=SYSTEM_PROMPT,
+                system=full_system,
                 messages=[{"role": "user", "content": user_prompt}],
             )
             return message.content[0].text
@@ -177,9 +179,9 @@ class ContentGenerator:
     ) -> str:
         """Send a prompt with additional encyclopedia context."""
         try:
-            system = SYSTEM_PROMPT
+            system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
             if extra_context:
-                system = f"{SYSTEM_PROMPT}\n\n{extra_context}"
+                system = f"{system}\n\n{extra_context}"
             message = await self.client.messages.create(
                 model=self.model,
                 max_tokens=max_tokens,
