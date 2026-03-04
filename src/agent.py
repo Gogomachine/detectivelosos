@@ -14,6 +14,7 @@ Daily schedule (Moscow time):
 
 import asyncio
 import logging
+import random
 from datetime import datetime, timedelta, timezone
 
 import aiohttp
@@ -24,7 +25,12 @@ from src.database.db import Database
 from src.parsers.news_filter import NewsFilter
 from src.parsers.rss_parser import RSSParser
 from src.parsers.web_scraper import WebScraper
-from src.scheduler.scheduler import AgentScheduler
+from src.scheduler.scheduler import (
+    DEEP_DIVE_TOPICS,
+    GOODNIGHT_TIP_TOPICS,
+    MINI_POST_TOPICS,
+    AgentScheduler,
+)
 from src.telegram_bot.bot import BINANCE_REFERRAL_URL, TelegramPublisher, UserBot
 
 logger = logging.getLogger(__name__)
@@ -63,13 +69,13 @@ class CaseWalkerAgent:
         self.scheduler.set_callbacks(
             on_parse_news=self.parse_all_news,
             on_morning_news=lambda: self.generate_and_publish_news_briefing("morning"),
-            on_mini_post=self.generate_and_publish_mini_post,
-            on_deep_dive=self.generate_and_publish_deep_dive,
+            on_mini_post=lambda: self.generate_and_publish_mini_post(),
+            on_deep_dive=lambda: self.generate_and_publish_deep_dive(),
             on_afternoon_news=lambda: self.generate_and_publish_news_briefing("afternoon"),
             on_author_post=self.generate_and_publish_author_post,
             on_evening_news=lambda: self.generate_and_publish_news_briefing("evening"),
             on_bot_reminder=self.publish_bot_reminder,
-            on_goodnight_post=self.generate_and_publish_goodnight_post,
+            on_goodnight_post=lambda: self.generate_and_publish_goodnight_post(),
         )
         self.scheduler.setup()
         self.scheduler.start()
@@ -100,6 +106,20 @@ class CaseWalkerAgent:
             await self._http_session.close()
         await self.db.close()
         logger.info("Кейс Уокер остановлен.")
+
+    # --- Topic Selection ---
+
+    @staticmethod
+    def _pick_unused_topic(all_topics: list[str], used_topics: list[str]) -> str:
+        """Pick a random topic that hasn't been used yet.
+
+        If all topics have been used, resets and picks from the full list.
+        """
+        available = [t for t in all_topics if t not in used_topics]
+        if not available:
+            # All topics exhausted — reset by picking from full list
+            available = list(all_topics)
+        return random.choice(available)
 
     # --- Core Operations ---
 
@@ -227,10 +247,14 @@ class CaseWalkerAgent:
 
     # --- Mini Post (10:00) ---
 
-    async def generate_and_publish_mini_post(self, topic: str):
+    async def generate_and_publish_mini_post(self, topic: str | None = None):
         """Generate and publish a mini educational post about security/AML."""
         # Get used topics to avoid repetition
         used_topics = await self.db.get_used_topics("mini_post")
+
+        # Pick an unused topic if none specified
+        if topic is None:
+            topic = self._pick_unused_topic(MINI_POST_TOPICS, used_topics)
 
         post_text = await self.generator.generate_mini_post(
             topic=topic,
@@ -253,9 +277,13 @@ class CaseWalkerAgent:
 
     # --- Deep Dive (13:00) ---
 
-    async def generate_and_publish_deep_dive(self, topic: str):
+    async def generate_and_publish_deep_dive(self, topic: str | None = None):
         """Generate and publish a deep dive analysis post."""
         used_topics = await self.db.get_used_topics("deep_dive")
+
+        # Pick an unused topic if none specified
+        if topic is None:
+            topic = self._pick_unused_topic(DEEP_DIVE_TOPICS, used_topics)
 
         post_text = await self.generator.generate_deep_dive(
             topic=topic,
@@ -326,9 +354,13 @@ class CaseWalkerAgent:
 
     # --- Goodnight Post (23:00) ---
 
-    async def generate_and_publish_goodnight_post(self, tip_topic: str):
+    async def generate_and_publish_goodnight_post(self, tip_topic: str | None = None):
         """Generate and publish a goodnight post with sweet dreams wish and security tip."""
         used_topics = await self.db.get_used_topics("goodnight_post")
+
+        # Pick an unused tip topic if none specified
+        if tip_topic is None:
+            tip_topic = self._pick_unused_topic(GOODNIGHT_TIP_TOPICS, used_topics)
 
         post_text = await self.generator.generate_goodnight_post(
             tip_topic=tip_topic,
