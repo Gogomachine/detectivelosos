@@ -429,6 +429,41 @@ class ContentGenerator:
         logger.info(f"Generated goodnight post: {tip_topic[:50]}")
         return post
 
+    async def admin_chat(
+        self,
+        message: str,
+        custom_knowledge: str = "",
+    ) -> str:
+        """Process an admin message (free-form chat with AI agent).
+
+        The admin can ask anything: analyze a link, generate content,
+        answer a question using the knowledge base and encyclopedia.
+        """
+        context_parts = []
+
+        # Add encyclopedia context based on message keywords
+        encyclopedia_context = _get_relevant_context(message)
+        if encyclopedia_context:
+            context_parts.append(encyclopedia_context)
+
+        # Add custom knowledge from DB
+        if custom_knowledge:
+            context_parts.append(
+                f"Дополнительные знания из базы (добавлены админом):\n\n{custom_knowledge}"
+            )
+
+        extra = "\n\n---\n\n".join(context_parts) if context_parts else ""
+
+        prompt = (
+            "Ты общаешься с админом бота. Отвечай как Кейс Уокер - "
+            "экспертно, живо и по делу. Используй знания из энциклопедии и базы знаний.\n\n"
+            "Если админ просит проанализировать ссылку - разбери тему, дай выводы.\n"
+            "Если просит сделать новость/пост - сгенерируй в формате канала.\n"
+            "Если спрашивает - отвечай развёрнуто.\n\n"
+            f"Сообщение админа:\n{message}"
+        )
+        return await self._generate_with_context(prompt, extra, max_tokens=3000)
+
     def get_category_emoji(self, category: str) -> str:
         """Get emoji for post category."""
         return POST_CATEGORIES.get(category, "📝")
