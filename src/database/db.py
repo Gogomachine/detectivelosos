@@ -278,6 +278,17 @@ class Database:
         rows = await cursor.fetchall()
         return [dict(row) for row in rows]
 
+    async def get_posts_since(self, since: datetime) -> list[dict]:
+        """Get all published posts since a given datetime."""
+        cursor = await self.db.execute(
+            """SELECT * FROM posts
+               WHERE created_at >= ? AND status = 'published'
+               ORDER BY created_at""",
+            (since.isoformat(),),
+        )
+        rows = await cursor.fetchall()
+        return [dict(row) for row in rows]
+
     async def get_post_count_today(self) -> int:
         """Get number of posts published today."""
         today = datetime.now(timezone.utc).strftime("%Y-%m-%d")

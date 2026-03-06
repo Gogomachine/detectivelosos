@@ -10,22 +10,27 @@ from config import ANTHROPIC_API_KEY
 from config.encyclopedia import AML_ENCYCLOPEDIA
 from config.prompts import (
     AFTERNOON_NEWS_TEMPLATE,
+    AML_SERVICES_TEMPLATE,
     AUTHOR_POST_TEMPLATE,
     COMBINED_POST_TEMPLATE,
     DEEP_DIVE_TEMPLATE,
     ENRICHMENT_TEMPLATE,
     EVENING_DIGEST_TEMPLATE,
     EVENING_NEWS_TEMPLATE,
+    EXPERT_THOUGHTS_TEMPLATE,
     FUN_FACT_TEMPLATE,
     GOODNIGHT_POST_TEMPLATE,
+    HACK_ARTICLE_TEMPLATE,
     MINI_POST_TEMPLATE,
     MORNING_DIGEST_TEMPLATE,
     MORNING_NEWS_TEMPLATE,
     INVESTIGATION_TEMPLATE,
     NEWS_POST_TEMPLATE,
+    RANDOM_ARTICLE_TEMPLATE,
     STYLE_EXAMPLES,
     SYSTEM_PROMPT,
     WEEKLY_ANALYTICS_TEMPLATE,
+    WEEKLY_SUMMARY_TEMPLATE,
 )
 from config.sources import POST_CATEGORIES
 
@@ -475,6 +480,104 @@ class ContentGenerator:
         )
         post = await self._generate(prompt, max_tokens=1000)
         logger.info(f"Generated goodnight post: {tip_topic[:50]}")
+        return post
+
+    async def generate_hack_article(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate an article about a crypto hack/theft."""
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = HACK_ARTICLE_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+        )
+        context = _get_relevant_context(topic)
+        post = await self._generate_with_context(prompt, context, max_tokens=4000)
+        logger.info(f"Generated hack article: {topic[:50]}")
+        return post
+
+    async def generate_aml_services_post(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate a review post about an AML service/tool."""
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = AML_SERVICES_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+        )
+        context = _get_relevant_context(topic)
+        post = await self._generate_with_context(prompt, context, max_tokens=2500)
+        logger.info(f"Generated AML services post: {topic[:50]}")
+        return post
+
+    async def generate_expert_thoughts(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate an expert opinion/thoughts post."""
+        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = EXPERT_THOUGHTS_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+            date=today,
+        )
+        context = _get_relevant_context(topic)
+        post = await self._generate_with_context(prompt, context, max_tokens=2000)
+        logger.info(f"Generated expert thoughts: {topic[:50]}")
+        return post
+
+    async def generate_random_article_post(
+        self, title: str, content: str, source: str, url: str
+    ) -> str:
+        """Generate a post from a random article in the database."""
+        prompt = RANDOM_ARTICLE_TEMPLATE.format(
+            title=title,
+            content=content[:3000],
+            source=source,
+            url=url or "не указан",
+        )
+        context = _get_relevant_context(f"{title} {content[:500]}")
+        post = await self._generate_with_context(prompt, context)
+        logger.info(f"Generated random article post: {title[:50]}")
+        return post
+
+    async def generate_weekly_summary(
+        self, news_list: str, weekly_posts: str
+    ) -> str:
+        """Generate a weekly summary post for Sunday."""
+        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        prompt = WEEKLY_SUMMARY_TEMPLATE.format(
+            date=today,
+            news_list=news_list or "Тихая неделя - мало новостей.",
+            weekly_posts=weekly_posts or "Нет данных о постах за неделю.",
+        )
+        context = _get_relevant_context("тренды AML крипто 2025 2026")
+        post = await self._generate_with_context(prompt, context, max_tokens=3000)
+        logger.info("Generated weekly summary")
         return post
 
     async def admin_chat(

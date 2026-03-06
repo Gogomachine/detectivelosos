@@ -2,14 +2,14 @@
 Main AML Detective Agent orchestrator.
 Coordinates all components: parsing, content generation, database, and publishing.
 
-Daily schedule (Moscow time):
-  09:00 - Morning News (greeting + news without comments)
-  10:00 - Mini Post (security/AML educational)
-  13:00 - Deep Dive (crypto networks, AML incidents analysis)
-  15:00 - Afternoon News (news + expert opinion on main news)
-  17:00 - Author's Post (free-form, personal)
-  20:00 - Evening News (news with links + expert summary)
-  23:00 - Goodnight Post (sweet dreams wish + mini security tip)
+Weekly schedule (Moscow time):
+  Mon: 09:00 News | 13:00 Security     | 17:00 Author     | 19:00 Evening News
+  Tue: 09:00 News | 13:00 Hack Article | 17:00 Author     | 19:00 Evening News
+  Wed: 09:00 News | 13:00 AML Services | 17:00 Author     | 19:00 Evening News
+  Thu: 09:00 News |                     | 17:00 Random Art | 19:00 Evening News
+  Fri: 09:00 News | 13:00 Hack Article | 17:00 Author     | 19:00 Evening News
+  Sat: 09:00 News |                     | 17:00 Expert     | 19:00 Evening News
+  Sun: 09:00 News |                     | 18:00 Weekly Summary
 """
 
 import asyncio
@@ -27,16 +27,17 @@ from src.parsers.news_filter import NewsFilter
 from src.parsers.rss_parser import RSSParser
 from src.parsers.web_scraper import WebScraper
 from src.scheduler.scheduler import (
-    DEEP_DIVE_TOPICS,
-    GOODNIGHT_TIP_TOPICS,
-    MINI_POST_TOPICS,
+    AML_SERVICES_TOPICS,
+    EXPERT_THOUGHTS_TOPICS,
+    HACK_ARTICLE_TOPICS,
+    SECURITY_POST_TOPICS,
     AgentScheduler,
 )
 from src.telegram_bot.bot import BINANCE_REFERRAL_URL, TelegramPublisher, UserBot
 
 logger = logging.getLogger(__name__)
 
-MIN_DAILY_POSTS = 6
+MIN_DAILY_POSTS = 3
 NEWS_HEADER_IMAGE = os.path.join(
     os.path.dirname(os.path.dirname(__file__)), "assets", "news_header.jpg",
 )
@@ -73,13 +74,14 @@ class CaseWalkerAgent:
         self.scheduler.set_callbacks(
             on_parse_news=self.parse_all_news,
             on_morning_news=lambda: self.generate_and_publish_news_briefing("morning"),
-            on_mini_post=lambda: self.generate_and_publish_mini_post(),
-            on_deep_dive=lambda: self.generate_and_publish_deep_dive(),
-            on_afternoon_news=lambda: self.generate_and_publish_news_briefing("afternoon"),
-            on_author_post=self.generate_and_publish_author_post,
             on_evening_news=lambda: self.generate_and_publish_news_briefing("evening"),
-            on_bot_reminder=self.publish_bot_reminder,
-            on_goodnight_post=lambda: self.generate_and_publish_goodnight_post(),
+            on_security_post=self.generate_and_publish_security_post,
+            on_hack_article=self.generate_and_publish_hack_article,
+            on_aml_services=self.generate_and_publish_aml_services,
+            on_random_article=self.generate_and_publish_random_article,
+            on_author_post=self.generate_and_publish_author_post,
+            on_expert_thoughts=self.generate_and_publish_expert_thoughts,
+            on_weekly_summary=self.generate_and_publish_weekly_summary,
         )
         self.scheduler.setup()
         self.scheduler.start()
@@ -87,7 +89,7 @@ class CaseWalkerAgent:
         # Configure user bot callbacks
         self.user_bot.db = self.db
         self.user_bot.set_callbacks(
-            on_force_post=lambda: self.generate_and_publish_mini_post(
+            on_force_post=lambda: self.generate_and_publish_security_post(
                 "Red flags при крипто-транзакциях: топ-5"
             ),
             on_status=self.get_status,
@@ -191,10 +193,10 @@ class CaseWalkerAgent:
         await self.db.set_state("last_parse", datetime.now(timezone.utc).isoformat())
         return saved_count
 
-    # --- News Briefings (09:00, 15:00, 20:00) ---
+    # --- News Briefings (09:00, 19:00) ---
 
     async def generate_and_publish_news_briefing(self, time_of_day: str):
-        """Generate and publish a news briefing (morning/afternoon/evening)."""
+        """Generate and publish a news briefing (morning/evening)."""
         # Get fresh unposted articles (max 7)
         articles = await self.db.get_diverse_unposted_articles(count=7)
 
@@ -254,66 +256,105 @@ class CaseWalkerAgent:
         else:
             await self.db.update_post_status(post_id, "failed")
 
-    # --- Mini Post (10:00) ---
+    # --- Security Post (Mon 13:00) ---
 
-    async def generate_and_publish_mini_post(self, topic: str | None = None):
-        """Generate and publish a mini educational post about security/AML."""
-        # Get used topics to avoid repetition
-        used_topics = await self.db.get_used_topics("mini_post")
-
-        # Pick an unused topic if none specified
+    async def generate_and_publish_security_post(self, topic: str | None = None):
+        """Generate and publish a security/AML educational post."""
+        used_topics = await self.db.get_used_topics("security_post")
         if topic is None:
-            topic = self._pick_unused_topic(MINI_POST_TOPICS, used_topics)
+            topic = self._pick_unused_topic(SECURITY_POST_TOPICS, used_topics)
 
         post_text = await self.generator.generate_mini_post(
-            topic=topic,
-            used_topics=used_topics,
+            topic=topic, used_topics=used_topics,
         )
 
         post_id = await self.db.save_post(
-            post_type="mini_post",
-            content=post_text,
-            status="draft",
+            post_type="security_post", content=post_text, status="draft",
         )
-
         message_id = await self.publisher.publish_post(post_text)
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
-            await self.db.save_used_topic(topic, "mini_post")
-            logger.info(f"Мини-пост опубликован: {topic[:50]}")
+            await self.db.save_used_topic(topic, "security_post")
+            logger.info(f"Пост про безопасность опубликован: {topic[:50]}")
         else:
             await self.db.update_post_status(post_id, "failed")
 
-    # --- Deep Dive (13:00) ---
+    # --- Hack Article (Tue/Fri 13:00) ---
 
-    async def generate_and_publish_deep_dive(self, topic: str | None = None):
-        """Generate and publish a deep dive analysis post."""
-        used_topics = await self.db.get_used_topics("deep_dive")
-
-        # Pick an unused topic if none specified
+    async def generate_and_publish_hack_article(self, topic: str | None = None):
+        """Generate and publish an article about a crypto hack."""
+        used_topics = await self.db.get_used_topics("hack_article")
         if topic is None:
-            topic = self._pick_unused_topic(DEEP_DIVE_TOPICS, used_topics)
+            topic = self._pick_unused_topic(HACK_ARTICLE_TOPICS, used_topics)
 
-        post_text = await self.generator.generate_deep_dive(
-            topic=topic,
-            used_topics=used_topics,
+        post_text = await self.generator.generate_hack_article(
+            topic=topic, used_topics=used_topics,
         )
 
         post_id = await self.db.save_post(
-            post_type="deep_dive",
-            content=post_text,
-            status="draft",
+            post_type="hack_article", content=post_text, status="draft",
         )
-
         message_id = await self.publisher.publish_post(post_text)
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
-            await self.db.save_used_topic(topic, "deep_dive")
-            logger.info(f"Разбор опубликован: {topic[:50]}")
+            await self.db.save_used_topic(topic, "hack_article")
+            logger.info(f"Статья про взлом опубликована: {topic[:50]}")
         else:
             await self.db.update_post_status(post_id, "failed")
 
-    # --- Author's Post (17:00) ---
+    # --- AML Services Review (Wed 13:00) ---
+
+    async def generate_and_publish_aml_services(self, topic: str | None = None):
+        """Generate and publish an AML service review post."""
+        used_topics = await self.db.get_used_topics("aml_services")
+        if topic is None:
+            topic = self._pick_unused_topic(AML_SERVICES_TOPICS, used_topics)
+
+        post_text = await self.generator.generate_aml_services_post(
+            topic=topic, used_topics=used_topics,
+        )
+
+        post_id = await self.db.save_post(
+            post_type="aml_services", content=post_text, status="draft",
+        )
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            await self.db.save_used_topic(topic, "aml_services")
+            logger.info(f"Обзор AML-сервиса опубликован: {topic[:50]}")
+        else:
+            await self.db.update_post_status(post_id, "failed")
+
+    # --- Random Article (Thu 17:00) ---
+
+    async def generate_and_publish_random_article(self):
+        """Publish a random article from the database, rephrased as a channel post."""
+        article = await self.db.get_random_article()
+        if not article:
+            logger.warning("Нет статей для рандомного поста, публикуем авторский")
+            return await self.generate_and_publish_author_post()
+
+        post_text = await self.generator.generate_random_article_post(
+            title=article.get("title", ""),
+            content=article.get("content", ""),
+            source=article.get("source", ""),
+            url=article.get("url", ""),
+        )
+
+        post_id = await self.db.save_post(
+            post_type="random_article",
+            content=post_text,
+            article_ids=str(article.get("id", "")),
+            status="draft",
+        )
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            logger.info(f"Рандомная статья опубликована: {article.get('title', '')[:50]}")
+        else:
+            await self.db.update_post_status(post_id, "failed")
+
+    # --- Author's Post (Mon/Tue/Wed/Fri 17:00) ---
 
     async def generate_and_publish_author_post(self):
         """Generate and publish a free-form author's post."""
@@ -324,69 +365,78 @@ class CaseWalkerAgent:
         )
 
         post_id = await self.db.save_post(
-            post_type="author_post",
-            content=post_text,
-            status="draft",
+            post_type="author_post", content=post_text, status="draft",
         )
-
         message_id = await self.publisher.publish_post(post_text)
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
-            # Save first line as topic marker to avoid repetition
             first_line = post_text.split("\n")[0][:100]
             await self.db.save_used_topic(first_line, "author_post")
             logger.info("Авторский пост опубликован")
         else:
             await self.db.update_post_status(post_id, "failed")
 
-    # --- Bot Reminder (12:00) ---
+    # --- Expert Thoughts (Sat 17:00) ---
 
-    async def publish_bot_reminder(self, message: str):
-        """Publish a daily bot reminder to the channel with a link to the bot."""
-        # Add inline button to open the bot
-        from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+    async def generate_and_publish_expert_thoughts(self, topic: str | None = None):
+        """Generate and publish an expert opinion post."""
+        used_topics = await self.db.get_used_topics("expert_thoughts")
+        if topic is None:
+            topic = self._pick_unused_topic(EXPERT_THOUGHTS_TOPICS, used_topics)
 
-        bot = self.publisher.bot
-        keyboard = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🤖 Открыть бота", url=f"https://t.me/{(await bot.get_me()).username}")],
-        ])
-
-        try:
-            msg = await bot.send_message(
-                chat_id=self.publisher.channel_id,
-                text=message,
-                reply_markup=keyboard,
-            )
-            logger.info(f"Напоминание о боте опубликовано, msg_id={msg.message_id}")
-        except Exception as e:
-            logger.error(f"Ошибка публикации напоминания о боте: {e}")
-
-    # --- Goodnight Post (23:00) ---
-
-    async def generate_and_publish_goodnight_post(self, tip_topic: str | None = None):
-        """Generate and publish a goodnight post with sweet dreams wish and security tip."""
-        used_topics = await self.db.get_used_topics("goodnight_post")
-
-        # Pick an unused tip topic if none specified
-        if tip_topic is None:
-            tip_topic = self._pick_unused_topic(GOODNIGHT_TIP_TOPICS, used_topics)
-
-        post_text = await self.generator.generate_goodnight_post(
-            tip_topic=tip_topic,
-            used_topics=used_topics,
+        post_text = await self.generator.generate_expert_thoughts(
+            topic=topic, used_topics=used_topics,
         )
 
         post_id = await self.db.save_post(
-            post_type="goodnight_post",
-            content=post_text,
-            status="draft",
+            post_type="expert_thoughts", content=post_text, status="draft",
         )
-
         message_id = await self.publisher.publish_post(post_text)
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
-            await self.db.save_used_topic(tip_topic, "goodnight_post")
-            logger.info(f"Ночной пост опубликован: {tip_topic[:50]}")
+            await self.db.save_used_topic(topic, "expert_thoughts")
+            logger.info(f"Экспертные мысли опубликованы: {topic[:50]}")
+        else:
+            await self.db.update_post_status(post_id, "failed")
+
+    # --- Weekly Summary (Sun 18:00) ---
+
+    async def generate_and_publish_weekly_summary(self):
+        """Generate and publish a weekly summary post on Sunday."""
+        from datetime import timedelta
+
+        # Get articles from the last 7 days
+        since = datetime.now(timezone.utc) - timedelta(days=7)
+        articles = await self.db.get_articles_since(since)
+
+        news_list = "\n".join(
+            f"- {a['title']} ({a['source']}) | {a.get('url', '')}"
+            for a in (articles or [])[:20]
+        )
+
+        # Get posts from the last 7 days
+        posts_week = await self.db.get_posts_since(since) if hasattr(self.db, 'get_posts_since') else []
+        weekly_posts = ""
+        if posts_week:
+            summaries = []
+            for p in posts_week:
+                ptype = p.get("post_type", "")
+                content = p.get("content", "")[:100]
+                summaries.append(f"[{ptype}] {content}...")
+            weekly_posts = "\n".join(summaries)
+
+        post_text = await self.generator.generate_weekly_summary(
+            news_list=news_list,
+            weekly_posts=weekly_posts,
+        )
+
+        post_id = await self.db.save_post(
+            post_type="weekly_summary", content=post_text, status="draft",
+        )
+        message_id = await self.publisher.publish_post(post_text)
+        if message_id:
+            await self.db.update_post_status(post_id, "published", message_id)
+            logger.info("Итоги недели опубликованы")
         else:
             await self.db.update_post_status(post_id, "failed")
 
@@ -570,13 +620,13 @@ class CaseWalkerAgent:
             f"  - Статей в базе: {articles_today}\n"
             f"  - Последний парсинг: {last_parse}\n\n"
             f"Расписание (МСК):\n"
-            f"  09:00 - Утренние новости\n"
-            f"  10:00 - Мини-пост\n"
-            f"  13:00 - Разбор\n"
-            f"  15:00 - Дневные новости\n"
-            f"  17:00 - Авторский пост\n"
-            f"  20:00 - Вечерние новости\n"
-            f"  23:00 - Ночной пост\n\n"
+            f"  Пн: 09:00 новости | 13:00 безопасность | 17:00 размышления | 19:00 вечерние\n"
+            f"  Вт: 09:00 новости | 13:00 взломы | 17:00 размышления | 19:00 вечерние\n"
+            f"  Ср: 09:00 новости | 13:00 AML-сервисы | 17:00 размышления | 19:00 вечерние\n"
+            f"  Чт: 09:00 новости | 17:00 рандомная статья | 19:00 вечерние\n"
+            f"  Пт: 09:00 новости | 13:00 взломы | 17:00 размышления | 19:00 вечерние\n"
+            f"  Сб: 09:00 новости | 17:00 экспертные мысли | 19:00 вечерние\n"
+            f"  Вс: 09:00 новости | 18:00 итоги недели\n\n"
             f"Ближайшие задачи:\n{next_runs_text}"
         )
 
