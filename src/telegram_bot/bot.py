@@ -639,10 +639,16 @@ class UserBot:
     async def handle_photo_message(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
-        """Handle photo messages (admin reply with photo)."""
-        if not context.user_data.get("reply_to_user_id"):
-            return
+        """Handle photo messages (admin reply with photo or AI chat with image)."""
         if not self._is_admin(update.effective_user.id):
+            return
+
+        # Admin AI chat mode - analyze the image
+        if context.user_data.get("admin_ai_chat"):
+            await self.handle_admin_ai_photo(update, context)
+            return
+
+        if not context.user_data.get("reply_to_user_id"):
             return
         await self.handle_admin_reply(update, context)
 
@@ -1015,7 +1021,8 @@ class UserBot:
             "Примеры:\n"
             "- Проанализируй и сделай краткую новость по этой ссылке: ...\n"
             "- Напиши пост про Lazarus Group\n"
-            "- Что ты знаешь про chain hopping?\n\n"
+            "- Что ты знаешь про chain hopping?\n"
+            "- Отправь картинку/скриншот - я проанализирую содержимое\n\n"
             "Команды:\n"
             "/remember Тема | Текст - добавить в базу знаний\n"
             "/kb - посмотреть базу знаний\n"
@@ -1147,6 +1154,40 @@ class UserBot:
             await update.message.reply_text(f"Ошибка: {e}")
 
         return True
+
+    async def handle_admin_ai_photo(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle admin photo in AI chat mode - analyze image with vision."""
+        if not self._on_admin_chat:
+            await update.message.reply_text(
+                "AI-чат не подключён. Перезапусти бота."
+            )
+            return
+
+        # Get the highest resolution photo
+        photo = update.message.photo[-1]
+        file = await photo.get_file()
+        image_bytes = await file.download_as_bytearray()
+
+        import base64
+        image_b64 = base64.b64encode(bytes(image_bytes)).decode("utf-8")
+
+        caption = (update.message.caption or "").strip()
+        message = caption if caption else "Проанализируй это изображение"
+
+        await update.message.reply_text("🔄 Анализирую изображение...")
+
+        try:
+            response = await self._on_admin_chat(
+                message, image_b64=image_b64
+            )
+            parts = _split_text(response, MAX_MESSAGE_LENGTH)
+            for part in parts:
+                await update.message.reply_text(part)
+        except Exception as e:
+            logger.error(f"Admin AI photo chat error: {e}")
+            await update.message.reply_text(f"Ошибка: {e}")
 
     async def cmd_orders(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /orders command - list pending investigations (admin only)."""

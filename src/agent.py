@@ -518,7 +518,9 @@ class CaseWalkerAgent:
         """Explain an AML term using the encyclopedia knowledge base."""
         return await self.generator.explain_term(term)
 
-    async def handle_admin_chat(self, message: str) -> str:
+    async def handle_admin_chat(
+        self, message: str, image_b64: str | None = None
+    ) -> str:
         """Handle admin AI chat message with custom knowledge context."""
         # Build custom knowledge context from DB
         custom_knowledge = ""
@@ -538,6 +540,7 @@ class CaseWalkerAgent:
         return await self.generator.admin_chat(
             message=message,
             custom_knowledge=custom_knowledge,
+            image_b64=image_b64,
         )
 
     async def get_status(self) -> str:

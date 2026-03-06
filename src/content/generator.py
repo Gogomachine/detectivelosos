@@ -159,6 +159,11 @@ class ContentGenerator:
         self.client = anthropic.AsyncAnthropic(api_key=api_key or ANTHROPIC_API_KEY)
         self.model = "claude-sonnet-4-20250514"
 
+    @staticmethod
+    def _clean_markdown(text: str) -> str:
+        """Remove bold markdown (**) from generated text."""
+        return text.replace("**", "")
+
     async def _generate(self, user_prompt: str, max_tokens: int = 2000) -> str:
         """Send a prompt to Claude and get the response."""
         try:
@@ -169,9 +174,50 @@ class ContentGenerator:
                 system=full_system,
                 messages=[{"role": "user", "content": user_prompt}],
             )
-            return message.content[0].text
+            return self._clean_markdown(message.content[0].text)
         except Exception as e:
             logger.error(f"Claude API error: {e}")
+            raise
+
+    async def _generate_with_image(
+        self,
+        user_prompt: str,
+        image_b64: str,
+        extra_context: str = "",
+        max_tokens: int = 2000,
+    ) -> str:
+        """Send a prompt with an image to Claude (vision) and get the response."""
+        try:
+            system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
+            if extra_context:
+                system = f"{system}\n\n{extra_context}"
+            message = await self.client.messages.create(
+                model=self.model,
+                max_tokens=max_tokens,
+                system=system,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": "image/jpeg",
+                                    "data": image_b64,
+                                },
+                            },
+                            {
+                                "type": "text",
+                                "text": user_prompt,
+                            },
+                        ],
+                    }
+                ],
+            )
+            return self._clean_markdown(message.content[0].text)
+        except Exception as e:
+            logger.error(f"Claude Vision API error: {e}")
             raise
 
     async def _generate_with_context(
@@ -188,7 +234,7 @@ class ContentGenerator:
                 system=system,
                 messages=[{"role": "user", "content": user_prompt}],
             )
-            return message.content[0].text
+            return self._clean_markdown(message.content[0].text)
         except Exception as e:
             logger.error(f"Claude API error: {e}")
             raise
@@ -435,11 +481,13 @@ class ContentGenerator:
         self,
         message: str,
         custom_knowledge: str = "",
+        image_b64: str | None = None,
     ) -> str:
         """Process an admin message (free-form chat with AI agent).
 
         The admin can ask anything: analyze a link, generate content,
         answer a question using the knowledge base and encyclopedia.
+        Supports image analysis when image_b64 is provided.
         """
         context_parts = []
 
@@ -456,15 +504,22 @@ class ContentGenerator:
 
         extra = "\n\n---\n\n".join(context_parts) if context_parts else ""
 
-        prompt = (
+        prompt_text = (
             "Ты общаешься с админом бота. Отвечай как Кейс Уокер - "
             "экспертно, живо и по делу. Используй знания из энциклопедии и базы знаний.\n\n"
             "Если админ просит проанализировать ссылку - разбери тему, дай выводы.\n"
             "Если просит сделать новость/пост - сгенерируй в формате канала.\n"
+            "Если отправлено изображение - опиши что на нём, проанализируй контент.\n"
             "Если спрашивает - отвечай развёрнуто.\n\n"
             f"Сообщение админа:\n{message}"
         )
-        return await self._generate_with_context(prompt, extra, max_tokens=3000)
+
+        if image_b64:
+            # Use vision: build multimodal content
+            return await self._generate_with_image(
+                prompt_text, image_b64, extra, max_tokens=3000
+            )
+        return await self._generate_with_context(prompt_text, extra, max_tokens=3000)
 
     def get_category_emoji(self, category: str) -> str:
         """Get emoji for post category."""
