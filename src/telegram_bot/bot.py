@@ -1,6 +1,7 @@
 """Telegram bot for managing the AML detective channel."""
 
 import logging
+import os
 import random
 import re
 
@@ -170,6 +171,64 @@ class TelegramPublisher:
             except Exception as e2:
                 logger.error(f"Retry also failed: {e2}")
                 return None
+
+    async def publish_post_with_photo(
+        self, text: str, photo_path: str,
+    ) -> int | None:
+        """Publish a post with a photo to the Telegram channel.
+
+        If photo caption exceeds 1024 chars, sends photo first then text.
+        Falls back to text-only publish_post if photo sending fails.
+        """
+        MAX_CAPTION = 1024
+        try:
+            keyboard = await self._get_bot_keyboard()
+
+            if len(text) <= MAX_CAPTION:
+                # Short text - send as photo caption
+                with open(photo_path, "rb") as photo:
+                    message = await self.bot.send_photo(
+                        chat_id=self.channel_id,
+                        photo=photo,
+                        caption=text,
+                        parse_mode=ParseMode.HTML,
+                        reply_markup=keyboard,
+                    )
+                logger.info(
+                    f"Published photo post to {self.channel_id}, "
+                    f"msg_id={message.message_id}",
+                )
+                return message.message_id
+            else:
+                # Long text - send photo first, then text parts
+                with open(photo_path, "rb") as photo:
+                    photo_msg = await self.bot.send_photo(
+                        chat_id=self.channel_id,
+                        photo=photo,
+                    )
+
+                parts = self._split_message(text)
+                message_id = photo_msg.message_id
+
+                for i, part in enumerate(parts):
+                    reply_markup = keyboard if i == len(parts) - 1 else None
+                    await self.bot.send_message(
+                        chat_id=self.channel_id,
+                        text=part,
+                        parse_mode=ParseMode.HTML,
+                        disable_web_page_preview=True,
+                        reply_markup=reply_markup,
+                    )
+
+                logger.info(
+                    f"Published photo+text post to {self.channel_id}, "
+                    f"msg_id={message_id}",
+                )
+                return message_id
+
+        except Exception as e:
+            logger.error(f"Failed to publish photo post: {e}, falling back to text")
+            return await self.publish_post(text)
 
     def _split_message(self, text: str) -> list[str]:
         """Split a long message into parts respecting Telegram limits."""
@@ -639,10 +698,16 @@ class UserBot:
     async def handle_photo_message(
         self, update: Update, context: ContextTypes.DEFAULT_TYPE
     ):
-        """Handle photo messages (admin reply with photo)."""
-        if not context.user_data.get("reply_to_user_id"):
-            return
+        """Handle photo messages (admin reply with photo or AI chat with image)."""
         if not self._is_admin(update.effective_user.id):
+            return
+
+        # Admin AI chat mode - analyze the image
+        if context.user_data.get("admin_ai_chat"):
+            await self.handle_admin_ai_photo(update, context)
+            return
+
+        if not context.user_data.get("reply_to_user_id"):
             return
         await self.handle_admin_reply(update, context)
 
@@ -1015,7 +1080,8 @@ class UserBot:
             "Примеры:\n"
             "- Проанализируй и сделай краткую новость по этой ссылке: ...\n"
             "- Напиши пост про Lazarus Group\n"
-            "- Что ты знаешь про chain hopping?\n\n"
+            "- Что ты знаешь про chain hopping?\n"
+            "- Отправь картинку/скриншот - я проанализирую содержимое\n\n"
             "Команды:\n"
             "/remember Тема | Текст - добавить в базу знаний\n"
             "/kb - посмотреть базу знаний\n"
@@ -1147,6 +1213,40 @@ class UserBot:
             await update.message.reply_text(f"Ошибка: {e}")
 
         return True
+
+    async def handle_admin_ai_photo(
+        self, update: Update, context: ContextTypes.DEFAULT_TYPE
+    ):
+        """Handle admin photo in AI chat mode - analyze image with vision."""
+        if not self._on_admin_chat:
+            await update.message.reply_text(
+                "AI-чат не подключён. Перезапусти бота."
+            )
+            return
+
+        # Get the highest resolution photo
+        photo = update.message.photo[-1]
+        file = await photo.get_file()
+        image_bytes = await file.download_as_bytearray()
+
+        import base64
+        image_b64 = base64.b64encode(bytes(image_bytes)).decode("utf-8")
+
+        caption = (update.message.caption or "").strip()
+        message = caption if caption else "Проанализируй это изображение"
+
+        await update.message.reply_text("🔄 Анализирую изображение...")
+
+        try:
+            response = await self._on_admin_chat(
+                message, image_b64=image_b64
+            )
+            parts = _split_text(response, MAX_MESSAGE_LENGTH)
+            for part in parts:
+                await update.message.reply_text(part)
+        except Exception as e:
+            logger.error(f"Admin AI photo chat error: {e}")
+            await update.message.reply_text(f"Ошибка: {e}")
 
     async def cmd_orders(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /orders command - list pending investigations (admin only)."""

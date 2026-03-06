@@ -10,22 +10,27 @@ from config import ANTHROPIC_API_KEY
 from config.encyclopedia import AML_ENCYCLOPEDIA
 from config.prompts import (
     AFTERNOON_NEWS_TEMPLATE,
+    AML_SERVICES_TEMPLATE,
     AUTHOR_POST_TEMPLATE,
     COMBINED_POST_TEMPLATE,
     DEEP_DIVE_TEMPLATE,
     ENRICHMENT_TEMPLATE,
     EVENING_DIGEST_TEMPLATE,
     EVENING_NEWS_TEMPLATE,
+    EXPERT_THOUGHTS_TEMPLATE,
     FUN_FACT_TEMPLATE,
     GOODNIGHT_POST_TEMPLATE,
+    HACK_ARTICLE_TEMPLATE,
     MINI_POST_TEMPLATE,
     MORNING_DIGEST_TEMPLATE,
     MORNING_NEWS_TEMPLATE,
     INVESTIGATION_TEMPLATE,
     NEWS_POST_TEMPLATE,
+    RANDOM_ARTICLE_TEMPLATE,
     STYLE_EXAMPLES,
     SYSTEM_PROMPT,
     WEEKLY_ANALYTICS_TEMPLATE,
+    WEEKLY_SUMMARY_TEMPLATE,
 )
 from config.sources import POST_CATEGORIES
 
@@ -159,6 +164,11 @@ class ContentGenerator:
         self.client = anthropic.AsyncAnthropic(api_key=api_key or ANTHROPIC_API_KEY)
         self.model = "claude-sonnet-4-20250514"
 
+    @staticmethod
+    def _clean_markdown(text: str) -> str:
+        """Remove bold markdown (**) from generated text."""
+        return text.replace("**", "")
+
     async def _generate(self, user_prompt: str, max_tokens: int = 2000) -> str:
         """Send a prompt to Claude and get the response."""
         try:
@@ -169,9 +179,50 @@ class ContentGenerator:
                 system=full_system,
                 messages=[{"role": "user", "content": user_prompt}],
             )
-            return message.content[0].text
+            return self._clean_markdown(message.content[0].text)
         except Exception as e:
             logger.error(f"Claude API error: {e}")
+            raise
+
+    async def _generate_with_image(
+        self,
+        user_prompt: str,
+        image_b64: str,
+        extra_context: str = "",
+        max_tokens: int = 2000,
+    ) -> str:
+        """Send a prompt with an image to Claude (vision) and get the response."""
+        try:
+            system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
+            if extra_context:
+                system = f"{system}\n\n{extra_context}"
+            message = await self.client.messages.create(
+                model=self.model,
+                max_tokens=max_tokens,
+                system=system,
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {
+                                "type": "image",
+                                "source": {
+                                    "type": "base64",
+                                    "media_type": "image/jpeg",
+                                    "data": image_b64,
+                                },
+                            },
+                            {
+                                "type": "text",
+                                "text": user_prompt,
+                            },
+                        ],
+                    }
+                ],
+            )
+            return self._clean_markdown(message.content[0].text)
+        except Exception as e:
+            logger.error(f"Claude Vision API error: {e}")
             raise
 
     async def _generate_with_context(
@@ -188,7 +239,7 @@ class ContentGenerator:
                 system=system,
                 messages=[{"role": "user", "content": user_prompt}],
             )
-            return message.content[0].text
+            return self._clean_markdown(message.content[0].text)
         except Exception as e:
             logger.error(f"Claude API error: {e}")
             raise
@@ -431,15 +482,115 @@ class ContentGenerator:
         logger.info(f"Generated goodnight post: {tip_topic[:50]}")
         return post
 
+    async def generate_hack_article(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate an article about a crypto hack/theft."""
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = HACK_ARTICLE_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+        )
+        context = _get_relevant_context(topic)
+        post = await self._generate_with_context(prompt, context, max_tokens=4000)
+        logger.info(f"Generated hack article: {topic[:50]}")
+        return post
+
+    async def generate_aml_services_post(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate a review post about an AML service/tool."""
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = AML_SERVICES_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+        )
+        context = _get_relevant_context(topic)
+        post = await self._generate_with_context(prompt, context, max_tokens=2500)
+        logger.info(f"Generated AML services post: {topic[:50]}")
+        return post
+
+    async def generate_expert_thoughts(
+        self, topic: str, used_topics: list[str] | None = None
+    ) -> str:
+        """Generate an expert opinion/thoughts post."""
+        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        encyclopedia_context = _get_relevant_context(topic)
+        if encyclopedia_context:
+            context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
+        else:
+            context_text = "Используй свои экспертные знания из AML-энциклопедии."
+
+        used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
+
+        prompt = EXPERT_THOUGHTS_TEMPLATE.format(
+            topic=topic,
+            encyclopedia_context=context_text,
+            used_topics=used_str,
+            date=today,
+        )
+        context = _get_relevant_context(topic)
+        post = await self._generate_with_context(prompt, context, max_tokens=2000)
+        logger.info(f"Generated expert thoughts: {topic[:50]}")
+        return post
+
+    async def generate_random_article_post(
+        self, title: str, content: str, source: str, url: str
+    ) -> str:
+        """Generate a post from a random article in the database."""
+        prompt = RANDOM_ARTICLE_TEMPLATE.format(
+            title=title,
+            content=content[:3000],
+            source=source,
+            url=url or "не указан",
+        )
+        context = _get_relevant_context(f"{title} {content[:500]}")
+        post = await self._generate_with_context(prompt, context)
+        logger.info(f"Generated random article post: {title[:50]}")
+        return post
+
+    async def generate_weekly_summary(
+        self, news_list: str, weekly_posts: str
+    ) -> str:
+        """Generate a weekly summary post for Sunday."""
+        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        prompt = WEEKLY_SUMMARY_TEMPLATE.format(
+            date=today,
+            news_list=news_list or "Тихая неделя - мало новостей.",
+            weekly_posts=weekly_posts or "Нет данных о постах за неделю.",
+        )
+        context = _get_relevant_context("тренды AML крипто 2025 2026")
+        post = await self._generate_with_context(prompt, context, max_tokens=3000)
+        logger.info("Generated weekly summary")
+        return post
+
     async def admin_chat(
         self,
         message: str,
         custom_knowledge: str = "",
+        image_b64: str | None = None,
     ) -> str:
         """Process an admin message (free-form chat with AI agent).
 
         The admin can ask anything: analyze a link, generate content,
         answer a question using the knowledge base and encyclopedia.
+        Supports image analysis when image_b64 is provided.
         """
         context_parts = []
 
@@ -456,15 +607,22 @@ class ContentGenerator:
 
         extra = "\n\n---\n\n".join(context_parts) if context_parts else ""
 
-        prompt = (
+        prompt_text = (
             "Ты общаешься с админом бота. Отвечай как Кейс Уокер - "
             "экспертно, живо и по делу. Используй знания из энциклопедии и базы знаний.\n\n"
             "Если админ просит проанализировать ссылку - разбери тему, дай выводы.\n"
             "Если просит сделать новость/пост - сгенерируй в формате канала.\n"
+            "Если отправлено изображение - опиши что на нём, проанализируй контент.\n"
             "Если спрашивает - отвечай развёрнуто.\n\n"
             f"Сообщение админа:\n{message}"
         )
-        return await self._generate_with_context(prompt, extra, max_tokens=3000)
+
+        if image_b64:
+            # Use vision: build multimodal content
+            return await self._generate_with_image(
+                prompt_text, image_b64, extra, max_tokens=3000
+            )
+        return await self._generate_with_context(prompt_text, extra, max_tokens=3000)
 
     def get_category_emoji(self, category: str) -> str:
         """Get emoji for post category."""
