@@ -1,6 +1,7 @@
 """Telegram bot for managing the AML detective channel."""
 
 import logging
+import os
 import random
 import re
 
@@ -170,6 +171,64 @@ class TelegramPublisher:
             except Exception as e2:
                 logger.error(f"Retry also failed: {e2}")
                 return None
+
+    async def publish_post_with_photo(
+        self, text: str, photo_path: str,
+    ) -> int | None:
+        """Publish a post with a photo to the Telegram channel.
+
+        If photo caption exceeds 1024 chars, sends photo first then text.
+        Falls back to text-only publish_post if photo sending fails.
+        """
+        MAX_CAPTION = 1024
+        try:
+            keyboard = await self._get_bot_keyboard()
+
+            if len(text) <= MAX_CAPTION:
+                # Short text - send as photo caption
+                with open(photo_path, "rb") as photo:
+                    message = await self.bot.send_photo(
+                        chat_id=self.channel_id,
+                        photo=photo,
+                        caption=text,
+                        parse_mode=ParseMode.HTML,
+                        reply_markup=keyboard,
+                    )
+                logger.info(
+                    f"Published photo post to {self.channel_id}, "
+                    f"msg_id={message.message_id}",
+                )
+                return message.message_id
+            else:
+                # Long text - send photo first, then text parts
+                with open(photo_path, "rb") as photo:
+                    photo_msg = await self.bot.send_photo(
+                        chat_id=self.channel_id,
+                        photo=photo,
+                    )
+
+                parts = self._split_message(text)
+                message_id = photo_msg.message_id
+
+                for i, part in enumerate(parts):
+                    reply_markup = keyboard if i == len(parts) - 1 else None
+                    await self.bot.send_message(
+                        chat_id=self.channel_id,
+                        text=part,
+                        parse_mode=ParseMode.HTML,
+                        disable_web_page_preview=True,
+                        reply_markup=reply_markup,
+                    )
+
+                logger.info(
+                    f"Published photo+text post to {self.channel_id}, "
+                    f"msg_id={message_id}",
+                )
+                return message_id
+
+        except Exception as e:
+            logger.error(f"Failed to publish photo post: {e}, falling back to text")
+            return await self.publish_post(text)
 
     def _split_message(self, text: str) -> list[str]:
         """Split a long message into parts respecting Telegram limits."""

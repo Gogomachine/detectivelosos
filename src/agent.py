@@ -14,6 +14,7 @@ Daily schedule (Moscow time):
 
 import asyncio
 import logging
+import os
 import random
 from datetime import datetime, timedelta, timezone
 
@@ -36,6 +37,9 @@ from src.telegram_bot.bot import BINANCE_REFERRAL_URL, TelegramPublisher, UserBo
 logger = logging.getLogger(__name__)
 
 MIN_DAILY_POSTS = 6
+NEWS_HEADER_IMAGE = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)), "assets", "news_header.jpg",
+)
 
 
 class CaseWalkerAgent:
@@ -234,8 +238,13 @@ class CaseWalkerAgent:
             status="draft",
         )
 
-        # Publish to Telegram
-        message_id = await self.publisher.publish_post(post_text)
+        # Publish to Telegram (with news header image if available)
+        if os.path.isfile(NEWS_HEADER_IMAGE):
+            message_id = await self.publisher.publish_post_with_photo(
+                post_text, NEWS_HEADER_IMAGE,
+            )
+        else:
+            message_id = await self.publisher.publish_post(post_text)
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
             for article in articles:
