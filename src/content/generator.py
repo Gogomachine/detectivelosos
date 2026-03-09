@@ -3,6 +3,7 @@
 import logging
 import random
 from datetime import datetime, timezone
+from zoneinfo import ZoneInfo
 
 import anthropic
 
@@ -35,6 +36,20 @@ from config.prompts import (
 from config.sources import POST_CATEGORIES
 
 logger = logging.getLogger(__name__)
+
+_MOSCOW_TZ = ZoneInfo("Europe/Moscow")
+_WEEKDAYS_RU = [
+    "понедельник", "вторник", "среда", "четверг",
+    "пятница", "суббота", "воскресенье",
+]
+
+
+def _today_with_weekday() -> str:
+    """Return current date in Moscow timezone with Russian day name, e.g. 'понедельник, 09.03.2026'."""
+    now = datetime.now(_MOSCOW_TZ)
+    day_name = _WEEKDAYS_RU[now.weekday()]
+    return f"{day_name}, {now.strftime('%d.%m.%Y')}"
+
 
 # Sections of the encyclopedia that can be referenced for specific topics
 ENCYCLOPEDIA_SECTIONS = {
@@ -288,7 +303,7 @@ class ContentGenerator:
         self, news_items: list[dict], is_morning: bool = True
     ) -> str:
         """Generate morning or evening digest."""
-        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        today = _today_with_weekday()
 
         news_list = "\n".join(
             f"- {item['title']} ({item['source']}) | {item.get('url', '')}"
@@ -377,7 +392,7 @@ class ContentGenerator:
         daily_summary: str = "",
     ) -> str:
         """Generate a news briefing (morning/afternoon/evening) with max 7 articles."""
-        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        today = _today_with_weekday()
 
         news_list = "\n".join(
             f"- {item['title']} ({item['source']}) | {item.get('url', '')}"
@@ -455,7 +470,7 @@ class ContentGenerator:
         self, used_topics: list[str] | None = None
     ) -> str:
         """Generate a free-form author's post - personal thoughts, jokes, reflections."""
-        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        today = _today_with_weekday()
         used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
 
         prompt = AUTHOR_POST_TEMPLATE.format(
@@ -470,7 +485,7 @@ class ContentGenerator:
         self, tip_topic: str, used_topics: list[str] | None = None
     ) -> str:
         """Generate a goodnight post with sweet dreams wish and mini security tip."""
-        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        today = _today_with_weekday()
         used_str = "\n".join(f"- {t}" for t in (used_topics or [])[-20:]) or "Пока не было."
 
         prompt = GOODNIGHT_POST_TEMPLATE.format(
@@ -530,7 +545,7 @@ class ContentGenerator:
         self, topic: str, used_topics: list[str] | None = None
     ) -> str:
         """Generate an expert opinion/thoughts post."""
-        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        today = _today_with_weekday()
         encyclopedia_context = _get_relevant_context(topic)
         if encyclopedia_context:
             context_text = f"Используй эту информацию из AML-энциклопедии:\n\n{encyclopedia_context}"
@@ -569,7 +584,7 @@ class ContentGenerator:
         self, news_list: str, weekly_posts: str
     ) -> str:
         """Generate a weekly summary post for Sunday."""
-        today = datetime.now(timezone.utc).strftime("%d.%m.%Y")
+        today = _today_with_weekday()
         prompt = WEEKLY_SUMMARY_TEMPLATE.format(
             date=today,
             news_list=news_list or "Тихая неделя - мало новостей.",

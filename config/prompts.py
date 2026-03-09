@@ -268,7 +268,7 @@ URL: {url}
 
 WEEKLY_SUMMARY_TEMPLATE = """Составь итоги недели для Telegram-канала.
 
-Дата: {date} (воскресенье)
+Дата: {date}
 
 Новости за неделю:
 {news_list}
