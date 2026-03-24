@@ -578,7 +578,10 @@ class CaseWalkerAgent:
         return await self.generator.explain_term(term)
 
     async def handle_admin_chat(
-        self, message: str, image_b64: str | None = None
+        self,
+        message: str,
+        image_b64: str | None = None,
+        history: list[dict] | None = None,
     ) -> str:
         """Handle admin AI chat message with custom knowledge context."""
         # Build custom knowledge context from DB
@@ -600,6 +603,7 @@ class CaseWalkerAgent:
             message=message,
             custom_knowledge=custom_knowledge,
             image_b64=image_b64,
+            history=history,
         )
 
     async def get_status(self) -> str:

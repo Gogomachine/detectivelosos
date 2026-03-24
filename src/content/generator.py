@@ -600,12 +600,14 @@ class ContentGenerator:
         message: str,
         custom_knowledge: str = "",
         image_b64: str | None = None,
+        history: list[dict] | None = None,
     ) -> str:
         """Process an admin message (free-form chat with AI agent).
 
         The admin can ask anything: analyze a link, generate content,
         answer a question using the knowledge base and encyclopedia.
         Supports image analysis when image_b64 is provided.
+        Maintains conversation history for multi-turn dialogue.
         """
         context_parts = []
 
@@ -622,22 +624,52 @@ class ContentGenerator:
 
         extra = "\n\n---\n\n".join(context_parts) if context_parts else ""
 
-        prompt_text = (
-            "Ты общаешься с админом бота. Отвечай как Кейс Уокер - "
+        system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
+        system += (
+            "\n\nТы общаешься с админом бота. Отвечай как Кейс Уокер - "
             "экспертно, живо и по делу. Используй знания из энциклопедии и базы знаний.\n\n"
             "Если админ просит проанализировать ссылку - разбери тему, дай выводы.\n"
             "Если просит сделать новость/пост - сгенерируй в формате канала.\n"
             "Если отправлено изображение - опиши что на нём, проанализируй контент.\n"
-            "Если спрашивает - отвечай развёрнуто.\n\n"
-            f"Сообщение админа:\n{message}"
+            "Если спрашивает - отвечай развёрнуто."
         )
+        if extra:
+            system = f"{system}\n\n{extra}"
 
+        # Build messages with conversation history
+        messages = []
+        if history:
+            messages.extend(history)
+
+        # Build current user message
         if image_b64:
-            # Use vision: build multimodal content
-            return await self._generate_with_image(
-                prompt_text, image_b64, extra, max_tokens=3000
+            user_content = [
+                {
+                    "type": "image",
+                    "source": {
+                        "type": "base64",
+                        "media_type": "image/jpeg",
+                        "data": image_b64,
+                    },
+                },
+                {"type": "text", "text": message},
+            ]
+        else:
+            user_content = message
+
+        messages.append({"role": "user", "content": user_content})
+
+        try:
+            response = await self.client.messages.create(
+                model=self.model,
+                max_tokens=3000,
+                system=system,
+                messages=messages,
             )
-        return await self._generate_with_context(prompt_text, extra, max_tokens=3000)
+            return self._clean_markdown(response.content[0].text)
+        except Exception as e:
+            logger.error(f"Admin chat API error: {e}")
+            raise
 
     def get_category_emoji(self, category: str) -> str:
         """Get emoji for post category."""
