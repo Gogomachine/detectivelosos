@@ -2,15 +2,16 @@
 Scheduler for the AML Detective Agent.
 Weekly content schedule (Moscow time):
 
-  Monday:    09:00 Morning News | 13:00 Security Post    | 17:00 Author Post     | 19:00 Evening News
-  Tuesday:   09:00 Morning News | 13:00 Hack Article     | 17:00 Author Post     | 19:00 Evening News
-  Wednesday: 09:00 Morning News | 13:00 AML Services     | 17:00 Author Post     | 19:00 Evening News
-  Thursday:  09:00 Morning News |                         | 17:00 Random Article  | 19:00 Evening News
-  Friday:    09:00 Morning News | 13:00 Hack Article     | 17:00 Author Post     | 19:00 Evening News
-  Saturday:  09:00 Morning News |                         | 17:00 Expert Thoughts | 19:00 Evening News
-  Sunday:    09:00 Morning News |                         | 18:00 Weekly Summary  |
+  Monday:    09:00 Morning News | 13:00 Security Post | 19:00 Evening News + Expert Opinion
+  Tuesday:   09:00 Morning News | 13:00 Hack Article  | 19:00 Evening News + Expert Opinion
+  Wednesday: 09:00 Morning News |                      | 19:00 Evening News + Expert Opinion
+  Thursday:  09:00 Morning News | 15:00 Random Article | 19:00 Evening News + Expert Opinion
+  Friday:    09:00 Morning News |                      | 19:00 Evening News + Expert Opinion
+  Saturday:  09:00 Morning News |                      | 19:00 Evening News + Expert Opinion
+  Sunday:    09:00 Morning News | 18:00 Weekly Summary + Expert Opinion
 
 News parsing: 08:45, 18:45 daily.
+Deep dives and authored articles are created manually by admin via /ai command.
 """
 
 import logging
@@ -49,7 +50,7 @@ SECURITY_POST_TOPICS = [
     "Не используй публичный Wi-Fi для крипто-транзакций",
 ]
 
-# Topics for hack articles (Tue/Fri 13:00)
+# Topics for hack articles (Tue 13:00)
 HACK_ARTICLE_TOPICS = [
     "Lazarus Group: как КНДР украла $1.5B у Bybit",
     "Ronin Bridge: анатомия кражи на $625M",
@@ -73,51 +74,9 @@ HACK_ARTICLE_TOPICS = [
     "Как ZachXBT стал главным крипто-детективом",
 ]
 
-# Topics for AML services review (Wed 13:00)
-AML_SERVICES_TOPICS = [
-    "Chainalysis Reactor: главный инструмент крипто-детектива",
-    "Elliptic: как британцы анализируют блокчейн",
-    "TRM Labs: конкурент Chainalysis из Сан-Франциско",
-    "Arkham Intelligence: деанон блокчейна в реальном времени",
-    "Crystal Blockchain (Bitfury): российские корни и глобальный охват",
-    "Nansen: аналитика DeFi и smart money",
-    "Dune Analytics: SQL-запросы к блокчейну для всех",
-    "Etherscan: больше чем просто блок-эксплорер",
-    "Revoke.cash: как отозвать опасные approvals",
-    "Tornado Cash vs Railgun: приватность или отмывание?",
-    "Сравнение AML-платформ: Chainalysis vs Elliptic vs TRM",
-    "MistTrack: бесплатная альтернатива для расследований",
-    "Scorechain: европейский AML-мониторинг",
-    "CipherTrace (Mastercard): как банки проверяют крипту",
-    "Merkle Science: AML из Сингапура",
-    "Solidus Labs: мониторинг DeFi-манипуляций",
-    "Как работает KYT (Know Your Transaction)",
-    "Что такое VASP и какие обязанности по AML",
-    "Travel Rule: как сервисы обмениваются данными",
-    "AI в AML: как машинное обучение ловит преступников",
-]
-
-# Topics for expert thoughts (Sat 17:00)
-EXPERT_THOUGHTS_TOPICS = [
-    "Регуляция крипты: мировые тренды 2025-2026",
-    "Privacy vs прозрачность: будущее блокчейна",
-    "Централизация DeFi: миф о децентрализации",
-    "Крипто-санкции: работают ли они на самом деле?",
-    "AI в комплаенсе: замена людей или усиление?",
-    "MiCA и европейская крипто-регуляция",
-    "Stablecoin regulation: почему все хотят контроля",
-    "CBDCs vs крипта: конкуренция или сосуществование?",
-    "Cross-chain будущее: проблемы интероперабельности",
-    "Deepfake fraud в крипте: новая угроза",
-    "Web3 идентичность: как решить KYC без централизации",
-    "Крипто-комплаенс в России: текущая ситуация",
-    "NFT и отмывание денег: реальная угроза?",
-    "DAO governance: демократия или плутократия?",
-    "Квантовые компьютеры и безопасность блокчейна",
-    "Метавселенные и финансовые преступления будущего",
-]
-
-# Legacy aliases for backward compatibility
+# Legacy aliases kept for imports that may reference them
+AML_SERVICES_TOPICS = []
+EXPERT_THOUGHTS_TOPICS = []
 MINI_POST_TOPICS = SECURITY_POST_TOPICS
 DEEP_DIVE_TOPICS = HACK_ARTICLE_TOPICS
 GOODNIGHT_TIP_TOPICS = SECURITY_POST_TOPICS
@@ -134,10 +93,7 @@ class AgentScheduler:
         self._on_evening_news = None
         self._on_security_post = None
         self._on_hack_article = None
-        self._on_aml_services = None
         self._on_random_article = None
-        self._on_author_post = None
-        self._on_expert_thoughts = None
         self._on_weekly_summary = None
 
     def set_callbacks(
@@ -147,10 +103,7 @@ class AgentScheduler:
         on_evening_news=None,
         on_security_post=None,
         on_hack_article=None,
-        on_aml_services=None,
         on_random_article=None,
-        on_author_post=None,
-        on_expert_thoughts=None,
         on_weekly_summary=None,
         **_kwargs,
     ):
@@ -160,10 +113,7 @@ class AgentScheduler:
         self._on_evening_news = on_evening_news
         self._on_security_post = on_security_post
         self._on_hack_article = on_hack_article
-        self._on_aml_services = on_aml_services
         self._on_random_article = on_random_article
-        self._on_author_post = on_author_post
-        self._on_expert_thoughts = on_expert_thoughts
         self._on_weekly_summary = on_weekly_summary
 
     def setup(self):
@@ -197,7 +147,7 @@ class AgentScheduler:
             replace_existing=True,
         )
 
-        # === 13:00 slots (Mon/Tue/Wed/Fri) ===
+        # === 13:00 slots ===
         # Monday 13:00 - Security post
         self.scheduler.add_job(
             self._run_security_post,
@@ -214,76 +164,43 @@ class AgentScheduler:
             name="Статья про взломы (Вт 13:00)",
             replace_existing=True,
         )
-        # Wednesday 13:00 - AML services review
-        self.scheduler.add_job(
-            self._run_aml_services,
-            trigger=CronTrigger(day_of_week="wed", hour=13, minute=0),
-            id="aml_services",
-            name="Разбор AML-сервисов (Ср 13:00)",
-            replace_existing=True,
-        )
-        # Friday 13:00 - Hack article
-        self.scheduler.add_job(
-            self._run_hack_article,
-            trigger=CronTrigger(day_of_week="fri", hour=13, minute=0),
-            id="hack_article_fri",
-            name="Статья про взломы (Пт 13:00)",
-            replace_existing=True,
-        )
 
-        # === 17:00 slots ===
-        # Mon/Tue/Wed/Fri 17:00 - Author post
-        self.scheduler.add_job(
-            self._run_author_post,
-            trigger=CronTrigger(day_of_week="mon,tue,wed,fri", hour=17, minute=0),
-            id="author_post",
-            name="Пост с размышлениями (17:00)",
-            replace_existing=True,
-        )
-        # Thursday 17:00 - Random article from bot
+        # === Thursday 15:00 - Random article ===
         self.scheduler.add_job(
             self._run_random_article,
-            trigger=CronTrigger(day_of_week="thu", hour=17, minute=0),
+            trigger=CronTrigger(day_of_week="thu", hour=15, minute=0),
             id="random_article",
-            name="Рандомная статья (Чт 17:00)",
-            replace_existing=True,
-        )
-        # Saturday 17:00 - Expert thoughts
-        self.scheduler.add_job(
-            self._run_expert_thoughts,
-            trigger=CronTrigger(day_of_week="sat", hour=17, minute=0),
-            id="expert_thoughts",
-            name="Экспертные мысли (Сб 17:00)",
+            name="Рандомная статья (Чт 15:00)",
             replace_existing=True,
         )
 
-        # === 19:00 Evening News (Mon-Sat) ===
+        # === 19:00 Evening News + Expert Opinion (Mon-Sat) ===
         self.scheduler.add_job(
             self._run_evening_news,
             trigger=CronTrigger(day_of_week="mon-sat", hour=19, minute=0),
             id="evening_news",
-            name="Вечерние новости (19:00)",
+            name="Вечерние новости + экспертное мнение (19:00)",
             replace_existing=True,
         )
 
-        # === Sunday 18:00 - Weekly Summary ===
+        # === Sunday 18:00 - Weekly Summary + Expert Opinion ===
         self.scheduler.add_job(
             self._run_weekly_summary,
             trigger=CronTrigger(day_of_week="sun", hour=18, minute=0),
             id="weekly_summary",
-            name="Итоги недели (Вс 18:00)",
+            name="Итоги недели + экспертное мнение (Вс 18:00)",
             replace_existing=True,
         )
 
         logger.info(
             "Расписание настроено (МСК):\n"
-            "  Пн: 09:00 новости | 13:00 безопасность | 17:00 размышления | 19:00 вечерние\n"
-            "  Вт: 09:00 новости | 13:00 взломы | 17:00 размышления | 19:00 вечерние\n"
-            "  Ср: 09:00 новости | 13:00 AML-сервисы | 17:00 размышления | 19:00 вечерние\n"
-            "  Чт: 09:00 новости | 17:00 рандомная статья | 19:00 вечерние\n"
-            "  Пт: 09:00 новости | 13:00 взломы | 17:00 размышления | 19:00 вечерние\n"
-            "  Сб: 09:00 новости | 17:00 экспертные мысли | 19:00 вечерние\n"
-            "  Вс: 09:00 новости | 18:00 итоги недели"
+            "  Пн: 09:00 новости | 13:00 безопасность | 19:00 вечерние + мнение\n"
+            "  Вт: 09:00 новости | 13:00 взломы | 19:00 вечерние + мнение\n"
+            "  Ср: 09:00 новости | 19:00 вечерние + мнение\n"
+            "  Чт: 09:00 новости | 15:00 рандомная статья | 19:00 вечерние + мнение\n"
+            "  Пт: 09:00 новости | 19:00 вечерние + мнение\n"
+            "  Сб: 09:00 новости | 19:00 вечерние + мнение\n"
+            "  Вс: 09:00 новости | 18:00 итоги недели + мнение"
         )
 
     def start(self):
@@ -315,7 +232,7 @@ class AgentScheduler:
                 logger.error(f"Morning news failed: {e}")
 
     async def _run_evening_news(self):
-        logger.info("Running evening news (19:00 MSK)")
+        logger.info("Running evening news + expert opinion (19:00 MSK)")
         if self._on_evening_news:
             try:
                 await self._on_evening_news()
@@ -331,47 +248,23 @@ class AgentScheduler:
                 logger.error(f"Security post failed: {e}")
 
     async def _run_hack_article(self):
-        logger.info("Running hack article (13:00 MSK)")
+        logger.info("Running hack article (Tue 13:00 MSK)")
         if self._on_hack_article:
             try:
                 await self._on_hack_article()
             except Exception as e:
                 logger.error(f"Hack article failed: {e}")
 
-    async def _run_aml_services(self):
-        logger.info("Running AML services review (Wed 13:00 MSK)")
-        if self._on_aml_services:
-            try:
-                await self._on_aml_services()
-            except Exception as e:
-                logger.error(f"AML services review failed: {e}")
-
     async def _run_random_article(self):
-        logger.info("Running random article post (Thu 17:00 MSK)")
+        logger.info("Running random article post (Thu 15:00 MSK)")
         if self._on_random_article:
             try:
                 await self._on_random_article()
             except Exception as e:
                 logger.error(f"Random article failed: {e}")
 
-    async def _run_author_post(self):
-        logger.info("Running author post (17:00 MSK)")
-        if self._on_author_post:
-            try:
-                await self._on_author_post()
-            except Exception as e:
-                logger.error(f"Author post failed: {e}")
-
-    async def _run_expert_thoughts(self):
-        logger.info("Running expert thoughts (Sat 17:00 MSK)")
-        if self._on_expert_thoughts:
-            try:
-                await self._on_expert_thoughts()
-            except Exception as e:
-                logger.error(f"Expert thoughts failed: {e}")
-
     async def _run_weekly_summary(self):
-        logger.info("Running weekly summary (Sun 18:00 MSK)")
+        logger.info("Running weekly summary + expert opinion (Sun 18:00 MSK)")
         if self._on_weekly_summary:
             try:
                 await self._on_weekly_summary()

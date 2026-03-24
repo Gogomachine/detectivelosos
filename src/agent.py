@@ -3,13 +3,15 @@ Main AML Detective Agent orchestrator.
 Coordinates all components: parsing, content generation, database, and publishing.
 
 Weekly schedule (Moscow time):
-  Mon: 09:00 News | 13:00 Security     | 17:00 Author     | 19:00 Evening News
-  Tue: 09:00 News | 13:00 Hack Article | 17:00 Author     | 19:00 Evening News
-  Wed: 09:00 News | 13:00 AML Services | 17:00 Author     | 19:00 Evening News
-  Thu: 09:00 News |                     | 17:00 Random Art | 19:00 Evening News
-  Fri: 09:00 News | 13:00 Hack Article | 17:00 Author     | 19:00 Evening News
-  Sat: 09:00 News |                     | 17:00 Expert     | 19:00 Evening News
-  Sun: 09:00 News |                     | 18:00 Weekly Summary
+  Mon: 09:00 News | 13:00 Security     | 19:00 Evening News + Expert Opinion
+  Tue: 09:00 News | 13:00 Hack Article | 19:00 Evening News + Expert Opinion
+  Wed: 09:00 News |                     | 19:00 Evening News + Expert Opinion
+  Thu: 09:00 News | 15:00 Random Art    | 19:00 Evening News + Expert Opinion
+  Fri: 09:00 News |                     | 19:00 Evening News + Expert Opinion
+  Sat: 09:00 News |                     | 19:00 Evening News + Expert Opinion
+  Sun: 09:00 News | 18:00 Weekly Summary + Expert Opinion
+
+Deep dives and authored articles are created manually by admin via /ai command.
 """
 
 import asyncio
@@ -27,8 +29,6 @@ from src.parsers.news_filter import NewsFilter
 from src.parsers.rss_parser import RSSParser
 from src.parsers.web_scraper import WebScraper
 from src.scheduler.scheduler import (
-    AML_SERVICES_TOPICS,
-    EXPERT_THOUGHTS_TOPICS,
     HACK_ARTICLE_TOPICS,
     SECURITY_POST_TOPICS,
     AgentScheduler,
@@ -77,10 +77,7 @@ class CaseWalkerAgent:
             on_evening_news=lambda: self.generate_and_publish_news_briefing("evening"),
             on_security_post=self.generate_and_publish_security_post,
             on_hack_article=self.generate_and_publish_hack_article,
-            on_aml_services=self.generate_and_publish_aml_services,
             on_random_article=self.generate_and_publish_random_article,
-            on_author_post=self.generate_and_publish_author_post,
-            on_expert_thoughts=self.generate_and_publish_expert_thoughts,
             on_weekly_summary=self.generate_and_publish_weekly_summary,
         )
         self.scheduler.setup()
@@ -302,37 +299,14 @@ class CaseWalkerAgent:
         else:
             await self.db.update_post_status(post_id, "failed")
 
-    # --- AML Services Review (Wed 13:00) ---
-
-    async def generate_and_publish_aml_services(self, topic: str | None = None):
-        """Generate and publish an AML service review post."""
-        used_topics = await self.db.get_used_topics("aml_services")
-        if topic is None:
-            topic = self._pick_unused_topic(AML_SERVICES_TOPICS, used_topics)
-
-        post_text = await self.generator.generate_aml_services_post(
-            topic=topic, used_topics=used_topics,
-        )
-
-        post_id = await self.db.save_post(
-            post_type="aml_services", content=post_text, status="draft",
-        )
-        message_id = await self.publisher.publish_post(post_text)
-        if message_id:
-            await self.db.update_post_status(post_id, "published", message_id)
-            await self.db.save_used_topic(topic, "aml_services")
-            logger.info(f"Обзор AML-сервиса опубликован: {topic[:50]}")
-        else:
-            await self.db.update_post_status(post_id, "failed")
-
-    # --- Random Article (Thu 17:00) ---
+    # --- Random Article (Thu 15:00) ---
 
     async def generate_and_publish_random_article(self):
         """Publish a random article from the database, rephrased as a channel post."""
         article = await self.db.get_random_article()
         if not article:
-            logger.warning("Нет статей для рандомного поста, публикуем авторский")
-            return await self.generate_and_publish_author_post()
+            logger.warning("Нет статей для рандомного поста")
+            return
 
         post_text = await self.generator.generate_random_article_post(
             title=article.get("title", ""),
@@ -351,51 +325,6 @@ class CaseWalkerAgent:
         if message_id:
             await self.db.update_post_status(post_id, "published", message_id)
             logger.info(f"Рандомная статья опубликована: {article.get('title', '')[:50]}")
-        else:
-            await self.db.update_post_status(post_id, "failed")
-
-    # --- Author's Post (Mon/Tue/Wed/Fri 17:00) ---
-
-    async def generate_and_publish_author_post(self):
-        """Generate and publish a free-form author's post."""
-        used_topics = await self.db.get_used_topics("author_post")
-
-        post_text = await self.generator.generate_author_post(
-            used_topics=used_topics,
-        )
-
-        post_id = await self.db.save_post(
-            post_type="author_post", content=post_text, status="draft",
-        )
-        message_id = await self.publisher.publish_post(post_text)
-        if message_id:
-            await self.db.update_post_status(post_id, "published", message_id)
-            first_line = post_text.split("\n")[0][:100]
-            await self.db.save_used_topic(first_line, "author_post")
-            logger.info("Авторский пост опубликован")
-        else:
-            await self.db.update_post_status(post_id, "failed")
-
-    # --- Expert Thoughts (Sat 17:00) ---
-
-    async def generate_and_publish_expert_thoughts(self, topic: str | None = None):
-        """Generate and publish an expert opinion post."""
-        used_topics = await self.db.get_used_topics("expert_thoughts")
-        if topic is None:
-            topic = self._pick_unused_topic(EXPERT_THOUGHTS_TOPICS, used_topics)
-
-        post_text = await self.generator.generate_expert_thoughts(
-            topic=topic, used_topics=used_topics,
-        )
-
-        post_id = await self.db.save_post(
-            post_type="expert_thoughts", content=post_text, status="draft",
-        )
-        message_id = await self.publisher.publish_post(post_text)
-        if message_id:
-            await self.db.update_post_status(post_id, "published", message_id)
-            await self.db.save_used_topic(topic, "expert_thoughts")
-            logger.info(f"Экспертные мысли опубликованы: {topic[:50]}")
         else:
             await self.db.update_post_status(post_id, "failed")
 
@@ -624,13 +553,14 @@ class CaseWalkerAgent:
             f"  - Статей в базе: {articles_today}\n"
             f"  - Последний парсинг: {last_parse}\n\n"
             f"Расписание (МСК):\n"
-            f"  Пн: 09:00 новости | 13:00 безопасность | 17:00 размышления | 19:00 вечерние\n"
-            f"  Вт: 09:00 новости | 13:00 взломы | 17:00 размышления | 19:00 вечерние\n"
-            f"  Ср: 09:00 новости | 13:00 AML-сервисы | 17:00 размышления | 19:00 вечерние\n"
-            f"  Чт: 09:00 новости | 17:00 рандомная статья | 19:00 вечерние\n"
-            f"  Пт: 09:00 новости | 13:00 взломы | 17:00 размышления | 19:00 вечерние\n"
-            f"  Сб: 09:00 новости | 17:00 экспертные мысли | 19:00 вечерние\n"
-            f"  Вс: 09:00 новости | 18:00 итоги недели\n\n"
+            f"  Пн: 09:00 новости | 13:00 безопасность | 19:00 вечерние + мнение\n"
+            f"  Вт: 09:00 новости | 13:00 взломы | 19:00 вечерние + мнение\n"
+            f"  Ср: 09:00 новости | 19:00 вечерние + мнение\n"
+            f"  Чт: 09:00 новости | 15:00 рандомная статья | 19:00 вечерние + мнение\n"
+            f"  Пт: 09:00 новости | 19:00 вечерние + мнение\n"
+            f"  Сб: 09:00 новости | 19:00 вечерние + мнение\n"
+            f"  Вс: 09:00 новости | 18:00 итоги недели + мнение\n\n"
+            f"Глубокие разборы и статьи - через /ai в ручном режиме.\n\n"
             f"Ближайшие задачи:\n{next_runs_text}"
         )
 
