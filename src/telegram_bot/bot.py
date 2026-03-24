@@ -1073,10 +1073,12 @@ class UserBot:
         if not update.effective_user or not self._is_admin(update.effective_user.id):
             return
         context.user_data["admin_ai_chat"] = True
+        context.user_data["ai_chat_history"] = []
         await update.message.reply_text(
             "🤖 Режим AI-чата активирован.\n\n"
             "Теперь ты можешь писать мне любые сообщения - "
-            "я отвечу как Кейс Уокер с учётом базы знаний и энциклопедии.\n\n"
+            "я отвечу как Кейс Уокер с учётом базы знаний и энциклопедии.\n"
+            "Я запоминаю контекст диалога до /stop.\n\n"
             "Примеры:\n"
             "- Проанализируй и сделай краткую новость по этой ссылке: ...\n"
             "- Напиши пост про Lazarus Group\n"
@@ -1094,8 +1096,9 @@ class UserBot:
         if not update.effective_user or not self._is_admin(update.effective_user.id):
             return
         context.user_data.pop("admin_ai_chat", None)
+        context.user_data.pop("ai_chat_history", None)
         await update.message.reply_text(
-            "🔒 Режим AI-чата отключён. Я снова в обычном режиме.",
+            "🔒 Режим AI-чата отключён. История диалога очищена.",
         )
 
     async def cmd_remember(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -1202,8 +1205,18 @@ class UserBot:
 
         await update.message.reply_text("🔄 Думаю...")
 
+        # Get conversation history
+        history = context.user_data.get("ai_chat_history", [])
+
         try:
-            response = await self._on_admin_chat(message)
+            response = await self._on_admin_chat(message, history=history)
+            # Update conversation history
+            history.append({"role": "user", "content": message})
+            history.append({"role": "assistant", "content": response})
+            # Keep last 20 turns (40 messages) to avoid token overflow
+            if len(history) > 40:
+                history = history[-40:]
+            context.user_data["ai_chat_history"] = history
             # Split long responses
             parts = _split_text(response, MAX_MESSAGE_LENGTH)
             for part in parts:
@@ -1237,10 +1250,19 @@ class UserBot:
 
         await update.message.reply_text("🔄 Анализирую изображение...")
 
+        # Get conversation history
+        history = context.user_data.get("ai_chat_history", [])
+
         try:
             response = await self._on_admin_chat(
-                message, image_b64=image_b64
+                message, image_b64=image_b64, history=history
             )
+            # Update conversation history (store text-only for history)
+            history.append({"role": "user", "content": f"[Изображение] {message}"})
+            history.append({"role": "assistant", "content": response})
+            if len(history) > 40:
+                history = history[-40:]
+            context.user_data["ai_chat_history"] = history
             parts = _split_text(response, MAX_MESSAGE_LENGTH)
             for part in parts:
                 await update.message.reply_text(part)
