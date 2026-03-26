@@ -2,11 +2,15 @@
 
 import logging
 import re
+from datetime import datetime, timedelta, timezone
 
 from config.sources import AML_KEYWORDS
 from src.parsers.rss_parser import NewsItem
 
 logger = logging.getLogger(__name__)
+
+# Maximum age for news articles (in hours)
+MAX_ARTICLE_AGE_HOURS = 72
 
 # Sources that are inherently AML-relevant and don't need keyword filtering
 AML_NATIVE_SOURCES = {
@@ -57,16 +61,27 @@ class NewsFilter:
             score += 2
         return score
 
+    @staticmethod
+    def is_fresh(item: NewsItem, max_age_hours: int = MAX_ARTICLE_AGE_HOURS) -> bool:
+        """Check if a news item is fresh enough (not older than max_age_hours)."""
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=max_age_hours)
+        pub = item.published_at
+        if pub.tzinfo is None:
+            pub = pub.replace(tzinfo=timezone.utc)
+        return pub >= cutoff
+
     def filter_and_rank(
         self,
         items: list[NewsItem],
         seen_hashes: set[str] | None = None,
+        max_age_hours: int = MAX_ARTICLE_AGE_HOURS,
     ) -> list[NewsItem]:
-        """Filter for relevance, deduplicate, and rank by score."""
+        """Filter for relevance, freshness, deduplicate, and rank by score."""
         seen = seen_hashes or set()
         filtered = []
         skipped_dupes = 0
         skipped_irrelevant = 0
+        skipped_old = 0
 
         for item in items:
             # Skip duplicates
@@ -74,6 +89,11 @@ class NewsFilter:
                 skipped_dupes += 1
                 continue
             seen.add(item.content_hash)
+
+            # Skip old articles
+            if not self.is_fresh(item, max_age_hours):
+                skipped_old += 1
+                continue
 
             # Check relevance
             if not self.is_relevant(item):
@@ -87,6 +107,7 @@ class NewsFilter:
 
         logger.info(
             f"Фильтрация: {len(items)} всего -> {len(filtered)} релевантных "
-            f"(пропущено: {skipped_dupes} дублей, {skipped_irrelevant} нерелевантных)"
+            f"(пропущено: {skipped_dupes} дублей, {skipped_irrelevant} нерелевантных, "
+            f"{skipped_old} устаревших)"
         )
         return filtered

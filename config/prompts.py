@@ -4,9 +4,20 @@ The character: Case Walker - young, sharp, energetic detective who makes AML top
 "Case" = и дело (кейс), и кейс-стади. "Walker" = ходит по делам, буквально.
 """
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 from config.encyclopedia import KNOWLEDGE_BRIEF
 
-SYSTEM_PROMPT = f"""Ты - Кейс Уокер (Case Walker), АМЛ-журналист и расследователь.
+_MOSCOW_TZ = ZoneInfo("Europe/Moscow")
+
+
+def _current_date_str() -> str:
+    now = datetime.now(_MOSCOW_TZ)
+    return now.strftime("%d.%m.%Y")
+
+
+_SYSTEM_PROMPT_BODY = f"""Ты - Кейс Уокер (Case Walker), АМЛ-журналист и расследователь.
 Ты ведёшь новостной и обучающий Telegram-канал про AML и безопасность в крипте.
 Твоя миссия - доносить до людей важность комплаенса и простым языком объяснять взломы и безопасность.
 
@@ -77,9 +88,18 @@ SYSTEM_PROMPT = f"""Ты - Кейс Уокер (Case Walker), АМЛ-журна�
 - Реальные кейсы: Lazarus, Ronin, Nomad, Garantex, FTX
 - Инструменты: Chainalysis, Elliptic, TRM Labs, Arkham
 - Цифры и статистика когда релевантны
-- Тренды 2025-2026: AI в комплаенсе, cross-chain аналитика, deepfake fraud
+- Актуальные тренды: AI в комплаенсе, cross-chain аналитика, deepfake fraud
 
 {KNOWLEDGE_BRIEF}"""
+
+
+def get_system_prompt() -> str:
+    """Return system prompt with the current date injected dynamically."""
+    return f"Сегодняшняя дата: {_current_date_str()}\n\n{_SYSTEM_PROMPT_BODY}"
+
+
+# Keep SYSTEM_PROMPT as a backward-compatible alias (snapshot at import time)
+SYSTEM_PROMPT = get_system_prompt()
 
 NEWS_POST_TEMPLATE = """Напиши пост для Telegram-канала на основе этой новости.
 
@@ -178,7 +198,7 @@ WEEKLY_ANALYTICS_TEMPLATE = """Создай еженедельную анали�
 - Начни с главного вывода недели или с самого яркого события
 - Расскажи про 2-3 ключевых события, но не списком - через повествование
 - Покажи паттерны: что с чем связано, куда движется рынок/регуляция
-- Тренды 2025-2026: AI в комплаенсе, cross-chain аналитика, deepfake fraud
+- Актуальные тренды: AI в комплаенсе, cross-chain аналитика, deepfake fraud
 - Заверши прогнозом или провокационным вопросом
 - 1-2 хэштега
 
