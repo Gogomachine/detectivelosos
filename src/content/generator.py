@@ -31,6 +31,7 @@ from config.prompts import (
     STYLE_EXAMPLES,
     SYSTEM_PROMPT,
     WEEKLY_ANALYTICS_TEMPLATE,
+    get_system_prompt,
     WEEKLY_SUMMARY_TEMPLATE,
 )
 from config.sources import POST_CATEGORIES
@@ -187,7 +188,7 @@ class ContentGenerator:
     async def _generate(self, user_prompt: str, max_tokens: int = 2000) -> str:
         """Send a prompt to Claude and get the response."""
         try:
-            full_system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
+            full_system = get_system_prompt() + "\n\n" + STYLE_EXAMPLES
             message = await self.client.messages.create(
                 model=self.model,
                 max_tokens=max_tokens,
@@ -208,7 +209,7 @@ class ContentGenerator:
     ) -> str:
         """Send a prompt with an image to Claude (vision) and get the response."""
         try:
-            system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
+            system = get_system_prompt() + "\n\n" + STYLE_EXAMPLES
             if extra_context:
                 system = f"{system}\n\n{extra_context}"
             message = await self.client.messages.create(
@@ -245,7 +246,7 @@ class ContentGenerator:
     ) -> str:
         """Send a prompt with additional encyclopedia context."""
         try:
-            system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
+            system = get_system_prompt() + "\n\n" + STYLE_EXAMPLES
             if extra_context:
                 system = f"{system}\n\n{extra_context}"
             message = await self.client.messages.create(
@@ -354,7 +355,7 @@ class ContentGenerator:
         """Generate weekly analytics post with trend context."""
         prompt = WEEKLY_ANALYTICS_TEMPLATE.format(weekly_data=weekly_data)
         # Add statistics context
-        context = _get_relevant_context("статистика тренды 2025")
+        context = _get_relevant_context("статистика тренды")
         post = await self._generate_with_context(prompt, context, max_tokens=3000)
         logger.info("Generated weekly analytics")
         return post
@@ -590,7 +591,7 @@ class ContentGenerator:
             news_list=news_list or "Тихая неделя - мало новостей.",
             weekly_posts=weekly_posts or "Нет данных о постах за неделю.",
         )
-        context = _get_relevant_context("тренды AML крипто 2025 2026")
+        context = _get_relevant_context("тренды AML крипто")
         post = await self._generate_with_context(prompt, context, max_tokens=3000)
         logger.info("Generated weekly summary")
         return post
@@ -624,7 +625,7 @@ class ContentGenerator:
 
         extra = "\n\n---\n\n".join(context_parts) if context_parts else ""
 
-        system = SYSTEM_PROMPT + "\n\n" + STYLE_EXAMPLES
+        system = get_system_prompt() + "\n\n" + STYLE_EXAMPLES
         system += (
             "\n\nТы общаешься с админом бота. Отвечай как Кейс Уокер - "
             "экспертно, живо и по делу. Используй знания из энциклопедии и базы знаний.\n\n"
